@@ -572,4 +572,7 @@ the rest is additive. If you are coming from before `0.11.0`, the order is:
 
 `scripts/check_sdk_drift.py --check` tells you whether the SDK you have
 installed still matches the version the generated `*_info` modules were
-vouched for; run it after any upgrade that touches `requirements.txt`.
+vouched for, and whether that version sits inside the range
+`requirements.txt` declares; `scripts/check_sdk_floor.py --check` tells you
+whether every module's SDK reference resolves at that range's floor. Run both
+after any upgrade that touches `requirements.txt`.

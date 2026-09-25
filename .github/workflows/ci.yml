@@ -44,16 +44,20 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint ruff
       # The committed _info specs are generated against a specific SDK
-      # release. requirements.txt allows the SDK as a compatibility range
-      # for users, so this sentinel first installs the range, then re-pins
-      # the SDK to the GENERATED_SDK_VERSION stamp, and fails when the
-      # stamp and the pinned install drift. Stale specs are regenerated
-      # deliberately (and reviewed) instead of shipping silently.
+      # release, and requirements.txt declares the range users may install.
+      # This sentinel installs the range, re-pins the SDK to the
+      # GENERATED_SDK_VERSION stamp, and checks that the stamp and the pinned
+      # install agree -- the step below then verifies that every SDK
+      # reference in plugins/ resolves at the floor of that range. Stale
+      # specs, or a floor that drifted away from the artifacts, are
+      # regenerated deliberately (and reviewed) instead of shipping silently.
       - name: SDK drift sentinel
         run: |
           python -m pip install -r requirements.txt
           python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
           python scripts/check_sdk_drift.py --check
+      - name: Declared SDK floor is real
+        run: python scripts/check_sdk_floor.py --check
       - name: Generated modules are up to date
         run: python scripts/generate_info_modules.py --check
       # RESOURCE_SPECS entries are verified against the installed SDK and

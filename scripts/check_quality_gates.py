@@ -103,6 +103,32 @@ SKELETON_TEST_RATCHET = 0
 # delete call rather than from the create example that turns it on.
 DELETE_EXAMPLE_RATCHET = 0
 
+# Two of the families above are stock counts of *existing* debt -- samples to
+# author (976) and integration targets that need a cloud account (135). A
+# stock ceiling cannot tell "fixed three, broke three" apart from "fixed
+# nothing", and it charges every new module for the sins of the old ones. So
+# those two families are also frozen as an explicit baseline list: a module
+# that is not on the list must not have the finding (new modules are held to
+# the standard), and a module that no longer has the finding must be removed
+# from the list (the baseline only shrinks, and `--write-baseline` reports
+# exactly what moved). The stock ceiling above stays as the debt budget, so
+# editing the baseline cannot raise the total.
+BASELINES_DIR = os.path.join(REPO_ROOT, "scripts", "quality_baselines")
+BASELINE_RETURN_SAMPLES = "return_samples"
+BASELINE_INTEGRATION_MISSING = "integration_missing"
+
+_BASELINE_GUIDANCE = {
+    BASELINE_RETURN_SAMPLES:
+        "a module added from now on documents its return values with a "
+        "`sample:` (see cam_user_info for the shape), and a baselined module "
+        "that gains one is removed from "
+        "scripts/quality_baselines/return_samples.txt",
+    BASELINE_INTEGRATION_MISSING:
+        "a new core-subset write module needs an integration target under "
+        "tests/integration/targets/, or it does not belong in the core "
+        "subset",
+}
+
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 
 
@@ -282,6 +308,90 @@ def return_sample_findings():
     return sorted(found)
 
 
+def baseline_path(family):
+    """Return the baseline file for *family*."""
+    return os.path.join(BASELINES_DIR, "%s.txt" % family)
+
+
+def read_baseline(family):
+    """Return the frozen findings for *family* (comments and blanks ignored)."""
+    try:
+        with open(baseline_path(family), encoding="utf-8") as handle:
+            lines = handle.readlines()
+    except OSError:
+        return None
+    return sorted(line.strip() for line in lines
+                  if line.strip() and not line.startswith("#"))
+
+
+def _wrap_comment(text, width=76):
+    """Wrap *text* into comment lines of at most *width* characters."""
+    lines = []
+    current = ""
+    for word in text.split():
+        if current and len(current) + 1 + len(word) > width:
+            lines.append(current)
+            current = word
+        else:
+            current = "%s %s" % (current, word) if current else word
+    if current:
+        lines.append(current)
+    return lines
+
+
+def write_baseline(family, findings, out=sys.stdout):
+    """Freeze *findings* as the baseline for *family*; report what moved."""
+    previous = read_baseline(family) or []
+    added = sorted(set(findings) - set(previous))
+    removed = sorted(set(previous) - set(findings))
+    os.makedirs(BASELINES_DIR, exist_ok=True)
+    with open(baseline_path(family), "w", encoding="utf-8") as handle:
+        handle.write("# Frozen findings for the %r family of "
+                     "scripts/check_quality_gates.py.\n" % family)
+        handle.write("# One module name per line.\n")
+        handle.write("# This list may only shrink: a baselined module that no "
+                     "longer has the\n# finding must be delisted (the gate "
+                     "names it), and a module that is not on\n# the list must "
+                     "not have the finding at all.\n")
+        for line in _wrap_comment(_BASELINE_GUIDANCE[family]):
+            handle.write("# %s\n" % line)
+        for name in findings:
+            handle.write("%s\n" % name)
+    print("%s: %d entry/entries (+%d, -%d)"
+          % (baseline_path(family), len(findings), len(added), len(removed)),
+          file=out)
+    for name in added:
+        print("   added:   %s" % name, file=out)
+    for name in removed:
+        print("   removed: %s" % name, file=out)
+    return 0
+
+
+def baseline_problems(family, findings):
+    """Return the problems that keep *findings* frozen as *family*'s baseline."""
+    problems = []
+    frozen = read_baseline(family)
+    if frozen is None:
+        return ["%s is missing: freeze the current %d finding(s) with "
+                "`python scripts/check_quality_gates.py --write-baseline %s`"
+                % (baseline_path(family), len(findings), family)]
+    new = sorted(set(findings) - set(frozen))
+    stale = sorted(set(frozen) - set(findings))
+    if new:
+        problems.append(
+            "%d finding(s) are not in the %s baseline: %s -- %s"
+            % (len(new), family, ", ".join(new[:6])
+               + (" ..." if len(new) > 6 else ""), _BASELINE_GUIDANCE[family]))
+    if stale:
+        problems.append(
+            "%d %s baseline entry/entries no longer have the finding: %s -- "
+            "delete them (the baseline only shrinks); "
+            "`--write-baseline %s` does it for you"
+            % (len(stale), family, ", ".join(stale[:6])
+               + (" ..." if len(stale) > 6 else ""), family))
+    return problems
+
+
 def delete_example_findings():
     """Write modules that accept ``state: absent`` but never show it.
 
@@ -422,11 +532,15 @@ def _gated_modules():
     return {name: sorted(module_targets[name]) for name in integration_findings()[0]}
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--print", dest="show", action="store_true",
                         help="print the census without judging it")
-    args = parser.parse_args()
+    parser.add_argument("--write-baseline", metavar="FAMILY",
+                        choices=sorted(_BASELINE_GUIDANCE),
+                        help="freeze the current findings of FAMILY as its "
+                             "baseline (a deliberate, reviewable act)")
+    args = parser.parse_args(argv)
 
     docs = doc_findings()
     gated, missing = integration_findings()
@@ -436,6 +550,11 @@ def main():
     skeletons = skeleton_test_findings()
     check_mode_tests = check_mode_test_findings()
     role_meta = role_meta_findings()
+
+    if args.write_baseline:
+        findings = {"return_samples": samples,
+                    "integration_missing": missing}[args.write_baseline]
+        return write_baseline(args.write_baseline, findings)
 
     if args.show:
         print("description restates the option name: %d option(s)" % len(docs))
@@ -450,6 +569,10 @@ def main():
         print()
         print("core-subset write modules with no integration target at all: %d"
               % len(missing))
+        frozen = read_baseline(BASELINE_INTEGRATION_MISSING)
+        print("   baseline %s: %s"
+              % (BASELINE_INTEGRATION_MISSING,
+                 "missing" if frozen is None else len(frozen)))
         for name in missing[:40]:
             print("   %s" % name)
         if len(missing) > 40:
@@ -460,6 +583,10 @@ def main():
             print("   %s" % name)
         print()
         print("modules whose RETURN carries no sample: %d" % len(samples))
+        frozen = read_baseline(BASELINE_RETURN_SAMPLES)
+        print("   baseline %s: %s"
+              % (BASELINE_RETURN_SAMPLES,
+                 "missing" if frozen is None else len(frozen)))
         print()
         print("write modules that accept state=absent with no delete example: %d"
               % len(deletes))
@@ -492,6 +619,8 @@ def main():
             "ratchet is %d (the ratchet only goes down)"
             % (len(missing), INTEGRATION_MISSING_RATCHET))
     problems.extend(role_meta)
+    problems.extend(baseline_problems(BASELINE_RETURN_SAMPLES, samples))
+    problems.extend(baseline_problems(BASELINE_INTEGRATION_MISSING, missing))
     if len(samples) > RETURN_SAMPLE_RATCHET:
         problems.append(
             "modules whose RETURN carries no sample: %d, ratchet is %d "
@@ -527,11 +656,15 @@ def main():
     print("ok: %d core-subset module(s) have a target that never runs "
           "(ratchet %d)" % (len(gated), INTEGRATION_GATED_RATCHET))
     print("ok: %d core-subset module(s) have no integration target "
-          "(ratchet %d)" % (len(missing), INTEGRATION_MISSING_RATCHET))
+          "(ratchet %d, baseline %d)"
+          % (len(missing), INTEGRATION_MISSING_RATCHET,
+             len(read_baseline(BASELINE_INTEGRATION_MISSING) or [])))
     print("ok: %d write module(s) lack a two-run test (ratchet %d)"
           % (len(idempotency), IDEMPOTENCY_RATCHET))
-    print("ok: %d module(s) have a RETURN with no sample (ratchet %d)"
-          % (len(samples), RETURN_SAMPLE_RATCHET))
+    print("ok: %d module(s) have a RETURN with no sample (ratchet %d, "
+          "baseline %d)"
+          % (len(samples), RETURN_SAMPLE_RATCHET,
+             len(read_baseline(BASELINE_RETURN_SAMPLES) or [])))
     print("ok: %d write module(s) accept state=absent with no delete example "
           "(ratchet %d)" % (len(deletes), DELETE_EXAMPLE_RATCHET))
     print("ok: %d unit-test file(s) are still generator skeletons (ratchet %d)"

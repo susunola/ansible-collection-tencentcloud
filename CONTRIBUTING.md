@@ -67,20 +67,30 @@ the release workflow folds them into `changelogs/` on tag.
 
 ## Dependencies
 
-`requirements.txt` declares `tencentcloud-sdk-python` as a compatibility
-range (`>=X,<4.0.0`) for users: the committed `*_info` specs carry a
-`GENERATED_SDK_VERSION` stamp and are only vouched for that exact SDK
-release. CI re-pins the SDK to the stamp (via
-`scripts/check_sdk_drift.py --print-stamp`) before running
-`scripts/check_sdk_drift.py --check` and the SDK contract tests, so
-generated artifacts are always verified against the SDK they were produced
-with. An SDK upgrade of the stamp is therefore a deliberate, reviewed
-change:
+`requirements.txt` declares `tencentcloud-sdk-python` as a range
+(`>=X,<4.0.0`) whose lower bound is a *verified floor*: it is the release CI
+installs, the release the committed `*_info` specs were discovered against
+(their `GENERATED_SDK_VERSION` stamp), and therefore the oldest release the
+collection is tested on. Two gates hold the floor to that meaning:
+
+- `scripts/check_sdk_drift.py --check` fails when the stamp and the installed
+  SDK disagree, or when the stamp falls outside the declared range (a floor
+  above the stamp advertises a release the artifacts were not generated from
+  -- that is how the floor once moved to 3.1.174 while the specs stayed
+  stamped 3.1.164);
+- `scripts/check_sdk_floor.py --check` resolves every SDK reference in
+  `plugins/` (product packages, client modules, client classes, the request
+  models the auto specs name, and the separate `qcloud_cos` SDK) and fails
+  when one does not resolve at the installed release, or when the installed
+  release is not the declared floor.
+
+An SDK upgrade is therefore a deliberate, reviewed change:
 
 1. raise the range floor (dependabot opens the PR, or do it by hand),
 2. run `scripts/discover_info_specs.py` then
    `scripts/generate_info_modules.py`,
-3. review the spec/module diff (new products, changed field names),
+3. review the spec/module diff (new products, changed field names) and the
+   discovery skip report,
 4. commit the bump and the regeneration together.
 
 The `cos-python-sdk-v5` line (only used by the `cos_*` modules) is
@@ -127,7 +137,8 @@ policy):
 
 **CI gates a merge must not weaken.** `audit_info_coverage.py --check`,
 `check_module_tiers.py --check`, `check_sdk_drift.py --check`,
-`generate_info_modules.py --check`, `check_sanity_ignore.py`, `ruff check .`,
+`check_sdk_floor.py --check`, `generate_info_modules.py --check`,
+`check_sanity_ignore.py`, `ruff check .`,
 the sanity tests, and the unit/contract run at `--cov-fail-under=80`. A PR
 that lowers a threshold to get green is the one thing a reviewer should always
 block.

@@ -1089,6 +1089,12 @@ run with `--check` to verify they are up to date). The module tables and the
 `action_groups` registry are kept in sync with `scripts/sync_registry.py`
 (`--check` runs in CI).
 
+The controller needs `tencentcloud-sdk-python>=3.1.174,<4.0.0`. That lower
+bound is a verified floor rather than a guess: it is the release CI installs
+and the release the generated specs were discovered against, and
+`scripts/check_sdk_floor.py` fails unless every SDK package, client class and
+request model the collection names resolves there.
+
 See the generated [product capability matrix](docs/product-capabilities.md)
 for product-level write, discovery and reusable-role maturity.
 

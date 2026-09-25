@@ -1,12 +1,16 @@
 # Dependency update automation.
 #
-# The SDK packages in requirements.txt are pinned exactly: the generated
-# *_info specs carry a GENERATED_SDK_VERSION stamp and
-# scripts/check_sdk_drift.py fails CI when the installed SDK drifts from
-# it. A dependabot bump to tencentcloud-sdk-python will therefore turn CI
-# red until scripts/discover_info_specs.py + scripts/generate_info_modules.py
-# are re-run and the regeneration is committed together with the bump -
-# which is the intended review workflow for an SDK upgrade.
+# tencentcloud-sdk-python is declared as a range whose lower bound is a
+# verified floor: it is the release CI installs and the release the generated
+# *_info specs were discovered against (their GENERATED_SDK_VERSION stamp).
+# Two gates hold that together -- scripts/check_sdk_drift.py fails when the
+# stamp falls outside the declared range, and scripts/check_sdk_floor.py
+# fails when the installed release is not the floor or when an SDK reference
+# does not resolve there. A dependabot bump of the lower bound therefore
+# turns CI red until scripts/discover_info_specs.py + the regeneration from
+# scripts/generate_info_modules.py are re-run and committed together with the
+# bump, which is the intended review workflow for an SDK upgrade. Bumps of
+# cos-python-sdk-v5 and of the GitHub Actions are ordinary dependency PRs.
 version: 2
 updates:
   - package-ecosystem: pip

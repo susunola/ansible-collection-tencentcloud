@@ -1,13 +1,23 @@
-# The SDK is a compatibility range for users; the generated _info specs in
-# scripts/info_specs_auto.py are only vouched for the SDK release recorded
-# in their GENERATED_SDK_VERSION stamp. CI therefore re-pins the SDK to the
-# stamp before running scripts/check_sdk_drift.py --check and the contract
-# tests (the stamp is printed by `scripts/check_sdk_drift.py --print-stamp`),
-# so generated artifacts are always verified against the exact SDK they were
-# produced with while user installs float within the range.
-# After upgrading the range, run scripts/discover_info_specs.py and
-# scripts/generate_info_modules.py and commit the regeneration together
-# with the bump.
+# The lower bound below is a verified floor, not a guess: it is the SDK
+# release CI installs, the release the generated _info specs were discovered
+# against (their GENERATED_SDK_VERSION stamp), and therefore the oldest
+# release the collection is tested on. Installs float up to the cap.
+#
+# scripts/check_sdk_floor.py resolves every SDK reference in plugins/ against
+# the installed release and fails when the installed release is not this
+# floor, so the floor cannot drift away from what CI runs. It matters:
+# regenerating against a newer SDK discovers products -- edgezone, databuddy,
+# workbuddyenterprise -- whose client packages do not exist at this floor,
+# and a floor nothing installs is a floor nothing keeps.
+#
+# Upgrading (a deliberate, reviewed change, not a bot edit):
+#   1) raise the floor here
+#   2) python scripts/discover_info_specs.py     # refresh SPECS_AUTO + stamp
+#   3) python scripts/generate_info_modules.py   # regenerate modules/tests
+#   4) review the new/changed/renamed modules, then commit the regeneration
+#      together with the bump
+# scripts/check_sdk_drift.py --check fails CI while the stamp sits outside
+# this range, which is what turns an SDK bump into that review.
 tencentcloud-sdk-python>=3.1.174,<4.0.0
 # COS is not API 3.0: the cos_* modules use the separate qcloud_cos SDK.
 cos-python-sdk-v5>=1.9.44

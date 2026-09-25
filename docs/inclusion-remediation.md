@@ -69,6 +69,9 @@ Each claim below is checkable with the command in the same row.
 | Every module documents the keys it returns | `python scripts/check_return_docs.py --check` |
 | The examples and every integration target resolve | `python scripts/check_examples.py --check` |
 | Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
+| The SDK release the artifacts were generated from is one users may install | `python scripts/check_sdk_drift.py --check` |
+| Every SDK reference resolves at the declared SDK floor | `python scripts/check_sdk_floor.py --check` |
+| The debt censuses are frozen and may only shrink | `python scripts/check_quality_gates.py` |
 
 ### The targets are checked, not just written
 
@@ -346,6 +349,44 @@ ratchets over it and over everything else:
 this collection and the standard it claims.** Closing it needs integration
 targets written against a real account, and the ratchet makes the distance
 visible in every CI run until they are.
+
+### The declared SDK range is verified, not asserted
+
+`requirements.txt` advertises `tencentcloud-sdk-python>=3.1.174,<4.0.0`, and
+the generated `*_info` specs carry the SDK release they were discovered
+against. Both halves of that were wrong at once, and neither guard that
+existed could see it:
+
+- the stamp said **3.1.164**, below the floor of the range the project
+  declares, so the artifacts were vouched for by a release users are not
+  allowed to install. Re-running `scripts/discover_info_specs.py` against
+  3.1.174 rewrites that one line and nothing else — 278 specs, byte for byte
+  identical — so the artifact was right and only its stamp was stale;
+- `scripts/check_sdk_drift.py` compared the stamp with the *installed* SDK,
+  and CI installed the stamp, so the comparison could not fail. The range is
+  now read from `requirements.txt` and checked in both directions.
+
+The floor itself was never installed by anything, so it was an assertion
+rather than a tested claim. `scripts/check_sdk_floor.py` resolves every SDK
+reference in `plugins/` — product packages, `*_client` submodules, the
+`*Client` class each module instantiates, the request models the auto specs
+name, the `RESOURCE_SPECS`-style tables that name the SDK in strings, and the
+separate `qcloud_cos` SDK — against the installed release, and fails unless
+that release is the declared floor. Run against 3.1.180 it reports exactly
+what a newer SDK discovers and the declared floor does not ship at all:
+three products (`edgezone`, `databuddy`, `workbuddyenterprise`) whose client
+packages are absent from 3.1.174. That is the mechanism by which a module can
+be shipped that no user of the documented range can run.
+
+Two censuses of existing debt are also frozen as shrink-only lists
+(`scripts/quality_baselines/`) rather than left as bare ceiling numbers: 976
+`RETURN` blocks with no `sample` and 135 core-subset write modules with no
+integration target. A stock ceiling cannot tell "fixed three, broke three"
+apart from "fixed nothing", and it charges a new module for the sins of the
+old ones. A module that is not on a list must not have the finding, a listed
+module that no longer has it must be delisted (the gate names it, and
+`--write-baseline` does the delisting), and the count ceilings stay as the
+debt budget so the list cannot simply be extended.
 
 ## What this record does not claim
 

@@ -1,0 +1,55 @@
+---
+bugfixes:
+  - >-
+    requirements.txt - correct the ``GENERATED_SDK_VERSION`` stamp in
+    ``scripts/info_specs_auto.py`` from 3.1.164 to 3.1.174, the release the
+    declared range has actually allowed since the last SDK bump. The specs
+    themselves are unchanged: re-running ``scripts/discover_info_specs.py``
+    against 3.1.174 rewrites that one line and nothing else. The stamp named
+    a release users are no longer allowed to install, so
+    ``scripts/check_sdk_drift.py`` could not tell a regeneration from a stale
+    artifact and CI re-pinned the SDK to a version the project did not
+    support.
+minor_changes:
+  - >-
+    scripts/check_sdk_floor.py - new guard, wired into CI as "Declared SDK
+    floor is real". ``requirements.txt`` advertises
+    ``tencentcloud-sdk-python>=3.1.174,<4.0.0``, but nothing ever installed
+    the floor: CI installed the range, re-pinned to the stamp, and checked
+    that. A module could therefore depend on an SDK release no user of the
+    declared range has -- which is what a newer SDK discovers (its
+    ``edgezone``, ``databuddy`` and ``workbuddyenterprise`` products do not
+    exist at 3.1.174). The guard resolves every SDK reference in ``plugins/``
+    (product packages, client modules, the ``*Client`` class each module
+    instantiates, the request models the auto specs name, and the separate
+    ``qcloud_cos`` SDK) against the installed release, and fails when the
+    installed release is not the declared floor -- so the floor is verified
+    rather than asserted.
+  - >-
+    scripts/check_sdk_drift.py - reject a stamp that falls outside the range
+    ``requirements.txt`` declares, in both directions. The sentinel compared
+    the stamp only with the *installed* SDK, and CI installed the stamp, so
+    the comparison could not fail; a floor raised above the stamp left the
+    generated artifacts vouched for by a release nobody could install. The
+    range is now read from ``requirements.txt`` (one parser, shared with the
+    floor guard) and both a stale stamp and a stamp beyond the cap fail with
+    the regeneration steps.
+  - >-
+    scripts/check_quality_gates.py - freeze the two censuses that count
+    existing debt (976 ``RETURN`` blocks with no ``sample``, 135 core-subset
+    write modules with no integration target) as shrink-only baseline lists
+    under ``scripts/quality_baselines/``. A stock ceiling cannot tell "fixed
+    three, broke three" apart from "fixed nothing", and it charges a new
+    module for the sins of the old ones. A module that is not on the list must
+    not have the finding, and a listed module that no longer has it must be
+    delisted (the gate names it), while the existing count ceilings stay as
+    the debt budget so the baseline cannot be extended to buy a green run.
+    ``--write-baseline FAMILY`` performs the delisting and reports what moved.
+  - >-
+    unit tests - add tests/unit/scripts/test_check_sdk_floor.py and
+    tests/unit/scripts/test_check_quality_gates.py, and extend
+    tests/unit/scripts/test_check_sdk_drift.py with the range cases. The
+    client-class rule is pinned against both false positives it started with
+    (a model class that merely ends in ``Client``, and an option value that
+    happens to be spelled like one), and the baseline rule is pinned against
+    the fixed-and-broken case a count cannot see.

@@ -97,6 +97,10 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32b. Declared SDK floor is real (0.12.0): the stamp must sit inside the
+    `requirements.txt` range and `check_sdk_floor.py` resolves every SDK
+    package, client module, client class and spec request model at that
+    floor, so the floor cannot be advertised without being verified. **Done**
 33. Failure-path coverage (0.12.0): the real `sdk_call` fail_json contract
     is pinned in unit tests and every generated `_info` test gains a
     `test_run_module_fails_cleanly_on_sdk_error` case. **Done**

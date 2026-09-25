@@ -36,14 +36,27 @@ SPECS_AUTO = [
 ]
 """
 
+REQUIREMENTS = "tencentcloud-sdk-python>=3.1.100,<4.0.0\n"
 
-def _invoke(drift, monkeypatch, tmp_path, installed, content=STAMPED_FILE, name="info_specs_auto.py"):
-    specs_path = tmp_path / name
+
+def _invoke(drift, monkeypatch, tmp_path, installed, content=STAMPED_FILE,
+            name="info_specs_auto.py", requirements=REQUIREMENTS,
+            requirements_name="requirements.txt", specs_dir=None):
+    """Run the sentinel against throwaway specs and requirements files.
+
+    Everything is written under *tmp_path*: the test that reads the committed
+    specs points *specs_dir* at the repository instead of writing there.
+    """
+    specs_path = (Path(specs_dir) if specs_dir else tmp_path) / name
     if content is not None:
         specs_path.write_text(content, encoding="utf-8")
+    requirements_path = tmp_path / requirements_name
+    if requirements is not None:
+        requirements_path.write_text(requirements, encoding="utf-8")
     monkeypatch.setattr(drift, "installed_version", lambda: installed)
     out, err = io.StringIO(), io.StringIO()
-    rc = drift.main(["--specs", str(specs_path)], out=out, err=err)
+    rc = drift.main(["--specs", str(specs_path),
+                     "--requirements", str(requirements_path)], out=out, err=err)
     return rc, out, err
 
 
@@ -55,7 +68,7 @@ def test_matching_version_passes(drift, monkeypatch, tmp_path):
     assert err.getvalue() == ""
 
 
-def test_real_committed_file_passes(drift, monkeypatch):
+def test_real_committed_file_passes(drift, monkeypatch, tmp_path):
     """The committed info_specs_auto.py parses and matches its own stamp."""
     # The mock "installed" version must mirror the stamp the committed file
     # actually carries (it moves on every deliberate SDK bump), otherwise
@@ -64,8 +77,9 @@ def test_real_committed_file_passes(drift, monkeypatch):
         r"^GENERATED_SDK_VERSION\s*=\s*['\"]([^'\"]+)['\"]",
         REAL_AUTO_SPECS.read_text(encoding="utf-8"), re.M).group(1)
     rc, out, err = _invoke(
-        drift, monkeypatch, tmp_path=Path(REPO_ROOT) / "scripts",
-        installed=stamp, content=None, name="info_specs_auto.py")
+        drift, monkeypatch, tmp_path=tmp_path, specs_dir=REPO_ROOT / "scripts",
+        installed=stamp, content=None, name="info_specs_auto.py",
+        requirements=(REPO_ROOT / "requirements.txt").read_text(encoding="utf-8"))
     assert rc == 0
     assert "SDK drift check OK" in out.getvalue()
 
@@ -96,8 +110,11 @@ def test_missing_sdk_fails(drift, monkeypatch, tmp_path):
     monkeypatch.setattr(drift, "installed_version", _no_sdk)
     specs_path = tmp_path / "info_specs_auto.py"
     specs_path.write_text(STAMPED_FILE, encoding="utf-8")
+    requirements_path = tmp_path / "requirements.txt"
+    requirements_path.write_text(REQUIREMENTS, encoding="utf-8")
     out, err = io.StringIO(), io.StringIO()
-    rc = drift.main(["--specs", str(specs_path)], out=out, err=err)
+    rc = drift.main(["--specs", str(specs_path),
+                     "--requirements", str(requirements_path)], out=out, err=err)
     assert rc == 1
     assert "not installed" in err.getvalue()
 
@@ -117,6 +134,62 @@ def test_print_stamp(drift, tmp_path):
     assert rc == 0
     assert out.getvalue().strip() == "3.1.113"
     assert err.getvalue() == ""
+
+
+def test_stamp_below_declared_floor_fails(drift, monkeypatch, tmp_path):
+    """The real defect: specs stamped 3.1.164 while the floor said 3.1.174."""
+    rc, out, err = _invoke(
+        drift, monkeypatch, tmp_path, installed="3.1.113",
+        requirements="tencentcloud-sdk-python>=3.1.174,<4.0.0\n")
+    assert rc == 1
+    assert "below the declared floor" in err.getvalue()
+    assert "3.1.113" in err.getvalue()
+    assert "3.1.174" in err.getvalue()
+    assert "requirements.txt" in err.getvalue()
+
+
+def test_stamp_at_or_above_cap_fails(drift, monkeypatch, tmp_path):
+    rc, out, err = _invoke(
+        drift, monkeypatch, tmp_path, installed="3.1.113",
+        requirements="tencentcloud-sdk-python>=3.1.100,<3.1.113\n")
+    assert rc == 1
+    assert "excludes" in err.getvalue()
+
+
+def test_stamp_above_floor_inside_range_passes(drift, monkeypatch, tmp_path):
+    rc, out, err = _invoke(
+        drift, monkeypatch, tmp_path, installed="3.1.113",
+        requirements="tencentcloud-sdk-python>=3.1.100,<4.0.0\n")
+    assert rc == 0
+    assert err.getvalue() == ""
+
+
+def test_unparsable_range_fails(drift, monkeypatch, tmp_path):
+    rc, out, err = _invoke(drift, monkeypatch, tmp_path, installed="3.1.113",
+                           requirements="tencentcloud-sdk-python\n")
+    assert rc == 1
+    assert "no readable" in err.getvalue()
+
+
+def test_missing_requirements_fails(drift, monkeypatch, tmp_path):
+    rc, out, err = _invoke(drift, monkeypatch, tmp_path, installed="3.1.113",
+                           requirements=None, requirements_name="absent.txt")
+    assert rc == 1
+    assert "no readable tencentcloud-sdk-python range" in err.getvalue()
+
+
+def test_parse_version_orders_numerically(drift):
+    assert drift.parse_version("3.1.180") > drift.parse_version("3.1.99")
+    assert drift.parse_version("3.1.180") == (3, 1, 180)
+    assert drift.parse_version("3.1") < drift.parse_version("3.1.1")
+    assert drift.parse_version("") is None
+    assert drift.parse_version("3.1.180.dev1") is None
+
+
+def test_committed_stamp_sits_inside_the_declared_range(drift):
+    """The repository's own stamp must satisfy its own requirement."""
+    stamp = drift.stamped_version(drift.AUTO_SPECS_PATH)
+    assert drift.range_finding(stamp) is None
 
 
 def test_print_stamp_missing_file_fails(drift, tmp_path):
