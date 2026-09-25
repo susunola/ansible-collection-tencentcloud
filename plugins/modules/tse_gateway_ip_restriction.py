@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway whose IP access control is managed.
     type: str
     required: true
   scope:

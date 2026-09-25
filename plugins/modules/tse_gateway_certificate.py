@@ -22,7 +22,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the certificate is bound to.
     type: str
     required: true
   certificate_id:

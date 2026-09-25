@@ -122,11 +122,11 @@ options:
     choices: [2, 3]
   cls_logset_id:
     description:
-      - CLS logset ID.
+      - CLS logset the job sends its logs to.
     type: str
   cls_topic_id:
     description:
-      - CLS topic ID.
+      - CLS topic within O(cls_logset_id) that the job sends its logs to.
     type: str
   log_level:
     description:

@@ -77,7 +77,7 @@ options:
     type: str
   scf_function_namespace:
     description:
-      - SCF function namespace.
+      - SCF namespace the backing function is deployed in.
     type: str
     default: default
   scf_function_qualifier:
@@ -98,7 +98,7 @@ options:
     default: false
   enable_cors:
     description:
-      - Enable CORS.
+      - Enable cross-origin resource sharing on the API.
     type: bool
     default: false
 extends_documentation_fragment:

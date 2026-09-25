@@ -93,7 +93,7 @@ options:
     type: int
   cache_data_disk_size:
     description:
-      - Cache data disk size.
+      - Size of the cache data disk attached to the instance, in GB.
     type: int
   wait:
     description:

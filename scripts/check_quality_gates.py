@@ -56,7 +56,7 @@ INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.ym
 # the core subset, and 20 core products have no covered write module at all.
 # That gap, not the documentation, is the largest remaining distance between
 # this collection and the standard it claims.
-DOC_RATCHET = 91
+DOC_RATCHET = 0
 INTEGRATION_GATED_RATCHET = 8
 INTEGRATION_MISSING_RATCHET = 134
 

@@ -61,7 +61,7 @@ options:
     type: str
   release_description:
     description:
-      - Release description.
+      - Free-text note recorded with the release for later identification.
     type: str
   supported_client:
     description:

@@ -15,7 +15,7 @@ version_added: "0.8.0"
 description: Returns TDCPG cluster instances visible in a Tencent Cloud region.
 options:
   cluster_id:
-    description: Cluster ID.
+    description: Cluster whose instances are returned.
     type: str
     required: true
   filters:

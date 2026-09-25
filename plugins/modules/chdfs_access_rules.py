@@ -14,7 +14,7 @@ description: Reconciles the complete access-rule set of a CHDFS access group.
 options:
   access_group_id:
     description:
-      - Access group ID.
+      - Access group whose rules are reconciled.
     type: str
     required: true
   rules:

@@ -40,7 +40,7 @@ options:
     default: '*'
   object_type:
     description:
-      - Object type.
+      - Kind of database object the privileges are granted on.
     type: str
     choices: ['*', table]
     default: '*'

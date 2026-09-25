@@ -23,7 +23,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the model API is published on.
     type: str
     required: true
   model_api_id:

@@ -73,7 +73,7 @@ options:
     type: int
   ingress_class_name:
     description:
-      - Ingress class name.
+      - Ingress class the cloud-native gateway serves.
     type: str
   trade_type:
     description:

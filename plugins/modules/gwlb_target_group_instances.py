@@ -14,7 +14,7 @@ description: Registers, updates and deregisters GWLB backend appliance IPs using
 options:
   target_group_id:
     description:
-      - Target group ID.
+      - Target group whose instances are reconciled.
     type: str
     required: true
   instances:

@@ -20,12 +20,12 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the model API belongs to.
     type: str
     required: true
   model_api_id:
     description:
-      - Model API ID.
+      - Model API whose consumer-group authorization is managed.
     type: str
   model_api_name:
     description:

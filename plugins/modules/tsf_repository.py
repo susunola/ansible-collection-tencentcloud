@@ -30,7 +30,7 @@ options:
     required: true
   repository_type:
     description:
-      - Repository type.
+      - Kind of package the repository stores.
     type: str
     required: true
     choices: [default, private]

@@ -20,12 +20,12 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the consumer group belongs to.
     type: str
     required: true
   consumer_group_id:
     description:
-      - Consumer group ID.
+      - Consumer group the consumer is added to or removed from.
     type: str
   consumer_group_name:
     description:

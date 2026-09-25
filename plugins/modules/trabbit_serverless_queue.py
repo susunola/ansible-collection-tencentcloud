@@ -78,11 +78,11 @@ options:
     choices: [drop-head, reject-publish, reject-publish-dlx]
   dead_letter_exchange:
     description:
-      - Dead-letter exchange.
+      - Exchange that receives messages this queue rejects.
     type: str
   dead_letter_routing_key:
     description:
-      - Dead-letter routing key.
+      - Routing key used when forwarding rejected messages to O(dead_letter_exchange).
     type: str
   single_active_consumer:
     description:

@@ -55,7 +55,7 @@ options:
     type: dict
   security_group_ids:
     description:
-      - Security group IDs.
+      - Security groups applied to the cluster's nodes.
     type: list
     elements: str
   bootstrap_actions:

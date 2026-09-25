@@ -22,7 +22,7 @@ options:
     default: present
   topic_name:
     description:
-      - Topic name.
+      - Name of the topic, unique within the CMQ namespace.
     type: str
     required: true
   max_msg_size:

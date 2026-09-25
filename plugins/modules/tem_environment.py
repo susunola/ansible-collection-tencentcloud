@@ -50,7 +50,7 @@ options:
     default: 0
   enable_tsw_tracing:
     description:
-      - Enable TSW tracing.
+      - Enable TSW distributed tracing for the environment.
     type: bool
   tags:
     description:

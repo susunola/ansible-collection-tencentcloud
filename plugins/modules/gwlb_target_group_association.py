@@ -25,7 +25,7 @@ options:
     required: true
   target_group_id:
     description:
-      - Target group ID.
+      - Target group the associations are managed on.
     type: str
     required: true
 

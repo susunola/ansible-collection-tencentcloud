@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the upstream service is published on.
     type: str
     required: true
   service_id:

@@ -20,7 +20,7 @@ options:
     default: present
   event_bus_id:
     description:
-      - Event bus ID.
+      - Event bus the rule is defined on.
     type: str
     required: true
   rule_id:

@@ -23,7 +23,7 @@ options:
     type: str
     required: true
   building_id:
-    description: Building ID.
+    description: Building whose element profile pages are returned.
     type: str
     required: true
   element_profile_page_ids:

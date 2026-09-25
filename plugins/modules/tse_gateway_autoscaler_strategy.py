@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the autoscaling strategy is defined on.
     type: str
     required: true
   strategy_id:

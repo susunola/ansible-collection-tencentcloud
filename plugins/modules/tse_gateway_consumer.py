@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the consumer is registered on.
     type: str
     required: true
   consumer_id:

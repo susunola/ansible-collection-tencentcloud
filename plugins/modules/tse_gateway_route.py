@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the route is served by.
     type: str
     required: true
   service_id:
@@ -62,7 +62,7 @@ options:
     type: bool
   https_redirect_status_code:
     description:
-      - HTTPS redirect status code.
+      - Status code returned by the HTTP-to-HTTPS redirect on this route.
     type: int
   strip_path:
     description:
@@ -70,7 +70,7 @@ options:
     type: bool
   force_https:
     description:
-      - Force HTTPS.
+      - Redirect plain HTTP requests on this route to HTTPS.
     type: bool
   destination_ports:
     description:

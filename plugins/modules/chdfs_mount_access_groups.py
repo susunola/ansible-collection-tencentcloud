@@ -19,7 +19,7 @@ options:
     required: true
   mount_point_id:
     description:
-      - Mount point ID.
+      - Mount point whose access-group bindings are reconciled.
     type: str
     required: true
   access_group_ids:

@@ -22,7 +22,7 @@ options:
     default: present
   ccn_id:
     description:
-      - CCN ID.
+      - CCN the network instance is attached to.
     type: str
     required: true
   instance_id:

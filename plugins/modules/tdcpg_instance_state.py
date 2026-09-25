@@ -14,7 +14,7 @@ description: Isolates or recovers cluster instances, or performs an explicitly r
 options:
   cluster_id:
     description:
-      - Cluster ID.
+      - TDSQL-C PostgreSQL cluster the instance belongs to.
     type: str
     required: true
   instance_ids:

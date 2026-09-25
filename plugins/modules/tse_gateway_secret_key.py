@@ -23,7 +23,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the secret key authenticates against.
     type: str
     required: true
   secret_key_id:
@@ -60,11 +60,11 @@ options:
     type: str
   kms_key_name:
     description:
-      - KMS key name.
+      - Name of the KMS key used to encrypt the secret key material.
     type: str
   kms_key_version:
     description:
-      - KMS key version.
+      - Version of the KMS key used to encrypt the secret key material.
     type: str
   description:
     description:

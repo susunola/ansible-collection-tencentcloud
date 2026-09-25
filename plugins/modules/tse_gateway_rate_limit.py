@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the rate-limiting rule applies to.
     type: str
     required: true
   scope:

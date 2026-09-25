@@ -57,7 +57,7 @@ options:
     type: bool
   ranger_service_addresses:
     description:
-      - Ranger service addresses.
+      - Addresses of the Ranger services the file system defers authorization to.
     type: list
     elements: str
   tags:
