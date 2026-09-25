@@ -138,3 +138,79 @@ def test_committed_integration_baseline_matches_the_tree(gates):
     frozen = gates.read_baseline(gates.BASELINE_INTEGRATION_MISSING)
     assert frozen is not None
     assert frozen == gates.integration_findings()[1]
+
+
+# --------------------------------------------------------------------------
+# role READMEs
+# --------------------------------------------------------------------------
+
+def _write_role(root, name, readme, defaults="", tasks=None):
+    role = Path(root) / "roles" / name
+    (role / "defaults").mkdir(parents=True, exist_ok=True)
+    (role / "defaults" / "main.yml").write_text(defaults, encoding="utf-8")
+    (role / "README.md").write_text(readme, encoding="utf-8")
+    if tasks is not None:
+        (role / "tasks").mkdir(parents=True, exist_ok=True)
+        (role / "tasks" / "main.yml").write_text(tasks, encoding="utf-8")
+    return role
+
+
+@pytest.fixture
+def role_tree(gates, tmp_path, monkeypatch):
+    monkeypatch.setattr(gates, "REPO_ROOT", str(tmp_path))
+    return tmp_path
+
+
+def test_a_role_readme_naming_a_declared_input_is_clean(gates, role_tree):
+    _write_role(role_tree, "tc_demo",
+                "Set `tc_demo_name` and `tc_demo_cidr_block`.\n",
+                defaults="---\ntc_demo_name: \"\"\ntc_demo_cidr_block: \"\"\n")
+    assert gates.role_doc_findings() == []
+
+
+def test_a_role_readme_naming_a_published_output_is_clean(gates, role_tree):
+    """``tc_<role>_result`` is an output: defaults do not declare it."""
+    _write_role(role_tree, "tc_demo",
+                "The role publishes `tc_demo_result`.\n",
+                defaults="---\ntc_demo_name: \"\"\n",
+                tasks="---\n- name: Publish\n  ansible.builtin.set_fact:\n"
+                      "    tc_demo_result: \"{{ tc_demo_name }}\"\n")
+    assert gates.role_doc_findings() == []
+
+
+def test_a_role_readme_naming_an_unknown_variable_is_reported(gates, role_tree):
+    _write_role(role_tree, "tc_demo", "Set `tc_demo_missing`.\n",
+                defaults="---\ntc_demo_name: \"\"\n")
+    problems = gates.role_doc_findings()
+    assert len(problems) == 1
+    assert "tc_demo_missing" in problems[0]
+
+
+def test_a_renamed_default_leaves_the_readme_behind(gates, role_tree):
+    """The rename-rot case: the variable exists, under another name."""
+    _write_role(role_tree, "tc_demo", "Set `tc_demo_name`.\n",
+                defaults="---\ntc_demo_naming: \"\"\n")
+    assert len(gates.role_doc_findings()) == 1
+
+
+def test_a_registered_result_counts_as_published(gates, role_tree):
+    _write_role(role_tree, "tc_demo",
+                "The role publishes `tc_demo_vpc`.\n",
+                defaults="---\ntc_demo_name: \"\"\n",
+                tasks="---\n- name: Read\n  ansible.builtin.debug:\n"
+                      "    msg: x\n  register: tc_demo_vpc\n")
+    assert gates.role_doc_findings() == []
+
+
+def test_a_role_without_a_readme_is_reported(gates, role_tree):
+    role = Path(role_tree) / "roles" / "tc_demo"
+    (role / "defaults").mkdir(parents=True)
+    (role / "defaults" / "main.yml").write_text("---\n", encoding="utf-8")
+    problems = gates.role_doc_findings()
+    assert len(problems) == 1
+    assert "no README.md" in problems[0]
+
+
+def test_committed_role_readmes_are_consistent(gates):
+    """The repository's own 68 roles must pass, not just the fixture's."""
+    assert gates.role_doc_findings() == []

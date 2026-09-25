@@ -97,6 +97,10 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32f. Role READMEs vs the role interface (0.12.0):
+    `role_doc_findings()` in `check_quality_gates.py` fails when a role README
+    names a `tc_<role>_*` variable that is neither a declared input nor a
+    published output. 68 roles, 0 findings. **Done**
 32e. Role tasks checked (0.12.0): `check_examples.py` walks
     `roles/*/tasks/**/*.yml` with the same rules as the playbooks and the
     targets, against the role's own scope; 68 roles, 128 task files, 173 files

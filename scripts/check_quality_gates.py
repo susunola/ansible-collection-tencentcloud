@@ -529,6 +529,78 @@ def role_meta_findings():
     return problems
 
 
+#: A role README names its own variables as ``tc_<role>_<name>``; that
+#: namespace is the role's public interface.
+ROLE_VAR_RE = re.compile(r"\b(tc_[a-z0-9_]+)\b")
+
+
+def _role_published_names(role_dir):
+    """Return every name the role assigns through set_fact or register."""
+    names = set()
+    tasks_dir = os.path.join(role_dir, "tasks")
+    files = []
+    for root, _dirs, filenames in os.walk(tasks_dir):
+        files.extend(os.path.join(root, name) for name in filenames
+                     if name.endswith(".yml"))
+    for path in sorted(files):
+        try:
+            with open(path, encoding="utf-8") as handle:
+                parsed = yaml.safe_load(handle)
+        except (OSError, yaml.YAMLError):
+            continue
+        stack = [parsed]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, list):
+                stack.extend(node)
+            elif isinstance(node, dict):
+                for key, value in node.items():
+                    if key in ("ansible.builtin.set_fact", "set_fact") \
+                            and isinstance(value, dict):
+                        names.update(str(name) for name in value)
+                    elif key == "register" and isinstance(value, str):
+                        names.add(value)
+                    stack.append(value)
+    return names
+
+
+def role_doc_findings():
+    """Role READMEs that name a variable the role does not offer.
+
+    A role's interface is its ``defaults/main.yml`` (the inputs) plus what it
+    publishes with ``set_fact``/``register`` (the outputs, documented as
+    ``tc_<role>_result``). A README that names anything else in the role's own
+    namespace documents a variable a user cannot set and will not receive --
+    the failure mode the example checker already caught once, when five roles
+    read a ``region`` variable they never declared and hidden it behind
+    ``default(omit)``.
+    """
+    problems = []
+    for role_dir in sorted(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))):
+        role = os.path.basename(role_dir)
+        readme = os.path.join(role_dir, "README.md")
+        if not os.path.isfile(readme):
+            problems.append("roles/%s: no README.md" % role)
+            continue
+        with open(readme, encoding="utf-8") as handle:
+            text = handle.read()
+        declared = set()
+        defaults = os.path.join(role_dir, "defaults", "main.yml")
+        if os.path.isfile(defaults):
+            with open(defaults, encoding="utf-8") as handle:
+                parsed = yaml.safe_load(handle) or {}
+            if isinstance(parsed, dict):
+                declared = {str(key) for key in parsed}
+        offered = declared | _role_published_names(role_dir)
+        mentioned = {name for name in ROLE_VAR_RE.findall(text)
+                     if name.startswith(role + "_")}
+        for name in sorted(mentioned - offered):
+            problems.append(
+                "roles/%s: README names %s, which defaults/main.yml does not "
+                "declare and nothing in the role publishes" % (role, name))
+    return problems
+
+
 def _gated_modules():
     """Map each gated module to the target(s) that would cover it."""
     registry, dispatched = _registry_and_dispatch()
@@ -557,6 +629,7 @@ def main(argv=None):
     skeletons = skeleton_test_findings()
     check_mode_tests = check_mode_test_findings()
     role_meta = role_meta_findings()
+    role_docs = role_doc_findings()
 
     if args.write_baseline:
         findings = {"return_samples": samples,
@@ -626,6 +699,7 @@ def main(argv=None):
             "ratchet is %d (the ratchet only goes down)"
             % (len(missing), INTEGRATION_MISSING_RATCHET))
     problems.extend(role_meta)
+    problems.extend(role_docs)
     problems.extend(baseline_problems(BASELINE_RETURN_SAMPLES, samples))
     problems.extend(baseline_problems(BASELINE_INTEGRATION_MISSING, missing))
     if len(samples) > RETURN_SAMPLE_RATCHET:
@@ -679,6 +753,8 @@ def main(argv=None):
     print("ok: %d write module(s) claim check_mode: full with no dry-run test "
           "(ratchet %d)" % (len(check_mode_tests), CHECK_MODE_TEST_RATCHET))
     print("ok: all %d role(s) declare the collection's ansible-core floor"
+          % len(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))))
+    print("ok: all %d role README(s) name only variables the role offers"
           % len(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))))
     return 0
 

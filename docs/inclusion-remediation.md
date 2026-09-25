@@ -130,6 +130,17 @@ each verified by editing a role and watching the gate fail: a module that does
 not exist, an option the module does not declare, and a variable nobody
 defines.
 
+`scripts/check_quality_gates.py` reads the roles from the documentation side
+too: a role's README may name only variables the role offers — its
+`defaults/main.yml` inputs plus whatever it publishes with
+`set_fact`/`register` (documented as `tc_<role>_result`). A README that names
+anything else documents a variable a user cannot set and will not receive,
+which is how five roles once lost their `region` input: they read it behind
+`default(omit)`, and it never appeared in the interface. All 68 roles pass,
+and both directions were verified by mutation — inventing a variable in a
+README, and renaming a default without touching the README, each fail the
+census.
+
 ### The coverage floor could not see one untested file
 
 The coverage gate measures `plugins/module_utils` and `plugins/modules`
