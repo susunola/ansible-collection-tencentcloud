@@ -7832,7 +7832,7 @@ REQUIRED_PARAM_OVERRIDES = {
     "cdwpg_account_info": {
         "extra_params": [
             {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
-             "doc": "Instance ID."},
+             "doc": "CDWPG instance whose accounts are returned."},
         ],
     },
     "trocket_consumer_client_info": {
@@ -7856,7 +7856,7 @@ REQUIRED_PARAM_OVERRIDES = {
     "tdcpg_cluster_instance_info": {
         "extra_params": [
             {"name": "cluster_id", "field": "ClusterId", "type": "str", "required": True,
-             "doc": "Cluster ID."},
+             "doc": "Cluster whose instances are returned."},
         ],
     },
     "yinsuda_ktv_robot_info": {
@@ -7896,7 +7896,7 @@ REQUIRED_PARAM_OVERRIDES = {
     "omics_application_info": {
         "extra_params": [
             {"name": "project_id", "field": "ProjectId", "type": "str", "required": True,
-             "doc": "Project ID."},
+             "doc": "OMICS project whose applications are returned."},
         ],
     },
     "adp_agent_release_preview_info": {
@@ -7975,7 +7975,7 @@ REQUIRED_PARAM_OVERRIDES = {
              "required": True, "no_log": True,
              "doc": "Application token issued for the workspace."},
             {"name": "building_id", "field": "BuildingId", "type": "str", "required": True,
-             "doc": "Building ID."},
+             "doc": "Building whose element profile pages are returned."},
         ],
     },
     "bsca_kb_component_info": {
