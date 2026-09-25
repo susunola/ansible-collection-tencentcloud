@@ -66,6 +66,29 @@ Each claim below is checkable with the command in the same row.
 | Every core module's `state` says what its choices do | `python scripts/enrich_state_docs.py --check` |
 | Every core id/name pair says which one to give | `python scripts/enrich_identity_docs.py --check` |
 | Every module that can delete shows how | `python scripts/add_delete_examples.py --check` |
+| Every module documents the keys it returns | `python scripts/check_return_docs.py --check` |
+
+### `RETURN` is a promise, and now it is checked
+
+A playbook registers a module's result and branches on a key. Nothing compared
+that promise with `exit_json`: `validate-modules` checks the *shape* of the
+block — an entry has a description, a `returned` and a `type` — and the
+integration targets assert the handful of keys they happen to use. Four modules
+returned keys nobody was told about, including `cvm_instance`'s `count`,
+`instances` and `terminated`, which are the whole point of `exact_count` mode.
+
+`check_return_docs.py` reads both directions: every keyword passed to
+`exit_json` must be documented or be one of the keys Ansible adds to every
+result, and a documented key the module never returns is reported too. That
+second direction is skipped for the 437 modules that splat a mapping, because a
+splat carries keys the check cannot read — the check reports what it can see
+and says so rather than guessing.
+
+Reading the same claim from the other side also exposed a hole in the attribute
+gate: it required the rules to derive an attribute before comparing support, so
+a module documenting `diff_mode` while never calling `maybe_diff` was skipped
+instead of reported. Three ALB modules were in exactly that state — they build
+a diff and never said so — and the hole is closed.
 
 ### Every module that can delete shows how
 

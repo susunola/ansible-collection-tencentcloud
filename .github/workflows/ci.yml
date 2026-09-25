@@ -149,6 +149,8 @@ jobs:
         run: python scripts/check_quality_gates.py
       - name: Modules document check_mode, diff_mode and idempotent
         run: python scripts/add_module_attributes.py --check
+      - name: Modules document every key they return
+        run: python scripts/check_return_docs.py --check
       - name: Changelog fragments use a configured section
         run: python scripts/check_changelog_fragments.py --check
       - name: Module docs are block style

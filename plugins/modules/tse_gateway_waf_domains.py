@@ -78,7 +78,20 @@ RETURN = r"""waf_domains:
     - Effective registered WAF domains.
   returned: always
   type: list
-  elements: str"""
+  elements: str
+added_domains:
+  description:
+    - Domains this run added to the gateway's WAF domain list.
+  returned: when the domain set changed
+  type: list
+  elements: str
+removed_domains:
+  description:
+    - Domains this run removed from the gateway's WAF domain list.
+  returned: when the domain set changed
+  type: list
+  elements: str
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

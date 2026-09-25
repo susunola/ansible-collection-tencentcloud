@@ -1,0 +1,33 @@
+---
+bugfixes:
+  - >-
+    module docs - document the return values four modules were already
+    reporting. ``cvm_instance`` returns C(count), C(instances) and
+    C(terminated) in I(exact_count) mode, which is the point of that mode;
+    ``tdcpg_account`` returns C(password_rotated); ``tdcpg_instance_state``
+    returns C(restarted); and ``tse_gateway_waf_domains`` returns
+    C(added_domains) and C(removed_domains). A playbook that registers the
+    result and branches on one of those had no way to know it existed.
+  - >-
+    module docs - document C(diff_mode) on the three ALB modules that did not.
+    ``alb_load_balancer``, ``alb_target_group`` and ``alb_target_group_targets``
+    call C(maybe_diff) and return a comparison under C(--diff), and said nothing
+    about it, while their sibling ``alb_listener`` documents it as C(partial)
+    with the reason. The comparison ran one way only.
+minor_changes:
+  - >-
+    scripts/check_return_docs.py - new guard, wired into CI as "Modules
+    document every key they return". Every keyword a module passes to
+    C(exit_json) must appear in its C(RETURN) block or be one of the keys
+    Ansible itself adds to every result, and a documented key the module never
+    returns is reported too -- that direction is skipped for the 437 modules
+    that splat a mapping, because a splat carries keys the check cannot read.
+    590 modules are checked in both directions, and both were verified by
+    mutation.
+  - >-
+    scripts/add_module_attributes.py - report an attribute a module claims
+    while its code has no support for it at all. The comparison previously
+    required the rules to derive the attribute before comparing support, so a
+    module documenting C(diff_mode) without ever calling C(maybe_diff) was
+    skipped rather than reported. That is the hole the three ALB modules came
+    through, and it is closed.

@@ -386,6 +386,28 @@ instance:
     SecurityGroupIds:
       - sg-xxxxxxxx
     Tags: []
+count:
+  description:
+    - Number of instances carrying O(count_tag) after the run. Reported in
+      I(exact_count) mode, where the module reconciles a pool of instances
+      rather than a single one.
+  returned: when I(exact_count) is set
+  type: int
+instances:
+  description:
+    - The instances carrying O(count_tag) after the run, as reported by
+      V(DescribeInstances).
+  returned: when I(exact_count) is set and the pool was created or already matched
+  type: list
+  elements: dict
+terminated:
+  description:
+    - Instance IDs this run terminated to bring the pool down to
+      I(exact_count), oldest first. PREPAID instances are never terminated
+      automatically; the module fails instead.
+  returned: when I(exact_count) is set and the pool was larger than requested
+  type: list
+  elements: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

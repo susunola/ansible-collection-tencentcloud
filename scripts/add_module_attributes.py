@@ -282,7 +282,15 @@ def overclaimed(text, relpath):
     for name in _ATTRIBUTES:
         claimed = committed.get(name)
         allowed = derived.get(name)
-        if claimed is None or allowed is None:
+        if claimed is None:
+            continue
+        if allowed is None:
+            # Claimed, but the rules derive nothing: the module documents an
+            # attribute its code does not have. Skipping this case is how three
+            # ALB modules came to call maybe_diff without ever documenting
+            # diff_mode -- the comparison only ran one way.
+            problems.append("%s: claims support=%s, but the module's code does not "
+                            "support it at all" % (name, claimed))
             continue
         if _SUPPORT_RANK.get(claimed, 0) > _SUPPORT_RANK.get(allowed, 0):
             problems.append("%s: claims support=%s, the module's code supports %s"

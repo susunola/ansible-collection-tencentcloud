@@ -75,7 +75,13 @@ RETURN = r"""account:
   description:
     - Effective account metadata.
   returned: always
-  type: dict"""
+  type: dict
+password_rotated:
+  description:
+    - Whether this run reset the account password, taken from O(rotate_password).
+  returned: when the account is created or updated
+  type: bool
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

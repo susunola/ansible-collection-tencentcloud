@@ -82,7 +82,13 @@ RETURN = r"""instances:
     - Effective selected instance metadata.
   returned: always
   type: list
-  elements: dict"""
+  elements: dict
+restarted:
+  description:
+    - Whether the run restarted the instances rather than moving them to O(state).
+  returned: when the instance state was changed
+  type: bool
+"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

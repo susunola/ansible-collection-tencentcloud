@@ -53,6 +53,10 @@ attributes:
   check_mode:
     description: Predicts changes without sending API write requests.
     support: full
+  diff_mode:
+    description: Returns a comparison of the observed and requested target group settings.
+    support: partial
+    details: API-assigned and other unmanaged fields are not part of the diff.
   idempotent:
     description: Compares the complete observed backend set before writing.
     support: partial

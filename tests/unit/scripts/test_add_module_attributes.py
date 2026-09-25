@@ -98,7 +98,10 @@ def test_weaker_claim_than_the_rules_allow_is_accepted(attributes):
     """alb_listener says partial for diff_mode and idempotent and explains
     why. That is more useful than the boilerplate, and it is not a
     false claim."""
-    text = with_block(module_text(), """\
+    # The module text has to call maybe_diff for the claim to be weaker than
+    # the rules rather than stronger than them: a diff_mode claim on a module
+    # that never builds a diff is an over-claim, and that is a separate test.
+    text = with_block(module_text(extra="    diff = maybe_diff(module, None, {})\n"), """\
 attributes:
   check_mode:
     description: placeholder
@@ -112,6 +115,22 @@ attributes:
     support: partial
     details: Waits for observable settings to converge after writes.""")
     assert attributes.overclaimed(text, "plugins/modules/alb_listener.py") == []
+
+
+def test_claim_without_any_support_in_the_code_is_reported(attributes):
+    """A module that never builds a diff may not document diff_mode: the
+    comparison used to run one way only, so three ALB modules called
+    maybe_diff without ever documenting diff_mode and nothing said so."""
+    text = with_block(module_text(), """\
+attributes:
+  check_mode:
+    description: placeholder
+    support: full
+  diff_mode:
+    description: placeholder
+    support: full""")
+    assert attributes.overclaimed(text, "plugins/modules/demo.py") == [
+        "diff_mode: claims support=full, but the module's code does not support it at all"]
 
 
 def test_no_attributes_block_is_not_an_overclaim(attributes):
