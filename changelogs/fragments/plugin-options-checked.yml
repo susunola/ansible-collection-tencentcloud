@@ -1,0 +1,24 @@
+---
+bugfixes:
+  - >-
+    tencentcloud_sg inventory plugin - implement ``include_sgless``, which was
+    documented from the day the plugin was written and never read. An
+    inventory plugin accepts any option it documents, so setting it silently
+    did nothing. With the option set and no ``security_group_ids``, ENIs that
+    belong to no security group now contribute their instances too, with
+    ``sg_ids: []``; the documented "no effect when ``security_group_ids`` is
+    set" clause is covered by a test.
+minor_changes:
+  - >-
+    scripts/check_plugin_options.py - new guard, wired into CI as "Plugin
+    options are options the plugin reads". ``validate-modules`` holds a
+    module's documentation to its argument spec; the plugins are documented by
+    hand and nothing compared the two, which is how the option above survived.
+    The check requires every option a lookup or inventory plugin documents --
+    its own and the ones it inherits from this collection's fragments -- to
+    appear in a ``get_option("...")`` call, resolving fragment options from
+    this collection first and then from the installed ansible-core. Options
+    from ansible-core's own fragments are left to the mixins that read them,
+    and the loader's ``plugin`` key, a lookup's ``_terms`` and
+    ``with_decryption`` (documented as inert for parity with
+    ``amazon.aws.aws_ssm``) are exemptions with a stated reason.

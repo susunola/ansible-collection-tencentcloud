@@ -44,7 +44,7 @@ options:
     default: []
   include_sgless:
     description:
-      - Whether to include ENIs that carry no matching security group when
+      - Whether to include ENIs that belong to no security group at all, when
         O(security_group_ids) is empty. Has no effect when
         O(security_group_ids) is set.
     type: bool
@@ -178,6 +178,50 @@ def list_network_interfaces(client, models, security_group_id):
     return [serialize(item) for item in items]
 
 
+def collect_region_hosts(client, models, region, security_group_ids,
+                         include_sgless, hostnames, compose):
+    """Return the hosts of one region, keyed by the hostname they resolve to.
+
+    Every ENI of every matching security group contributes its instance. When
+    O(security_group_ids) is empty and O(include_sgless) is set, ENIs that
+    belong to no security group at all contribute too: the per-group pass
+    cannot reach them, which is what the option is for.
+    """
+    hosts = {}
+
+    def record(eni, group_id, group_name):
+        if not eni.get("InstanceId"):
+            return
+        hostname = eni_hostname(eni, hostnames, compose)
+        if not hostname:
+            return
+        entry = hosts.setdefault(hostname, {
+            "hostname": hostname,
+            "instance_id": eni["InstanceId"],
+            "region": region,
+            "sg_ids": [],
+            "sg_names": [],
+        })
+        if group_id and group_id not in entry["sg_ids"]:
+            entry["sg_ids"].append(group_id)
+            entry["sg_names"].append(group_name)
+        eni_ids = entry.get("eni_ids", [])
+        if eni.get("NetworkInterfaceId"):
+            eni_ids = list(dict.fromkeys(eni_ids + [eni["NetworkInterfaceId"]]))
+        entry["eni_ids"] = eni_ids
+
+    for group in list_security_groups(client, models, security_group_ids):
+        group_id = group.get("SecurityGroupId")
+        for eni in list_network_interfaces(client, models, group_id):
+            record(eni, group_id, group.get("SecurityGroupName"))
+    if include_sgless and not security_group_ids:
+        for eni in list_network_interfaces(client, models, None):
+            if eni.get("SecurityGroupIds"):
+                continue
+            record(eni, None, None)
+    return list(hosts.values())
+
+
 def eni_private_ip(eni):
     addresses = eni.get("PrivateIpAddresses") or []
     for address in addresses:
@@ -243,31 +287,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             results = {}
             for region in regions:
                 client = self._create_client(region)
-                hosts = {}
-                groups = list_security_groups(client, vpc_models, security_group_ids)
-                for group in groups:
-                    group_id = group.get("SecurityGroupId")
-                    enis = list_network_interfaces(client, vpc_models, group_id)
-                    for eni in enis:
-                        if not eni.get("InstanceId"):
-                            continue
-                        hostname = eni_hostname(eni, self.get_option("hostnames"), self._compose)
-                        if not hostname:
-                            continue
-                        entry = hosts.setdefault(hostname, {
-                            "hostname": hostname,
-                            "instance_id": eni["InstanceId"],
-                            "region": region,
-                            "sg_ids": [],
-                            "sg_names": [],
-                        })
-                        if group_id not in entry["sg_ids"]:
-                            entry["sg_ids"].append(group_id)
-                            entry["sg_names"].append(group.get("SecurityGroupName"))
-                        entry["eni_ids"] = list(dict.fromkeys(
-                            entry.get("eni_ids", []) + [eni["NetworkInterfaceId"]]
-                        ))
-                results[region] = list(hosts.values())
+                results[region] = collect_region_hosts(
+                    client, vpc_models, region, security_group_ids,
+                    self.get_option("include_sgless"),
+                    self.get_option("hostnames"), self._compose)
         if cache_needs_update:
             self._cache[cache_key] = results
         self._populate(results)

@@ -71,6 +71,7 @@ Each claim below is checkable with the command in the same row.
 | Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
 | Every captured `RETURN` sample still matches the payload its module's tests produce | `python scripts/add_return_samples.py --check` |
 | Every option that is a secret by name carries `no_log`, and no message interpolates one | `python scripts/check_secret_handling.py --check` |
+| Every option a plugin documents is an option it reads | `python scripts/check_plugin_options.py --check` |
 | The SDK release the artifacts were generated from is one users may install | `python scripts/check_sdk_drift.py --check` |
 | Every SDK reference resolves at the declared SDK floor | `python scripts/check_sdk_floor.py --check` |
 | The debt censuses are frozen and may only shrink | `python scripts/check_quality_gates.py` |
@@ -129,6 +130,27 @@ All 173 playbook, target and role files pass, and the three failure modes were
 each verified by editing a role and watching the gate fail: a module that does
 not exist, an option the module does not declare, and a variable nobody
 defines.
+
+**A documented option that did nothing.** `plugins/inventory/tencentcloud_sg.py`
+documented `include_sgless` — "whether to include ENIs that carry no matching
+security group when `security_group_ids` is empty" — from the day the plugin
+was written, and never read it. An inventory plugin accepts any option it
+documents, so a user could set it and silently get the default behaviour; no
+test executed the plugin either. It is implemented now (the per-group pass
+cannot reach an ENI that belongs to no group, which is what the option is for)
+and covered by five unit tests, including the "no effect when
+`security_group_ids` is set" clause the documentation promises.
+
+The class is closed rather than the instance: `scripts/check_plugin_options.py`
+requires every option a lookup or inventory plugin documents — its own and the
+ones it inherits from this collection's fragments — to appear in a
+`get_option("...")` call. Options from ansible-core's own fragments
+(`constructed`, `inventory_cache`) are left alone: `Constructable` and
+`Cacheable` read those inside the plugin instance, so they are the framework's
+contract rather than the plugin's. The loader's `plugin` key, a lookup's
+`_terms`, and `ssm_parameter.with_decryption` (documented as inert, for parity
+with `amazon.aws.aws_ssm`) are listed as exemptions with their reasons. Nine
+plugins pass; the defect above was re-created to watch the gate fail.
 
 `scripts/check_quality_gates.py` reads the roles from the documentation side
 too: a role's README may name only variables the role offers — its

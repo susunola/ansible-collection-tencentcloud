@@ -358,3 +358,117 @@ def test_create_client_missing_everywhere_mentions_profile(monkeypatch):
     plugin.get_option = options.get
     with pytest.raises(AnsibleError, match="default.configure"):
         plugin._create_client("ap-guangzhou")
+
+
+# ---------------------------------------------------------------------------
+# host collection (security groups and the ENIs no group reaches)
+# ---------------------------------------------------------------------------
+
+class FakeFilteringVpcClient(object):
+    """Answer a filtered ENI call from ``by_group`` and a plain one from ``all``."""
+
+    def __init__(self, groups, by_group, all_enis):
+        self.groups = groups
+        self.by_group = by_group
+        self.all_enis = all_enis
+        self.filters = []
+
+    def DescribeSecurityGroups(self, request):
+        items = [FakeSdkItem(group) for group in self.groups]
+        return FakeSgPageResponse(items, len(items))
+
+    def DescribeNetworkInterfaces(self, request):
+        filters = getattr(request, "Filters", None)
+        self.filters.append(filters)
+        if filters:
+            group = filters[0].Values[0]
+            items = self.by_group.get(group, [])
+        else:
+            items = self.all_enis
+        return FakeEniPageResponse([FakeSdkItem(eni) for eni in items], len(items))
+
+
+def _collect(client, **overrides):
+    options = {
+        "include_sgless": False,
+        "hostnames": ["private-ip", "instance-id"],
+    }
+    options.update(overrides)
+    return inv_mod.collect_region_hosts(
+        client, FakeModels, "ap-guangzhou", options.pop("security_group_ids", []),
+        options["include_sgless"], options["hostnames"], compose_stub)
+
+
+GROUPED = {
+    "NetworkInterfaceId": "eni-grouped",
+    "InstanceId": "ins-grouped",
+    "PrivateIpAddresses": [{"PrivateIpAddress": "10.0.0.1"}],
+}
+SGLESS = {
+    "NetworkInterfaceId": "eni-sgless",
+    "InstanceId": "ins-sgless",
+    "PrivateIpAddresses": [{"PrivateIpAddress": "10.0.0.9"}],
+    "SecurityGroupIds": [],
+}
+
+
+def test_collect_region_hosts_reaches_every_group():
+    client = FakeFilteringVpcClient(
+        [{"SecurityGroupId": "sg-1", "SecurityGroupName": "web"}],
+        {"sg-1": [GROUPED]}, [GROUPED])
+    hosts = _collect(client)
+    assert [host["instance_id"] for host in hosts] == ["ins-grouped"]
+    assert hosts[0]["sg_ids"] == ["sg-1"]
+    assert hosts[0]["sg_names"] == ["web"]
+    assert hosts[0]["eni_ids"] == ["eni-grouped"]
+
+
+def test_collect_region_hosts_skips_sgless_enis_by_default():
+    client = FakeFilteringVpcClient(
+        [{"SecurityGroupId": "sg-1", "SecurityGroupName": "web"}],
+        {"sg-1": [GROUPED]}, [GROUPED, SGLESS])
+    hosts = _collect(client)
+    assert [host["instance_id"] for host in hosts] == ["ins-grouped"]
+    # the unfiltered call is what the option buys: without it, nothing asks
+    # the API about ENIs that belong to no group.
+    assert all(filters is not None for filters in client.filters)
+
+
+def test_collect_region_hosts_includes_sgless_enis_when_asked():
+    client = FakeFilteringVpcClient(
+        [{"SecurityGroupId": "sg-1", "SecurityGroupName": "web"}],
+        {"sg-1": [GROUPED]}, [GROUPED, SGLESS])
+    hosts = _collect(client, include_sgless=True)
+    by_instance = {host["instance_id"]: host for host in hosts}
+    assert sorted(by_instance) == ["ins-grouped", "ins-sgless"]
+    sgless = by_instance["ins-sgless"]
+    assert sgless["sg_ids"] == []
+    assert sgless["sg_names"] == []
+    assert sgless["eni_ids"] == ["eni-sgless"]
+    assert any(filters is None for filters in client.filters)
+
+
+def test_collect_region_hosts_ignores_sgless_when_group_ids_are_given():
+    """The option says it has no effect when security_group_ids is set."""
+    client = FakeFilteringVpcClient(
+        [{"SecurityGroupId": "sg-1", "SecurityGroupName": "web"}],
+        {"sg-1": [GROUPED]}, [GROUPED, SGLESS])
+    hosts = _collect(client, include_sgless=True, security_group_ids=["sg-1"])
+    assert [host["instance_id"] for host in hosts] == ["ins-grouped"]
+    assert all(filters is not None for filters in client.filters)
+
+
+def test_collect_region_hosts_merges_the_enis_of_one_instance():
+    second = {
+        "NetworkInterfaceId": "eni-second",
+        "InstanceId": "ins-grouped",
+        "PrivateIpAddresses": [{"PrivateIpAddress": "10.0.0.1"}],
+    }
+    client = FakeFilteringVpcClient(
+        [{"SecurityGroupId": "sg-1", "SecurityGroupName": "web"},
+         {"SecurityGroupId": "sg-2", "SecurityGroupName": "app"}],
+        {"sg-1": [GROUPED], "sg-2": [second]}, [])
+    hosts = _collect(client)
+    assert len(hosts) == 1
+    assert hosts[0]["sg_ids"] == ["sg-1", "sg-2"]
+    assert hosts[0]["eni_ids"] == ["eni-grouped", "eni-second"]

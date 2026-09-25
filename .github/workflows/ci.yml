@@ -63,6 +63,11 @@ jobs:
       # out of scope: it cannot carry a credential.
       - name: Secrets cannot reach a log
         run: python scripts/check_secret_handling.py --check
+      # validate-modules holds a module's documentation to its argument spec.
+      # The plugins are documented by hand, and tencentcloud_sg documented an
+      # inventory option it never read.
+      - name: Plugin options are options the plugin reads
+        run: python scripts/check_plugin_options.py --check
       # Every captured RETURN sample is re-derived from the module's own unit
       # tests, so a sample cannot outlive the payload it documents. Hand
       # written samples are exempt (a test's fake response may carry fewer

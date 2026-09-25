@@ -97,6 +97,11 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32g. Plugin options vs the plugin (0.12.0):
+    `check_plugin_options.py` requires every documented lookup/inventory
+    option to appear in a `get_option` call; it found
+    `tencentcloud_sg.include_sgless`, documented and never read, which is now
+    implemented and tested. **Done**
 32f. Role READMEs vs the role interface (0.12.0):
     `role_doc_findings()` in `check_quality_gates.py` fails when a role README
     names a `tc_<role>_*` variable that is neither a declared input nor a
