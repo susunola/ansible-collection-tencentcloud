@@ -133,6 +133,8 @@ jobs:
         run: python scripts/fix_module_headers.py --check
       - name: Example playbooks resolve
         run: python scripts/check_examples.py --check
+      - name: Module examples run as written
+        run: python scripts/check_module_examples.py --check
       - name: Porting table resolves
         run: python scripts/check_porting_map.py --check
       - name: Integration target layout is complete

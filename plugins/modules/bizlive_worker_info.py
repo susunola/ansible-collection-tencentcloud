@@ -13,8 +13,7 @@ module: bizlive_worker_info
 short_description: Gather information about Tencent Cloud BIZLIVE workers
 version_added: "0.9.0"
 description: Returns BIZLIVE workers visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

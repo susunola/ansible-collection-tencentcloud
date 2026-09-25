@@ -68,8 +68,7 @@ options:
     description:
       - Rule input parameter values keyed by parameter name.
     type: dict
-    default:
-      {}
+    default: {}
   description:
     description:
       - Rule description.
@@ -85,8 +84,7 @@ options:
     description:
       - Exact evaluated tag scope.
     type: dict
-    default:
-      {}
+    default: {}
   excluded_resource_ids:
     description:
       - Exact resource exclusion list.

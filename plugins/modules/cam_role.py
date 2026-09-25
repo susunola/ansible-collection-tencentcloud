@@ -54,8 +54,7 @@ options:
         value are updated.
       - Reconciled through the CAM-native C(TagRole)/C(UntagRole) APIs.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - CAM is a global service. O(region) is accepted (the shared argument spec

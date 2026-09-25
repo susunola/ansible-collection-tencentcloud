@@ -13,8 +13,7 @@ module: mna_access_region_info
 short_description: Gather information about Tencent Cloud MNA access regions
 version_added: "0.9.0"
 description: Returns MNA access regions visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

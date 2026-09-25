@@ -45,8 +45,7 @@ options:
     description:
       - Parameter name and expected value mapping to enforce.
     type: dict
-    default:
-      {}
+    default: {}
   reset_parameters:
     description:
       - Parameter names to reset to template defaults.

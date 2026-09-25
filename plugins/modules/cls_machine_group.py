@@ -43,8 +43,7 @@ options:
     description:
       - Exact resource tags.
     type: dict
-    default:
-      {}
+    default: {}
   auto_update:
     description:
       - Automatically update LogListener.

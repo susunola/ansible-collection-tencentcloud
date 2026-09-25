@@ -62,8 +62,7 @@ options:
       - Default placeholder values.
       - Omitted from the request when empty because TAT rejects the field unless C(enable_parameters) is true.
     type: dict
-    default:
-      {}
+    default: {}
   username:
     description:
       - Operating system user used to execute the command.
@@ -82,8 +81,7 @@ options:
       - Tags assigned when creating the command.
       - Applied on create only - TAT does not return tags so they are never reconciled.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

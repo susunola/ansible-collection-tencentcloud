@@ -22,14 +22,12 @@ options:
     description:
       - Notebook API filter names mapped to values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   tag_filters:
     description:
       - Tag keys mapped to tag values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   order_field:
     description:
       - Field used for ordering.

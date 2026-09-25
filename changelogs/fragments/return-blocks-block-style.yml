@@ -1,0 +1,15 @@
+---
+minor_changes:
+  - >-
+    module docs - write every ``RETURN`` entry in block style. The
+    documentation normalisation pass only rewrote ``DOCUMENTATION.options``,
+    so 440 modules still described their return values as single-line flow
+    mappings such as ``- id: {description: ..., returned: always, type: str}``.
+    596 entries across 355 of those modules are now laid out the same way as
+    the option blocks above them, and
+    ``scripts/normalize_module_docs.py --check`` covers ``RETURN`` too, so the
+    two halves of a module's documentation can no longer be normalised to
+    different rules. An empty flow mapping is left alone rather than expanded:
+    ``options: {}`` and ``default: {}`` are already the shortest readable form,
+    and rewriting them as a key followed by a line holding ``{}`` is longer
+    without being clearer.

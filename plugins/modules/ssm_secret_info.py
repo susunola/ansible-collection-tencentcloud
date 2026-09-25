@@ -33,8 +33,7 @@ options:
     description:
       - Tag keys mapped to value lists in list mode.
     type: dict
-    default:
-      {}
+    default: {}
   secret_type:
     description:
       - Secret type filter.

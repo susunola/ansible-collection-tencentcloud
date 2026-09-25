@@ -170,8 +170,7 @@ options:
       - Existing tags not listed are removed; listed tags with a different
         value are updated.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(cos-python-sdk-v5) package on the controller.
   - O(role_arn) is honoured; the temporary credentials obtained via STS

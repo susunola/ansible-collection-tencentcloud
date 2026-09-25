@@ -13,8 +13,7 @@ module: captcha_user_all_app_id_info
 short_description: Gather information about Tencent Cloud CAPTCHA user all app ids
 version_added: "0.9.0"
 description: Returns CAPTCHA user all app ids visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

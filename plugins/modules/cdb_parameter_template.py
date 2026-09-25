@@ -51,8 +51,7 @@ options:
     description:
       - Exact parameter name and value mapping.
     type: dict
-    default:
-      {}
+    default: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

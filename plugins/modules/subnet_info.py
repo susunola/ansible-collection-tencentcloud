@@ -22,8 +22,7 @@ options:
       - Subnet API filter names mapped to lists of values, for example
         C(vpc-id), C(subnet-name), C(cidr-block), C(zone) or C(is-default).
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int

@@ -104,7 +104,10 @@ def test_create_when_missing(monkeypatch):
 def test_delete_when_present(monkeypatch):
     fake = FakeCdbClient(rules=[_rule("rule-1", "rule-host-prod")])
     _make_module(monkeypatch, fake)
-    module_args(rule_name="rule-host-prod", rule_filters=RF, state="absent")
+    # No rule_filters: the delete path addresses the rule by name, and a
+    # previous argument spec that marked the filters required made this call
+    # -- the only way to delete an audit rule -- fail before it started.
+    module_args(rule_name="rule-host-prod", state="absent")
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["exists"] is False
@@ -134,7 +137,7 @@ def test_already_present_is_idempotent(monkeypatch):
 def test_absent_when_missing_is_idempotent(monkeypatch):
     fake = FakeCdbClient(rules=[])
     _make_module(monkeypatch, fake)
-    module_args(rule_name="rule-host-prod", rule_filters=RF, state="absent")
+    module_args(rule_name="rule-host-prod", state="absent")
     result = run(mod.run_module)
     assert result["changed"] is False
     assert "DeleteAuditRule" not in [c for c, unused in fake.calls]
@@ -158,7 +161,7 @@ def test_create_check_mode_is_dry_run(monkeypatch):
 def test_delete_check_mode_is_dry_run(monkeypatch):
     fake = FakeCdbClient(rules=[_rule("rule-1", "rule-host-prod")])
     _make_module(monkeypatch, fake)
-    module_args(rule_name="rule-host-prod", rule_filters=RF, state="absent", _ansible_check_mode=True)
+    module_args(rule_name="rule-host-prod", state="absent", _ansible_check_mode=True)
     result = run(mod.run_module)
     assert result["changed"] is True
     assert "DeleteAuditRule" not in [c for c, unused in fake.calls]

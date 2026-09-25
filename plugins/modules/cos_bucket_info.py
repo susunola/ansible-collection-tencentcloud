@@ -89,8 +89,7 @@ buckets:
       location: ap-guangzhou
       acl: private
       versioning: false
-      tags:
-        {}
+      tags: {}
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

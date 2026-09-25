@@ -13,8 +13,7 @@ module: cdb_parameter_template_info
 short_description: Gather information about Tencent Cloud CDB parameter templates
 version_added: "1.2.0"
 description: Returns CDB parameter templates visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

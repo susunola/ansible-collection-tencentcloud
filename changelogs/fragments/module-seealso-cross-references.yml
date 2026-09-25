@@ -1,0 +1,32 @@
+---
+minor_changes:
+  - >-
+    module docs - cross-reference each module with its read-only counterpart.
+    All 365 write and ``_info`` pairs, 730 modules, now carry a ``seealso``
+    entry naming the other side, which is the one navigation step a reader
+    needs most and the only link from "create a CLB listener" to "list CLB
+    listeners" that does not require knowing the naming convention. The
+    description is the counterpart's own ``short_description`` quoted
+    verbatim, so a pointer cannot describe a module that does not exist.
+  - >-
+    scripts/generate_info_modules.py - emit the same cross-reference into
+    generated ``_info`` modules, so the link survives regeneration instead of
+    being a hand edit the next generator run silently drops. A new CI step,
+    "Modules cross-reference their read-only counterpart", runs
+    ``scripts/add_module_seealso.py --check``, so a module that loses its link
+    or a new pair that never gets one fails the build rather than waiting for
+    a reviewer to notice the asymmetry.
+bugfixes:
+  - >-
+    tests - ``tests/unit/scripts/test_module_source_governance.py`` rejected
+    every ``seealso`` entry. Its rule was a source line matching
+    ``- <text>: <text>``, which is how a description that accidentally became
+    a mapping looks, but also exactly what
+    ``- module: susunola.tencentcloud.alb_listener`` is. The rule now reads
+    the parsed documentation instead: a description must be a string (an
+    option genuinely *named* ``description`` is a mapping with a ``type``, and
+    is skipped), and a ``seealso`` entry must name a ``module`` or a ``ref``
+    and describe it in prose. It also covers ``RETURN``, which the source-line
+    rule never looked at, and the module list is resolved from the test file
+    rather than from the working directory -- from any other directory the
+    glob matched nothing and the test passed without reading a single module.

@@ -40,8 +40,7 @@ options:
     description:
       - Tags applied when creating the host.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

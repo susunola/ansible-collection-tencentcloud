@@ -12,8 +12,7 @@ short_description: Gather cloud products supported by Tencent Cloud SSM
 version_added: "0.14.0"
 description:
   - Returns the region-specific product identifiers accepted by C(ssm_product_secret).
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

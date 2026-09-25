@@ -27,8 +27,7 @@ options:
     description:
       - Parent-scoped version filters such as TrainingModelVersionId, ModelVersionType, ModelFormat or AlgorithmFramework.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

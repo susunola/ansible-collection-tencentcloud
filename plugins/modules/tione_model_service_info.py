@@ -31,14 +31,12 @@ options:
     description:
       - Service-group API filters used in list mode.
     type: dict
-    default:
-      {}
+    default: {}
   tag_filters:
     description:
       - Tag keys mapped to values or value lists in list mode.
     type: dict
-    default:
-      {}
+    default: {}
   order_field:
     description:
       - List sort field.

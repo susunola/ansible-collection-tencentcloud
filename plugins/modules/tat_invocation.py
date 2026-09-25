@@ -39,8 +39,7 @@ options:
     description:
       - Command placeholder values.
     type: dict
-    default:
-      {}
+    default: {}
   username:
     description:
       - Least-privilege operating-system user override.

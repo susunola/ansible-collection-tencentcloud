@@ -65,8 +65,7 @@ options:
         value are updated. Requires the C(tencentcloud-sdk-python-tag) package
         and the tag service to be enabled for the account.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).

@@ -138,7 +138,12 @@ def _expand(body, is_return):
         except yaml.YAMLError:
             out.append(line)
             continue
-        if not isinstance(mapping, dict):
+        if not isinstance(mapping, dict) or not mapping:
+            # An empty flow mapping already is the shortest readable form:
+            # ``options: {}`` says "this module takes no options" and
+            # ``options:`` followed by ``{}`` says the same thing in two
+            # lines. 22 modules had the two-line form because this pass used
+            # to expand ``{}`` as if it were an option block.
             out.append(line)
             continue
         # validate-modules and the style guide want description as a list.

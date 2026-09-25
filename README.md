@@ -1331,6 +1331,15 @@ smoke-tests the tarball. See [`docs/release.md`](docs/release.md).
 variables); run it after touching anything under `docs/examples/` or
 `playbooks/`. See [`docs/examples/README.md`](docs/examples/README.md).
 
+`python scripts/check_module_examples.py --check` applies the same rules to the
+`EXAMPLES` block *inside* every module — the snippet a user copies out of
+`ansible-doc` rather than out of the repository. It resolves each module an
+example calls, checks every option against that module's `DOCUMENTATION` and
+doc fragments, and checks that options marked `required` are passed, so a
+shipped example runs as written. Three shipped examples named a module that
+does not exist, omitted a required option, or documented a delete call the
+argument spec rejected before this guard existed.
+
 Integration tests require Tencent Cloud credentials and run only when
 `TENCENTCLOUD_SECRET_ID` / `TENCENTCLOUD_SECRET_KEY` are set (see
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).

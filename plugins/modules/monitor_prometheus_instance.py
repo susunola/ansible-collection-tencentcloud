@@ -52,14 +52,12 @@ options:
     description:
       - Instance tags.
     type: dict
-    default:
-      {}
+    default: {}
   instance_attributes:
     description:
       - Additional instance attributes.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

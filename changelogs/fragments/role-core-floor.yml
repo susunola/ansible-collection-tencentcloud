@@ -1,0 +1,19 @@
+---
+bugfixes:
+  - >-
+    roles - declare the ansible-core floor the collection actually requires.
+    64 roles still advertised ``min_ansible_version: "2.16"`` while
+    ``meta/runtime.yml`` and every module in the collection require 2.19, so
+    Galaxy offered the roles to a controller that cannot load them. All 64
+    now state 2.19, which is the version whose argument-spec and
+    validate-modules behaviour these roles are tested against.
+  - >-
+    roles - add ``meta/main.yml`` to the four roles that had none,
+    ``tc_cdwpg_analytics_platform``, ``tc_clickhouse_platform``,
+    ``tc_doris_analytics_platform`` and ``tc_oceanus_streaming_platform``. A
+    role without role metadata has no license and no version floor at all, so
+    Galaxy published it with empty values and nothing in the repository
+    noticed. ``scripts/check_quality_gates.py`` now compares every role's
+    ``min_ansible_version`` with ``meta/runtime.yml`` and its license with the
+    collection license, which is the check that was missing when 64 roles
+    drifted four core versions behind.

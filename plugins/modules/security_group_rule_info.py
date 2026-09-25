@@ -21,8 +21,7 @@ options:
   filters:
     description: VPC API filter names mapped to lists of values.
     type: dict
-    default:
-      {}
+    default: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

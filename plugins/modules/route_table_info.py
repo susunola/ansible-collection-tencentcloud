@@ -24,8 +24,7 @@ options:
       - Route table API filter names mapped to lists of values, e.g.
         C(vpc-id), C(route-table-name), C(association.main), C(tag-key).
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int

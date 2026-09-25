@@ -22,8 +22,7 @@ options:
     description:
       - Service filters such as name and upstreamType.
     type: dict
-    default:
-      {}
+    default: {}
   include_upstreams:
     description:
       - Query upstream targets for every matching service.

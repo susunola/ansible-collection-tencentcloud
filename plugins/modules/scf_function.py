@@ -90,8 +90,7 @@ options:
       - Environment variables as a dict of key/value pairs, written to
         V(CreateFunctionRequest.Environment.Variables).
     type: dict
-    default:
-      {}
+    default: {}
   role:
     description:
       - IAM role name (CAM role) the function runs as.

@@ -1,0 +1,38 @@
+---
+bugfixes:
+  - >-
+    cdb_audit_rule - allow I(state=absent) to be called without
+    I(rule_filters). The argument spec marked the nested filter payload
+    ``required`` while the module's own documentation said it was required
+    only when I(state=present), and the delete path never reads it, so
+    deleting an audit rule failed with "missing required arguments" before any
+    API call. The unconditional requirement is gone and ``required_if`` --
+    which was already there and already says what was meant -- is now the only
+    one. The unit tests passed because they supplied the filters on the delete
+    path too, which is how a test can hold a bug in place; the three delete
+    tests now call the module the way a user has to.
+  - >-
+    tse_governance_alias_info - the shipped example called
+    ``tse_governance_aliase_info``, a module that does not exist, so the
+    copy-paste failed with "couldn't resolve module/action" before reaching
+    Tencent Cloud. The name is corrected in the generator spec that produces
+    the module, not only in the module, which is what the regeneration check
+    would have demanded anyway.
+  - >-
+    lcic_answer_info - the shipped example omitted I(question_id), which the
+    module marks required, so it failed with "missing required arguments".
+    Every module that takes a required parameter it cannot infer now gets an
+    example that passes it, and this was the one that had been missed.
+minor_changes:
+  - >-
+    scripts/check_module_examples.py - new guard, and the reason the three
+    defects above were found rather than reported by a user. Nothing validated
+    the ``EXAMPLES`` block *inside* a module: ``validate-modules`` proves the
+    string exists and parses as YAML, ``scripts/check_examples.py`` covers the
+    playbooks under ``docs/examples/`` and ``playbooks/`` but not the examples
+    that ship in the 1,027 modules, and the integration targets are the only
+    thing that would run one. The guard resolves every module an example
+    calls, checks each option it passes against the module's own
+    ``DOCUMENTATION`` and doc fragments, and checks that every option the
+    module marks ``required`` is passed, so the example can be run as written.
+    It is wired into CI as "Module examples run as written".

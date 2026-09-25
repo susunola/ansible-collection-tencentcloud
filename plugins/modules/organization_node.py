@@ -40,8 +40,7 @@ options:
     description:
       - Tags assigned when creating the node.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

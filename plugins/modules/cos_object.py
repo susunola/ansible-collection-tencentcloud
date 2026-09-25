@@ -80,8 +80,7 @@ options:
       - User-defined object metadata as a dict; keys are sent as
         C(x-cos-meta-<key>) headers. Replaced in full on upload.
     type: dict
-    default:
-      {}
+    default: {}
   storage_class:
     description:
       - Storage class of the object, for example C(STANDARD), C(STANDARD_IA),

@@ -13,8 +13,7 @@ module: chdfs_file_system_info
 short_description: Gather information about Tencent Cloud CHDFS file systems
 version_added: "0.9.0"
 description: Returns CHDFS file systems visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

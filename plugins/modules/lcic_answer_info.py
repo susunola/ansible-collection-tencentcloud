@@ -42,9 +42,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all answers
+- name: List answers of a question
   susunola.tencentcloud.lcic_answer_info:
     region: ap-guangzhou
+    question_id: "12345678"
 '''
 
 RETURN = r'''

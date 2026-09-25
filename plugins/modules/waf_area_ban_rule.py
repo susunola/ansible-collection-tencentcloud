@@ -41,8 +41,7 @@ options:
     description:
       - SDK-compatible JobDateTime schedule.
     type: dict
-    default:
-      {}
+    default: {}
   language:
     description:
       - Language used by area names.

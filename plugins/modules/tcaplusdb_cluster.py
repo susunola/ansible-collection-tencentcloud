@@ -109,8 +109,7 @@ options:
     description:
       - Tags applied during creation.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

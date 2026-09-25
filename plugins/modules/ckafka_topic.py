@@ -102,8 +102,7 @@ options:
       - Tags to apply to the topic as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-ckafka) package on the controller.
   - The CKafka instance itself is not created or destroyed by this module;

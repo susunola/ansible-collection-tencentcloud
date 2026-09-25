@@ -13,8 +13,7 @@ module: ba_auth_info
 short_description: Gather information about Tencent Cloud BA auth
 version_added: "0.9.0"
 description: Returns BA auth visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

@@ -13,8 +13,7 @@ module: cloudaudit_audit_info
 short_description: Gather information about Tencent Cloud CLOUDAUDIT audits
 version_added: "1.5.0"
 description: Returns CLOUDAUDIT audits visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

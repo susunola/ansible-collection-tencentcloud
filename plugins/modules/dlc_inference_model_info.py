@@ -34,8 +34,7 @@ options:
     description:
       - Inference-model API filter names mapped to values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   sort_fields:
     type: list
     elements: dict

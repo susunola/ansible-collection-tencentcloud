@@ -94,8 +94,7 @@ options:
             choices: [Deny, Monitor, Disabled]
   frequent_scanning:
     type: dict
-    default:
-      {}
+    default: {}
     description: High-frequency managed-rule hit protection.
     suboptions:
       enabled:

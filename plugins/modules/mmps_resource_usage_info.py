@@ -13,8 +13,7 @@ module: mmps_resource_usage_info
 short_description: Gather information about Tencent Cloud MMPS resource usages
 version_added: "0.9.0"
 description: Returns MMPS resource usages visible in a Tencent Cloud region.
-options:
-  {}
+options: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

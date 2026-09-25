@@ -111,8 +111,7 @@ options:
     description:
       - Creation tags.
     type: dict
-    default:
-      {}
+    default: {}
   enabled:
     description:
       - Whether the secret is enabled.

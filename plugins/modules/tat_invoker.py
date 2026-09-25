@@ -44,8 +44,7 @@ options:
     description:
       - Command parameter values encoded as canonical JSON.
     type: dict
-    default:
-      {}
+    default: {}
   policy:
     description:
       - One-time or recurring schedule policy.
