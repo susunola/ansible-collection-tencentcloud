@@ -47,6 +47,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULES_DIR = os.path.join(REPO_ROOT, "plugins", "modules")
 CORE_SUBSET = os.path.join(REPO_ROOT, "tests", "quality", "core-subset.yml")
 COVERAGE_YML = os.path.join(REPO_ROOT, "tests", "integration", "coverage.yml")
+UNIT_TESTS = os.path.join(REPO_ROOT, "tests", "unit", "plugins", "modules")
 INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.yml")
 
 # Ratchets: the census measured when this gate was introduced (2026-09-25).
@@ -57,6 +58,11 @@ INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.ym
 # this collection and the standard it claims.
 DOC_RATCHET = 91
 INTEGRATION_RATCHET = 142
+
+# Write modules whose unit tests never run ``run_module`` twice, so nothing
+# checks the idempotency the attributes claim.  Small, but the claim is
+# user-facing and the three core-subset entries are worth naming.
+IDEMPOTENCY_RATCHET = 5
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 
@@ -144,6 +150,39 @@ def integration_findings():
     return sorted(found)
 
 
+def _unit_test_sources():
+    """Map module name -> concatenated unit test source for that module."""
+    sources = {}
+    for path in glob.glob(os.path.join(UNIT_TESTS, "*.py")):
+        name = os.path.basename(path)[len("test_"):-3]
+        for suffix in ("_main", "_info"):
+            if name.endswith(suffix):
+                name = name[: -len(suffix)]
+        with open(path, encoding="utf-8") as handle:
+            sources.setdefault(name, "")
+            sources[name] += handle.read()
+    return sources
+
+
+def idempotency_findings():
+    """Write modules whose tests never exercise the module twice."""
+    sources = _unit_test_sources()
+    found = []
+    for path in module_paths():
+        name = os.path.basename(path)[:-3]
+        if name.endswith("_info"):
+            continue
+        source = sources.get(name, "")
+        named = re.search(
+            r"def test_\w*(?:idempot|second_run|twice|no_change|unchanged)", source)
+        twice = re.search(
+            r"run\(\s*\w*\.?run_module[^\n]*\)(?:.|\n){0,4000}?run\(\s*\w*\.?run_module",
+            source)
+        if not (named or twice):
+            found.append(name)
+    return sorted(found)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--print", dest="show", action="store_true",
@@ -152,6 +191,7 @@ def main():
 
     docs = doc_findings()
     integrations = integration_findings()
+    idempotency = idempotency_findings()
 
     if args.show:
         print("description restates the option name: %d option(s)" % len(docs))
@@ -162,6 +202,10 @@ def main():
         print("core-subset write modules with no dispatched integration target: %d"
               % len(integrations))
         for name in integrations:
+            print("   %s" % name)
+        print()
+        print("write modules whose tests never run the module twice: %d" % len(idempotency))
+        for name in idempotency:
             print("   %s" % name)
         return 0
 
@@ -175,6 +219,11 @@ def main():
             "core-subset modules with no dispatched integration target: %d, "
             "ratchet is %d (the ratchet only goes down)"
             % (len(integrations), INTEGRATION_RATCHET))
+    if len(idempotency) > IDEMPOTENCY_RATCHET:
+        problems.append(
+            "write modules whose tests never run the module twice: %d, "
+            "ratchet is %d (the ratchet only goes down)"
+            % (len(idempotency), IDEMPOTENCY_RATCHET))
 
     if problems:
         for problem in problems:
@@ -186,6 +235,8 @@ def main():
           "(ratchet %d)" % (len(docs), DOC_RATCHET))
     print("ok: %d core-subset module(s) lack a dispatched integration target "
           "(ratchet %d)" % (len(integrations), INTEGRATION_RATCHET))
+    print("ok: %d write module(s) lack a two-run test (ratchet %d)"
+          % (len(idempotency), IDEMPOTENCY_RATCHET))
     return 0
 
 
