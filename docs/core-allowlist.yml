@@ -1,0 +1,99 @@
+# 2.0.0 core allowlist for susunola.tencentcloud.
+# Modules not named here must leave this collection before 2.0.0.
+# Adding a name is a deliberate exception and must drop another name
+# or raise max_modules in the same pull request with a written reason.
+version: 1
+max_modules: 120
+max_roles: 3
+max_generated_modules: 0
+roles:
+  - tc_vpc_foundation
+  - tc_clb_http
+  - tc_tke_cluster
+modules:
+  # Identity
+  - cam_user
+  - cam_user_info
+  - cam_group
+  - cam_group_info
+  - cam_group_membership
+  - cam_role
+  - cam_role_info
+  - cam_policy
+  - cam_policy_info
+  - cam_policy_attachment
+  # Compute
+  - cvm_instance
+  - cvm_instance_info
+  - cvm_instance_security_group
+  - cvm_image
+  - cvm_image_info
+  - key_pair
+  - key_pair_info
+  - lighthouse_instance
+  - lighthouse_instance_info
+  - lighthouse_firewall_rules
+  - lighthouse_key_pair
+  # Network
+  - vpc
+  - vpc_info
+  - subnet
+  - subnet_info
+  - security_group
+  - security_group_info
+  - security_group_rule
+  - security_group_rule_info
+  - route_table
+  - route_table_info
+  - eip
+  - eip_info
+  - nat_gateway
+  - nat_gateway_info
+  - nat_gateway_rule
+  # Load balancer — CLB only in 2.0 core
+  - clb_load_balancer
+  - clb_load_balancer_info
+  - clb_listener
+  - clb_listener_info
+  - clb_listener_target
+  - clb_listener_target_info
+  - clb_rule
+  - clb_target_group
+  - clb_target_group_info
+  # Storage
+  - cos_bucket
+  - cos_bucket_info
+  - cos_bucket_policy
+  - cos_bucket_policy_info
+  - cos_object
+  - cos_object_info
+  - cbs_disk
+  - cbs_disk_info
+  - cbs_snapshot
+  - cbs_snapshot_info
+  # Containers
+  - tke_cluster
+  - tke_cluster_info
+  - tke_node_pool
+  - tke_node_pool_info
+  - tke_addon
+  - tcr_instance
+  - tcr_instance_info
+  - tcr_namespace
+  - tcr_repository
+  # Databases
+  - cdb_instance
+  - cdb_instance_info
+  - cdb_account
+  - cdb_account_info
+  - redis_instance
+  - redis_instance_info
+  # Secrets
+  - kms_key
+  - kms_key_info
+  - ssm_parameter
+  - ssm_secret
+  - ssm_secret_info
+  # Auto Scaling
+  - as_scaling_group
+  - as_scaling_group_info
