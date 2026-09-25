@@ -194,8 +194,15 @@ jobs:
         run: |
           python -m pip install -r requirements.txt pytest-cov
           python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
-          PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules -q \
-            --cov=plugins/module_utils --cov=plugins/modules \
+          # The measured packages are named in full rather than as relative
+          # directories: pointed at a directory, coverage records each file by
+          # its bare name, and three of them -- inventory.py, paging.py and
+          # polling.py -- exist in both module_utils and plugin_utils, so the
+          # report could not be attributed to either.
+          PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules tests/unit/plugins/plugin_utils -q \
+            --cov=ansible_collections.susunola.tencentcloud.plugins.module_utils \
+            --cov=ansible_collections.susunola.tencentcloud.plugins.modules \
+            --cov=ansible_collections.susunola.tencentcloud.plugins.plugin_utils \
             --cov-report=term-missing --cov-report=xml:${GITHUB_WORKSPACE}/coverage.xml \
             --cov-report=html:${GITHUB_WORKSPACE}/coverage-html --cov-fail-under=80
           # The 80% gate is measured over module_utils and modules together,

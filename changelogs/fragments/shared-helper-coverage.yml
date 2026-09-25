@@ -22,3 +22,13 @@ minor_changes:
     placeholder C(TencentCloudSDKException) exists for exactly that
     environment, and nothing had ever exercised it: the branch was uncovered
     while the collection's own unit suite runs with the SDK absent.
+  - >-
+    ci - name the measured packages in full in the coverage step, and measure
+    C(plugins/plugin_utils) with them. Pointed at a relative directory,
+    coverage records each file by its bare name, and three of them --
+    C(inventory.py), C(paging.py) and C(polling.py) -- exist in both
+    module_utils and plugin_utils, so the report could not be attributed to
+    either. Naming the packages in full gives every file its path back. The
+    plugin_utils tests are collected in the same step so the five helpers are
+    measured rather than counted as uncovered; the measured total is 92.43%
+    against the 80 gate, so the extra 22 statements change nothing.

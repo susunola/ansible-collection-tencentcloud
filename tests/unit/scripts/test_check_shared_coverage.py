@@ -71,7 +71,7 @@ def report(tmp_path):
 
 def test_only_shared_helpers_are_read(report, coverage):
     """A module at 10% is the measure's business, not this gate's."""
-    files = dict(coverage.shared_files(str(report)))
+    files = dict(coverage.shared_files(str(report))[0])
     assert set(files) == {
         "plugins/module_utils/base.py",
         "plugins/module_utils/client.py",
@@ -81,7 +81,7 @@ def test_only_shared_helpers_are_read(report, coverage):
 
 
 def test_rates_are_percentages(report, coverage):
-    files = dict(coverage.shared_files(str(report)))
+    files = dict(coverage.shared_files(str(report))[0])
     assert files["plugins/module_utils/base.py"] == 100.0
     assert files["plugins/module_utils/client.py"] == 91.0
 
@@ -113,6 +113,27 @@ def test_the_floor_is_applied_per_file(report, coverage, capsys):
 def test_a_missing_report_is_reported(tmp_path, coverage, capsys):
     assert coverage.main(["--coverage-xml", str(tmp_path / "nothing.xml")]) == 2
     assert "no coverage report" in capsys.readouterr().err
+
+
+def test_a_bare_file_name_is_resolved_against_the_shared_directories(report, coverage):
+    """Pointed at a directory, coverage records bare names; the gate has to
+    read that shape too, and it does so from the files on disk."""
+    files, ambiguous = coverage.shared_files(str(report))
+    assert ambiguous == []
+    assert any(path.endswith("plugins/module_utils/base.py") for path, _rate in files)
+
+
+def test_a_name_in_two_directories_is_reported_rather_than_guessed(tmp_path, coverage, capsys):
+    """inventory.py, paging.py and polling.py exist in both module_utils and
+    plugin_utils, so a bare name cannot be attributed -- the gate says so
+    instead of holding the wrong file to the floor."""
+    path = tmp_path / "ambiguous.xml"
+    path.write_text(
+        '<?xml version="1.0" ?><coverage><packages><package><classes>'
+        '<class filename="inventory.py" line-rate="1.0"/>'
+        '</classes></package></packages></coverage>\n', encoding="utf-8")
+    assert coverage.main(["--coverage-xml", str(path)]) == 2
+    assert "matches more than one directory" in capsys.readouterr().err
 
 
 def test_a_report_without_shared_files_is_reported(tmp_path, coverage, capsys):
