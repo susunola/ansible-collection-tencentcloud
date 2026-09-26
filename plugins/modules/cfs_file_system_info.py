@@ -60,6 +60,40 @@ file_systems:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CreationTime: null
+      CreationToken: null
+      FileSystemId: null
+      LifeCycleState: null
+      SizeByte: null
+      SizeLimit: null
+      ZoneId: null
+      Zone: null
+      Protocol: null
+      StorageType: null
+      StorageResourcePkg: null
+      BandwidthResourcePkg: null
+      PGroup: null
+      FsName: null
+      Encrypted: null
+      KmsKeyId: null
+      AppId: null
+      BandwidthLimit: null
+      AutoSnapshotPolicyId: null
+      SnapStatus: null
+      Capacity: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      TieringState: null
+      TieringDetail: null
+      AutoScaleUpRule: null
+      Version: null
+      ExstraPerformanceInfo:
+        - Type: null
+          Performance: null
+      MetaType: null
+      Scenario: null
 total_count:
   description: Number of file systems reported by the API.
   returned: always

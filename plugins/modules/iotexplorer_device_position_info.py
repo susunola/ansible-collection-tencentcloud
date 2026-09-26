@@ -58,6 +58,14 @@ device_positions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Items:
+        - DeviceName: null
+          CreateTime: null
+          Longitude: null
+          Latitude: null
+      ProductId: null
+      Total: null
 total_count:
   description: Number of device positions reported by the API.
   returned: always

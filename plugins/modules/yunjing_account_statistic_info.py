@@ -53,6 +53,9 @@ account_statistics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Username: null
+      MachineNum: null
 total_count:
   description: Number of account statistics reported by the API.
   returned: always

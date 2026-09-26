@@ -56,6 +56,18 @@ target_group_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TargetGroupId: null
+      Type: null
+      InstanceId: null
+      Port: null
+      Weight: null
+      PublicIpAddresses: null
+      PrivateIpAddresses: null
+      InstanceName: null
+      RegisteredTime: null
+      EniId: null
+      ZoneId: null
 total_count:
   description: Number of target group instances reported by the API.
   returned: always

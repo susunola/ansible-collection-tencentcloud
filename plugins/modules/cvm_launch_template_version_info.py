@@ -58,6 +58,14 @@ launch_template_versions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LaunchTemplateVersion: null
+      LaunchTemplateVersionData: null
+      CreationTime: null
+      LaunchTemplateId: null
+      IsDefaultVersion: null
+      LaunchTemplateVersionDescription: null
+      CreatedBy: null
 total_count:
   description: Number of versions reported by the API.
   returned: always

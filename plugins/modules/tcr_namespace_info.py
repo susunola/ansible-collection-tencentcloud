@@ -69,6 +69,20 @@ namespaces:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      CreationTime: null
+      Public: null
+      NamespaceId: null
+      TagSpecification: null
+      Metadata:
+        - Key: null
+          Value: null
+      CVEWhitelistItems:
+        - CVEID: null
+      AutoScan: null
+      PreventVUL: null
+      Severity: null
 total_count:
   description: Number of namespaces reported by the API.
   returned: always

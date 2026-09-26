@@ -49,6 +49,16 @@ groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      Brief: null
+      MaxCapacity: null
+      MaxQps: null
+      GroupType: null
+      PicCount: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of groups returned (the API reports no total count).
   returned: always

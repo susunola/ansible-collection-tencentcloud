@@ -45,6 +45,20 @@ strategies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StrategyId: null
+      Name: null
+      Desc: null
+      Product: null
+      ProductDesc: null
+      Repair: null
+      GroupId: null
+      GroupName: null
+      Conditions:
+        - ConditionId: null
+          Level: null
+          LevelDesc: null
+          Desc: null
 total_count:
   description: Number of strategies returned (the API reports no total count).
   returned: always

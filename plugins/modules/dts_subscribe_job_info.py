@@ -58,6 +58,55 @@ subscribe_jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SubscribeId: null
+      SubscribeName: null
+      Topic: null
+      Product: null
+      InstanceId: null
+      InstanceStatus: null
+      Status: null
+      SubsStatus: null
+      ModifyTime: null
+      CreateTime: null
+      IsolateTime: null
+      ExpireTime: null
+      OfflineTime: null
+      PayType: null
+      AutoRenewFlag: null
+      Region: null
+      AccessType: null
+      Endpoints:
+        - DatabaseRegion: null
+          User: null
+          Password: null
+          InstanceId: null
+          CvmInstanceId: null
+          UniqDcgId: null
+          CcnId: null
+          UniqVpnGwId: null
+          VpcId: null
+          SubnetId: null
+          HostName: null
+          Port: null
+          EncryptConn: null
+          DatabaseNetEnv: null
+          CcnOwnerUin: null
+          ExtraAttr:
+            - Key: null
+              Value: null
+          ChildInstanceId: null
+          ChildInstanceType: null
+      SubscribeVersion: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Errors:
+        - Message: null
+          Reason: null
+          Solution: null
+      InstanceClass: null
+      ConsumerRoutePhase: null
 total_count:
   description: Number of subscribe jobs reported by the API.
   returned: always

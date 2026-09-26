@@ -51,6 +51,9 @@ user_bind_workload_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - UserName: null
+      WorkloadGroupName: null
 total_count:
   description: Number of user bind workload groups returned (the API reports no total count).
   returned: always

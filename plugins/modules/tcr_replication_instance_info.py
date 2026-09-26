@@ -57,6 +57,13 @@ replication_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RegistryId: null
+      ReplicationRegistryId: null
+      ReplicationRegionId: null
+      ReplicationRegionName: null
+      Status: null
+      CreatedAt: null
 total_count:
   description: Number of replication instances reported by the API.
   returned: always

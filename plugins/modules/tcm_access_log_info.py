@@ -51,6 +51,11 @@ access_log_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Namespace: null
+      ClusterName: null
+      ItemName: null
+      Gateways: null
 total_count:
   description: Number of access log configs returned (the API reports no total count).
   returned: always

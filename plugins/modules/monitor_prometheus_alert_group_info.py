@@ -57,6 +57,26 @@ prometheus_alert_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      AMPReceivers: null
+      CustomReceiver: null
+      RepeatInterval: null
+      TemplateId: null
+      Rules:
+        - RuleName: null
+          Labels:
+            - Key: null
+              Value: null
+          Annotations:
+            - Key: null
+              Value: null
+          Duration: null
+          Expr: null
+          State: null
+      CreatedAt: null
+      UpdatedAt: null
 total_count:
   description: Number of Prometheus alert groups reported by the API.
   returned: always

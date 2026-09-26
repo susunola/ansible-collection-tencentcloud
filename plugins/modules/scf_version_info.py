@@ -60,6 +60,12 @@ versions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Version: null
+      Description: null
+      AddTime: null
+      ModTime: null
+      Status: null
 total_count:
   description: Number of versions reported by the API.
   returned: always

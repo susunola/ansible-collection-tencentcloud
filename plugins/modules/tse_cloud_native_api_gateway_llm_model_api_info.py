@@ -53,6 +53,43 @@ cloud_native_api_gateway_llm_model_apis:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      CreateTime: null
+      ModifyTime: null
+      Name: null
+      SceneType: null
+      RequestProtocol: null
+      RouteList:
+        - Name: null
+          ID: null
+          Methods: null
+          Paths: null
+      BasePath: null
+      StripPath: null
+      Description: null
+      ModelServiceId: null
+      ModelServiceName: null
+      ModelServiceRoute: null
+      MatchHeaders:
+        - Key: null
+          Value: null
+          Operator: null
+      EnableCrossServiceFallback: null
+      CrossServiceFallbackConfig: null
+      DescribeCloudNativeAPIGatewayLLMModelAPI: null
+      TagFilter: null
+      LogConfig: null
+      LogDesensitizeConfig: null
+      ForwardDesensitizeConfig: null
+      MaxDocumentsConfig: null
+      SensitiveWordRoute: null
+      ConsumerGroupModelScopes:
+        - PrincipalId: null
+          PrincipalName: null
+          ModelScope: null
+          EffectiveModelNames: null
+      ConsumerInheritModelScope: null
 total_count:
   description: Number of cloud native api gateway llm model apis reported by the API.
   returned: always

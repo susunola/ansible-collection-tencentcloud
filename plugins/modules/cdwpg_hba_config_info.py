@@ -51,6 +51,13 @@ user_hba_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Type: null
+      Database: null
+      User: null
+      Address: null
+      Method: null
+      Mask: null
 total_count:
   description: Number of user hba configs reported by the API.
   returned: always

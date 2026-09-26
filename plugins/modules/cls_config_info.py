@@ -57,6 +57,22 @@ configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConfigId: null
+      Name: null
+      LogFormat: null
+      Path: null
+      LogType: null
+      ExtractRule: null
+      ExcludePaths:
+        - Type: null
+          Value: null
+      Output: null
+      UpdateTime: null
+      CreateTime: null
+      UserDefineRule: null
+      AdvancedConfig: null
+      InputType: null
 total_count:
   description: Number of configurations reported by the API.
   returned: always

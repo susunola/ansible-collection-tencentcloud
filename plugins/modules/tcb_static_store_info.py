@@ -51,6 +51,13 @@ static_stores:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvId: null
+      CdnDomain: null
+      Bucket: null
+      Regoin: null
+      Status: null
+      Region: null
 total_count:
   description: Number of static stores returned (the API reports no total count).
   returned: always

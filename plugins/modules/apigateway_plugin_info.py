@@ -71,6 +71,24 @@ plugins:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PluginId: null
+      PluginName: null
+      PluginType: null
+      PluginData: null
+      Description: null
+      CreatedTime: null
+      ModifiedTime: null
+      AttachedApiTotalCount: null
+      AttachedApis:
+        - ServiceId: null
+          ServiceName: null
+          ServiceDesc: null
+          ApiId: null
+          ApiName: null
+          ApiDesc: null
+          Environment: null
+          AttachedTime: null
 total_count:
   description: Number of plugins reported by the API.
   returned: always

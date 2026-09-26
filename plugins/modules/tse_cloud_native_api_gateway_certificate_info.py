@@ -49,6 +49,21 @@ cloud_native_api_gateway_certificates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Id: null
+      BindDomains: null
+      Status: null
+      Crt: null
+      Key: null
+      ExpireTime: null
+      CreateTime: null
+      IssueTime: null
+      CertSource: null
+      CertId: null
+      CertType: null
+      CertUsage: null
+      ReferCount: null
 total_count:
   description: Number of cloud native api gateway certificates reported by the API.
   returned: always

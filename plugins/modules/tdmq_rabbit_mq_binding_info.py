@@ -49,6 +49,18 @@ rabbit_mq_bindings:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BindingId: null
+      VirtualHost: null
+      Source: null
+      DestinationType: null
+      Destination: null
+      RoutingKey: null
+      SourceExchangeType: null
+      CreateTime: null
+      ModifyTime: null
+      CreateTs: null
+      ModifyTs: null
 total_count:
   description: Number of rabbit mq bindings reported by the API.
   returned: always

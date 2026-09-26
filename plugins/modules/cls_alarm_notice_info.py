@@ -59,6 +59,69 @@ alarm_notices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Tags:
+        - Key: null
+          Value: null
+      Type: null
+      NoticeReceivers:
+        - ReceiverType: null
+          ReceiverIds: null
+          ReceiverChannels: null
+          NoticeContentId: null
+          StartTime: null
+          EndTime: null
+          Index: null
+      WebCallbacks:
+        - CallbackType: null
+          Url: null
+          WebCallbackId: null
+          Method: null
+          NoticeContentId: null
+          RemindType: null
+          Mobiles: null
+          UserIds: null
+          Headers: null
+          Body: null
+          Index: null
+      AlarmNoticeId: null
+      NoticeRules:
+        - Rule: null
+          NoticeReceivers:
+            - ReceiverType: null
+              ReceiverIds: null
+              ReceiverChannels: null
+              NoticeContentId: null
+              StartTime: null
+              EndTime: null
+              Index: null
+          WebCallbacks:
+            - CallbackType: null
+              Url: null
+              WebCallbackId: null
+              Method: null
+              NoticeContentId: null
+              RemindType: null
+              Mobiles: null
+              UserIds: null
+              Headers: null
+              Body: null
+              Index: null
+          Escalate: null
+          Type: null
+          Interval: null
+          EscalateNotice: null
+      AlarmShieldStatus: null
+      SecureDetailStatus: null
+      JumpDomain: null
+      AlarmNoticeDeliverConfig: null
+      CreateTime: null
+      UpdateTime: null
+      DeliverStatus: null
+      DeliverFlag: null
+      AlarmShieldCount: null
+      CallbackPrioritize: null
 total_count:
   description: Number of alarm notices reported by the API.
   returned: always

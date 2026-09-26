@@ -44,6 +44,26 @@ balance:
   description: Account balance as reported by the API.
   returned: always
   type: dict
+  sample:
+    Balance: null
+    Uin: null
+    RealBalance: null
+    CashAccountBalance: null
+    IncomeIntoAccountBalance: null
+    PresentAccountBalance: null
+    FreezeAmount: null
+    OweAmount: null
+    IsAllowArrears: null
+    IsCreditLimited: null
+    CreditAmount: null
+    CreditBalance: null
+    RealCreditBalance: null
+    TempCredit: null
+    TempAmountInfoList:
+      - Uin: null
+        TempAmount: null
+        StartTime: null
+        EndTime: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

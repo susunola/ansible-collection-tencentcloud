@@ -65,6 +65,19 @@ key_pairs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - KeyId: null
+      KeyName: null
+      PublicKey: null
+      AssociatedInstanceIds: null
+      AssociatedInstanceSet:
+        - InstanceId: null
+          Username: null
+      CreatedTime: null
+      PrivateKey: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of key pairs reported by the API.
   returned: always

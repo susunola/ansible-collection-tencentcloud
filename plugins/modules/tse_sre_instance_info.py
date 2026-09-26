@@ -56,6 +56,126 @@ sre_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      Name: null
+      Edition: null
+      Status: null
+      SpecId: null
+      Replica: null
+      Type: null
+      VpcId: null
+      SubnetIds: null
+      EnableStorage: null
+      StorageType: null
+      StorageCapacity: null
+      Paymode: null
+      EKSClusterID: null
+      CreateTime: null
+      EnvInfos:
+        - EnvName: null
+          VpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          StorageCapacity: null
+          Status: null
+          AdminServiceIp: null
+          ConfigServiceIp: null
+          EnableConfigInternet: null
+          ConfigInternetServiceIp: null
+          SpecId: null
+          EnvReplica: null
+          RunningCount: null
+          AliasEnvName: null
+          EnvDesc: null
+          ClientBandWidth: null
+          EnableConfigIntranet: null
+      EngineRegion: null
+      EnableInternet: null
+      VpcInfos:
+        - VpcId: null
+          SubnetId: null
+          IntranetAddress: null
+          LbSubnetId: null
+      ServiceGovernanceInfos:
+        - EngineRegion: null
+          BoundK8SInfos:
+            - BoundClusterId: null
+              BoundClusterType: null
+              SyncMode: null
+              BindRegion: null
+          VpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          AuthOpen: null
+          Features: null
+          MainPassword: null
+          PgwVpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          LimiterVpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          CLSTopics:
+            - LogSetId: null
+              LogSetName: null
+              TopicId: null
+              TopicName: null
+          SubPassword: null
+      Tags:
+        - Key: null
+          Value: null
+      EnableConsoleInternet: null
+      EnableConsoleIntranet: null
+      ConfigInfoVisible: null
+      ConsoleDefaultPwd: null
+      TradeType: null
+      AutoRenewFlag: null
+      CurDeadline: null
+      IsolateTime: null
+      RegionInfos:
+        - EngineRegion: null
+          Replica: null
+          SpecId: null
+          IntranetVpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          ConsoleIntranetVpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          EnableClientInternet: null
+          LimiterIntranetVpcInfos:
+            - VpcId: null
+              SubnetId: null
+              IntranetAddress: null
+              LbSubnetId: null
+          MainRegion: null
+          EKSClusterID: null
+      EKSType: null
+      FeatureVersion: null
+      EnableClientIntranet: null
+      StorageOption:
+        - Name: null
+          Type: null
+          Capacity: null
+      ZookeeperRegionInfo: null
+      DeployMode: null
+      GlobalType: null
+      GroupType: null
+      GroupId: null
+      IsMainRegion: null
 total_count:
   description: Number of sre instances reported by the API.
   returned: always

@@ -60,6 +60,20 @@ acl_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleName: null
+      InstanceId: null
+      PatternType: null
+      Pattern: null
+      ResourceType: null
+      AclList: null
+      CreateTimeStamp: null
+      IsApplied: null
+      UpdateTimeStamp: null
+      Comment: null
+      TopicName: null
+      TopicCount: null
+      PatternTypeTitle: null
 total_count:
   description: Number of acl rules reported by the API.
   returned: always

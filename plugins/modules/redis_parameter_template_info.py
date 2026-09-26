@@ -53,6 +53,11 @@ parameter_templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TemplateId: null
+      Name: null
+      Description: null
+      ProductType: null
 total_count:
   description: Number of templates reported by the API.
   returned: always

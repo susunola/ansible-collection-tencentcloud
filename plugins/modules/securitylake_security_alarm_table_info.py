@@ -53,6 +53,59 @@ security_alarm_tables:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Timestamp: null
+      AlarmName: null
+      RuleName: null
+      AlarmId: null
+      Severity: null
+      Score: null
+      Category: null
+      SubCategory: null
+      Tags: null
+      Payload: null
+      Result: null
+      Confidence: null
+      Status: null
+      RuleTopic: null
+      HandleTime: null
+      Suggestion: null
+      Description: null
+      SourceName: null
+      AppId: null
+      RuleId: null
+      EventTime: null
+      RuleType: null
+      AttackNum: null
+      AlarmCount: null
+      AttackSubTechnique: null
+      AttackTechnique: null
+      AttackTactic: null
+      AttackSubTechniqueName: null
+      AttackTechniqueName: null
+      AttackTacticName: null
+      StartTime: null
+      EndTime: null
+      RuleExpression: null
+      ExpressionType: null
+      DrillDownExpression: null
+      SrcIp: null
+      SrcPort: null
+      DstIp: null
+      DstPort: null
+      HostIp: null
+      HostAsset: null
+      SdlId: null
+      RichCustomInfos: null
+      AttackerIp: null
+      AttackerAsset: null
+      VictimIp: null
+      VictimAsset: null
+      AttackDirection: null
+      TrafficDirection: null
+      SecurityGroupAlertInfos:
+        - AlarmUuid: null
+          Timestamp: null
 total_count:
   description: Number of security alarm tables reported by the API.
   returned: always

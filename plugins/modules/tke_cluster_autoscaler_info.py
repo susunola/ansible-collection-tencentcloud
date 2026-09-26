@@ -52,6 +52,8 @@ autoscaler_option:
   description: The cluster autoscaler option object.
   returned: always
   type: dict
+  sample:
+    ClusterAsGroupOption: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

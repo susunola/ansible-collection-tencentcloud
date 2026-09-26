@@ -53,6 +53,18 @@ asset_processes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CloudAccountID: null
+      InstanceName: null
+      AppID: null
+      CloudAccountName: null
+      InstanceID: null
+      PublicIp: null
+      PrivateIp: null
+      ProcessID: null
+      ProcessName: null
+      CmdLine: null
+      Port: null
 total_count:
   description: Number of asset processes reported by the API.
   returned: always

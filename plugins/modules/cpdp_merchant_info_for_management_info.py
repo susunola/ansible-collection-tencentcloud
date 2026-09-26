@@ -49,6 +49,11 @@ merchant_info_for_managements:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TaxpayerName: null
+      TaxpayerNum: null
+      SerialNo: null
+      InvoicePlatformId: null
 total_count:
   description: Number of merchant info for managements reported by the API.
   returned: always

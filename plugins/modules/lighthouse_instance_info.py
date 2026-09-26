@@ -65,6 +65,41 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      BundleId: null
+      BlueprintId: null
+      CPU: null
+      Memory: null
+      InstanceName: null
+      InstanceChargeType: null
+      SystemDisk: null
+      PrivateAddresses: null
+      PublicAddresses: null
+      InternetAccessible: null
+      RenewFlag: null
+      LoginSettings: null
+      InstanceState: null
+      Uuid: null
+      LatestOperation: null
+      LatestOperationState: null
+      LatestOperationRequestId: null
+      LatestOperationStartedTime: null
+      IsolatedTime: null
+      CreatedTime: null
+      ExpiredTime: null
+      PlatformType: null
+      Platform: null
+      OsName: null
+      Zone: null
+      Tags:
+        - Key: null
+          Value: null
+      InstanceRestrictState: null
+      SupportIpv6Detail: null
+      PublicIpv6Addresses: null
+      InitInvocationId: null
+      InstanceViolationDetail: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

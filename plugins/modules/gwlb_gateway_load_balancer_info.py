@@ -62,6 +62,23 @@ gateway_load_balancers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LoadBalancerId: null
+      LoadBalancerName: null
+      VpcId: null
+      SubnetId: null
+      Vips: null
+      Status: null
+      TargetGroupId: null
+      DeleteProtect: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      CreateTime: null
+      ChargeType: null
+      Isolation: null
+      IsolatedTime: null
+      OperateProtect: null
 total_count:
   description: Number of gateway load balancers reported by the API.
   returned: always

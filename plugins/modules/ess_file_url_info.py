@@ -71,6 +71,9 @@ file_urls:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Url: null
+      Option: null
 total_count:
   description: Number of file urls reported by the API.
   returned: always

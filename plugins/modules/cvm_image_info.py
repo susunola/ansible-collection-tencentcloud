@@ -68,6 +68,32 @@ images:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ImageId: null
+      OsName: null
+      ImageType: null
+      CreatedTime: null
+      ImageName: null
+      ImageDescription: null
+      ImageSize: null
+      Architecture: null
+      ImageState: null
+      Platform: null
+      ImageCreator: null
+      ImageSource: null
+      SyncPercent: null
+      IsSupportCloudinit: null
+      SnapshotSet:
+        - SnapshotId: null
+          DiskUsage: null
+          DiskSize: null
+      Tags:
+        - Key: null
+          Value: null
+      LicenseType: null
+      ImageFamily: null
+      ImageDeprecated: null
+      CdcCacheStatus: null
 total_count:
   description: Number of images reported by the API.
   returned: always

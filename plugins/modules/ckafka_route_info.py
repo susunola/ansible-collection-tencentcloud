@@ -57,6 +57,23 @@ routes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccessType: null
+      RouteId: null
+      VipType: null
+      VipList:
+        - Vip: null
+          Vport: null
+      Domain: null
+      DomainPort: null
+      DeleteTimestamp: null
+      Subnet: null
+      BrokerVipList:
+        - Vip: null
+          Vport: null
+      VpcId: null
+      Note: null
+      Status: null
 total_count:
   description: Number of routes returned (the API reports no total count).
   returned: always

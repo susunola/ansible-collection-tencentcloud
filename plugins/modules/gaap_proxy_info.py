@@ -65,6 +65,49 @@ proxies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      CreateTime: null
+      ProjectId: null
+      ProxyName: null
+      AccessRegion: null
+      RealServerRegion: null
+      Bandwidth: null
+      Concurrent: null
+      Status: null
+      Domain: null
+      IP: null
+      Version: null
+      ProxyId: null
+      Scalarable: null
+      SupportProtocols: null
+      GroupId: null
+      PolicyId: null
+      AccessRegionInfo: null
+      RealServerRegionInfo: null
+      ForwardIP: null
+      TagSet:
+        - TagKey: null
+          TagValue: null
+      SupportSecurity: null
+      BillingType: null
+      RelatedGlobalDomains: null
+      ModifyConfigTime: null
+      ProxyType: null
+      ClientIPMethod: null
+      IPAddressVersion: null
+      NetworkType: null
+      PackageType: null
+      BanStatus: null
+      IPList:
+        - IP: null
+          Provider: null
+          Bandwidth: null
+      Http3Supported: null
+      InBanBlacklist: null
+      FeatureBitmap: null
+      IsAutoScaleProxy: null
+      IsSupportTLSChoice: null
 total_count:
   description: Number of proxies reported by the API.
   returned: always

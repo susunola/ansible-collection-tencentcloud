@@ -52,6 +52,30 @@ lanes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LaneId: null
+      LaneName: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      LaneGroupList:
+        - GroupId: null
+          Entrance: null
+          LaneGroupId: null
+          LaneId: null
+          GroupName: null
+          ApplicationId: null
+          ApplicationName: null
+          NamespaceId: null
+          NamespaceName: null
+          CreateTime: null
+          UpdateTime: null
+          ClusterType: null
+      Entrance: null
+      NamespaceIdList: null
+      LaneGroupId: null
+      DeleteDisabled: null
+      DeleteDisabledReason: null
 total_count:
   description: Number of lanes reported by the API.
   returned: always

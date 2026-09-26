@@ -56,6 +56,22 @@ address_template_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AddressTemplateGroupName: null
+      AddressTemplateGroupId: null
+      AddressTemplateIdSet: null
+      CreatedTime: null
+      UpdatedTime: null
+      AddressTemplateSet:
+        - AddressTemplateId: null
+          AddressTemplateName: null
+          From: null
+          To: null
+          Description: null
+          UpdatedTime: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of address template groups reported by the API.
   returned: always

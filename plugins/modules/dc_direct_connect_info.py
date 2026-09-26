@@ -66,6 +66,47 @@ direct_connects:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DirectConnectId: null
+      DirectConnectName: null
+      AccessPointId: null
+      State: null
+      CreatedTime: null
+      EnabledTime: null
+      LineOperator: null
+      Location: null
+      Bandwidth: null
+      PortType: null
+      CircuitCode: null
+      RedundantDirectConnectId: null
+      Vlan: null
+      TencentAddress: null
+      CustomerAddress: null
+      CustomerName: null
+      CustomerContactMail: null
+      CustomerContactNumber: null
+      ExpiredTime: null
+      ChargeType: null
+      FaultReportContactPerson: null
+      FaultReportContactNumber: null
+      FaultReportContactEmail: null
+      TagSet:
+        - Key: null
+          Value: null
+      AccessPointType: null
+      IdcCity: null
+      ChargeState: null
+      StartTime: null
+      SignLaw: null
+      LocalZone: null
+      VlanZeroDirectConnectTunnelCount: null
+      OtherVlanDirectConnectTunnelCount: null
+      MinBandwidth: null
+      Construct: null
+      AccessPointName: null
+      IsThreeArch: null
+      IsMacSec: null
+      PortSpecification: null
 total_count:
   description: Number of connections reported by the API.
   returned: always

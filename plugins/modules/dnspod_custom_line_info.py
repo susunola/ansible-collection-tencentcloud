@@ -54,6 +54,12 @@ domain_custom_lines:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DomainId: null
+      Name: null
+      Area: null
+      UseCount: null
+      MaxCount: null
 total_count:
   description: Number of domain custom lines returned (the API reports no total count).
   returned: always

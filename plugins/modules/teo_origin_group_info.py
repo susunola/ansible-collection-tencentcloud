@@ -57,6 +57,29 @@ origin_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      Name: null
+      Type: null
+      Records:
+        - Record: null
+          Type: null
+          RecordId: null
+          Weight: null
+          Private: null
+          PrivateParameters:
+            - Name: null
+              Value: null
+      References:
+        - InstanceType: null
+          InstanceId: null
+          InstanceName: null
+          ZoneId: null
+          ZoneName: null
+          AliasZoneName: null
+      CreateTime: null
+      UpdateTime: null
+      HostHeader: null
 total_count:
   description: Number of origin groups reported by the API.
   returned: always

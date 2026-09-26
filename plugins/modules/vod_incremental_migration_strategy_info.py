@@ -53,6 +53,13 @@ incremental_migration_strategies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StrategyId: null
+      StrategyName: null
+      SubAppId: null
+      BucketId: null
+      OriginType: null
+      HttpOriginConfig: null
 total_count:
   description: Number of incremental migration strategies reported by the API.
   returned: always

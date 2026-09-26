@@ -52,6 +52,19 @@ governance_aliases:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Alias: null
+      AliasNamespace: null
+      Service: null
+      Namespace: null
+      Comment: null
+      CreateTime: null
+      ModifyTime: null
+      Id: null
+      Editable: null
+      Metadatas:
+        - Key: null
+          Value: null
 total_count:
   description: Number of governance aliases reported by the API.
   returned: always

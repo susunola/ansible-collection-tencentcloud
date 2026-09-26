@@ -61,6 +61,17 @@ connections:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Status: null
+      ModTime: null
+      Enable: null
+      Description: null
+      AddTime: null
+      ConnectionId: null
+      EventBusId: null
+      ConnectionDescription: null
+      ConnectionName: null
+      Type: null
 total_count:
   description: Number of connections reported by the API.
   returned: always

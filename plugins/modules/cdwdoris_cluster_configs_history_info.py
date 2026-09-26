@@ -68,6 +68,14 @@ cluster_configs_histories:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ComputeGroupId: null
+      FileName: null
+      NewConfValue: null
+      OldConfValue: null
+      Remark: null
+      ModifyTime: null
+      UserUin: null
 total_count:
   description: Number of cluster configs histories reported by the API.
   returned: always

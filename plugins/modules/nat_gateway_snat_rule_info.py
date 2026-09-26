@@ -58,6 +58,16 @@ snat_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      ResourceType: null
+      PrivateIpAddress: null
+      PublicIpAddresses: null
+      Description: null
+      NatGatewaySnatId: null
+      NatGatewayId: null
+      VpcId: null
+      CreatedTime: null
 total_count:
   description: Number of SNAT rules reported by the API.
   returned: always

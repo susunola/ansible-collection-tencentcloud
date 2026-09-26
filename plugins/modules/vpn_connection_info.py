@@ -65,6 +65,37 @@ vpn_connections:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VpnConnectionId: null
+      VpnConnectionName: null
+      VpcId: null
+      VpnGatewayId: null
+      CustomerGatewayId: null
+      PreShareKey: null
+      VpnProto: null
+      EncryptProto: null
+      RouteType: null
+      CreatedTime: null
+      State: null
+      NetStatus: null
+      SecurityPolicyDatabaseSet:
+        - LocalCidrBlock: null
+          RemoteCidrBlock: null
+      IKEOptionsSpecification: null
+      IPSECOptionsSpecification: null
+      EnableHealthCheck: null
+      HealthCheckLocalIp: null
+      HealthCheckRemoteIp: null
+      HealthCheckStatus: null
+      DpdEnable: null
+      DpdTimeout: null
+      DpdAction: null
+      TagSet:
+        - Key: null
+          Value: null
+      NegotiationType: null
+      BgpConfig: null
+      HealthCheckConfig: null
 total_count:
   description: Number of VPN connections reported by the API.
   returned: always

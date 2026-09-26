@@ -65,6 +65,27 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      ClusterStatus: null
+      ClusterName: null
+      Placement: null
+      CreateTime: null
+      SchedulerType: null
+      SchedulerVersion: null
+      ComputeNodeCount: null
+      ComputeNodeSet:
+        - NodeId: null
+      ManagerNodeCount: null
+      ManagerNodeSet:
+        - NodeId: null
+      LoginNodeSet:
+        - NodeId: null
+      LoginNodeCount: null
+      AutoScalingType: null
+      VpcId: null
+      ClusterType: null
+      DeletionProtection: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

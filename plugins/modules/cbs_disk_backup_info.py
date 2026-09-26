@@ -71,6 +71,16 @@ disk_backups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DiskBackupId: null
+      DiskId: null
+      DiskSize: null
+      DiskUsage: null
+      DiskBackupName: null
+      DiskBackupState: null
+      Percent: null
+      CreateTime: null
+      Encrypt: null
 total_count:
   description: Number of disk backups reported by the API.
   returned: always

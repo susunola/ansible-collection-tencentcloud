@@ -58,6 +58,22 @@ device_certificates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClientId: null
+      DeviceCertificate: null
+      DeviceCertificateSn: null
+      DeviceCertificateCn: null
+      CaSn: null
+      Format: null
+      Status: null
+      OrganizationalUnit: null
+      LastActivationTime: null
+      LastInactivationTime: null
+      CreatedTime: null
+      UpdateTime: null
+      CertificateSource: null
+      NotAfterTime: null
+      NotBeforeTime: null
 total_count:
   description: Number of device certificates reported by the API.
   returned: always

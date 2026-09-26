@@ -53,6 +53,46 @@ standard_engine_resource_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EngineResourceGroupId: null
+      EngineResourceGroupName: null
+      Creator: null
+      ResourceGroupState: null
+      AutoLaunch: null
+      AutoPause: null
+      AutoPauseTime: null
+      DriverCuSpec: null
+      ExecutorCuSpec: null
+      MaxConcurrency: null
+      MinExecutorNums: null
+      MaxExecutorNums: null
+      CreateTime: null
+      UpdateTime: null
+      NeedRestart: null
+      DataEngineName: null
+      DataEngineId: null
+      DataEngineState: null
+      AccessPointId: null
+      AccessPointName: null
+      AccessPointState: null
+      ResourceGroupType: null
+      EngineNetworkId: null
+      NetworkConfigNames: null
+      FrameType: null
+      ImageType: null
+      ImageName: null
+      ImageVersion: null
+      Size: null
+      IsDefault: null
+      ResourceGroupScene: null
+      PythonCuSpec: null
+      SparkSpecMode: null
+      SparkSize: null
+      SparkMinSize: null
+      PublicDomain: null
+      RegistryId: null
+      RegionName: null
+      LaunchTime: null
 total_count:
   description: Number of standard engine resource groups reported by the API.
   returned: always

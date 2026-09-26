@@ -61,6 +61,13 @@ line_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DomainId: null
+      Id: null
+      Name: null
+      Lines: null
+      CreatedOn: null
+      UpdatedOn: null
 total_count:
   description: Number of line groups returned (the API reports no total count).
   returned: always

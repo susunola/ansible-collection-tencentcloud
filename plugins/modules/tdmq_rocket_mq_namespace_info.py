@@ -49,6 +49,14 @@ rocket_mq_namespaces:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NamespaceId: null
+      Ttl: null
+      RetentionTime: null
+      Remark: null
+      PublicEndpoint: null
+      VpcEndpoint: null
+      InternalEndpoint: null
 total_count:
   description: Number of rocket mq namespaces reported by the API.
   returned: always

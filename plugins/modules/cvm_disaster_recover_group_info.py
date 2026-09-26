@@ -66,6 +66,20 @@ disaster_recover_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DisasterRecoverGroupId: null
+      Name: null
+      Type: null
+      CvmQuotaTotal: null
+      CurrentNum: null
+      InstanceIds: null
+      CreateTime: null
+      Affinity: null
+      Strategy: null
+      PartitionCount: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of placement groups reported by the API.
   returned: always

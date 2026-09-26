@@ -97,6 +97,10 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32i. Generated modules document their fields (0.12.0): the generator emits
+    the response model's structure as a `sample` (API field names, empty
+    values), verified by `--check` against the installed SDK; the RETURN
+    sample census falls from 563 to 62. **Done**
 32h. Module options vs the module (0.12.0):
     `check_module_options.py` fails when a module declares an option no code
     path reads (an imported helper counts as a read). It found

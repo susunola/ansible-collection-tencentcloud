@@ -57,6 +57,25 @@ flow_logs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VpcId: null
+      FlowLogId: null
+      FlowLogName: null
+      ResourceType: null
+      ResourceId: null
+      TrafficType: null
+      CloudLogId: null
+      CloudLogState: null
+      FlowLogDescription: null
+      CreatedTime: null
+      TagSet:
+        - Key: null
+          Value: null
+      Enable: null
+      StorageType: null
+      FlowLogStorage: null
+      CloudLogRegion: null
+      Period: null
 total_count:
   description: Number of flow logs reported by the API.
   returned: always

@@ -57,6 +57,16 @@ grafana_notification_channels:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ChannelId: null
+      ChannelName: null
+      Receivers: null
+      CreatedAt: null
+      UpdatedAt: null
+      OrgId: null
+      ExtraOrgIds: null
+      OrgIds: null
+      OrganizationIds: null
 total_count:
   description: Number of Grafana notification channels reported by the API.
   returned: always

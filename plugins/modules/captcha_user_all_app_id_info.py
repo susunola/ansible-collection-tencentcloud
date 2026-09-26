@@ -45,6 +45,11 @@ user_all_app_ids:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CaptchaAppId: null
+      AppName: null
+      TcAppId: null
+      ChannelInfo: null
 total_count:
   description: Number of user all app ids reported by the API.
   returned: always

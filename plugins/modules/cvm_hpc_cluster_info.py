@@ -66,6 +66,21 @@ hpc_clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - HpcClusterId: null
+      Name: null
+      Remark: null
+      CvmQuotaTotal: null
+      Zone: null
+      CurrentNum: null
+      CreateTime: null
+      InstanceIds: null
+      HpcClusterType: null
+      HpcClusterBusinessId: null
+      HpcClusterNetMode: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of HPC clusters reported by the API.
   returned: always

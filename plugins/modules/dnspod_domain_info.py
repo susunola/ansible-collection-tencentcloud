@@ -61,6 +61,32 @@ domains:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DomainId: null
+      Name: null
+      Status: null
+      TTL: null
+      CNAMESpeedup: null
+      DNSStatus: null
+      Grade: null
+      GroupId: null
+      SearchEnginePush: null
+      Remark: null
+      Punycode: null
+      EffectiveDNS: null
+      GradeLevel: null
+      GradeTitle: null
+      IsVip: null
+      VipStartAt: null
+      VipEndAt: null
+      VipAutoRenew: null
+      RecordCount: null
+      CreatedOn: null
+      UpdatedOn: null
+      Owner: null
+      TagList:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of domains returned (the API reports no total count).
   returned: always

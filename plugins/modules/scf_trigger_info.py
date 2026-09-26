@@ -64,6 +64,21 @@ triggers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Enable: null
+      Qualifier: null
+      TriggerName: null
+      Type: null
+      TriggerDesc: null
+      AvailableStatus: null
+      CustomArgument: null
+      AddTime: null
+      ModTime: null
+      ResourceId: null
+      BindStatus: null
+      TriggerAttribute: null
+      Description: null
+      BoundResources: null
 total_count:
   description: Number of triggers reported by the API.
   returned: always

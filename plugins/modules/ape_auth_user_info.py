@@ -49,6 +49,12 @@ auth_users:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Code: null
+      Type: null
+      CreateTime: null
 total_count:
   description: Number of auth users reported by the API.
   returned: always

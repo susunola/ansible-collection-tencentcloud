@@ -68,6 +68,21 @@ element_profile_pages:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BuildingId: null
+      ElementId: null
+      EntityType: null
+      ElementName: null
+      Level: null
+      BottomHeight: null
+      Sort: null
+      SpaceCode: null
+      SpaceTypeCode: null
+      SpaceTypeName: null
+      ParentElementId: null
+      SpacePoiId: null
+      ElementDesc: null
+      IsDelete: null
 total_count:
   description: Number of element profile pages reported by the API.
   returned: always

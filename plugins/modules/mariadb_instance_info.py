@@ -61,6 +61,62 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      AppId: null
+      ProjectId: null
+      Region: null
+      Zone: null
+      VpcId: null
+      SubnetId: null
+      Status: null
+      Vip: null
+      Vport: null
+      WanDomain: null
+      WanVip: null
+      WanPort: null
+      CreateTime: null
+      UpdateTime: null
+      AutoRenewFlag: null
+      PeriodEndTime: null
+      Uin: null
+      TdsqlVersion: null
+      Memory: null
+      Storage: null
+      UniqueVpcId: null
+      UniqueSubnetId: null
+      OriginSerialId: null
+      NodeCount: null
+      IsTmp: null
+      ExclusterId: null
+      Id: null
+      Pid: null
+      Qps: null
+      Paymode: null
+      Locker: null
+      StatusDesc: null
+      WanStatus: null
+      IsAuditSupported: null
+      Machine: null
+      IsEncryptSupported: null
+      Cpu: null
+      Ipv6Flag: null
+      Vipv6: null
+      WanVipv6: null
+      WanPortIpv6: null
+      WanStatusIpv6: null
+      DbEngine: null
+      DbVersion: null
+      DcnFlag: null
+      DcnStatus: null
+      DcnDstNum: null
+      InstanceType: null
+      ResourceTags:
+        - TagKey: null
+          TagValue: null
+      DbVersionId: null
+      ProtectedProperty: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

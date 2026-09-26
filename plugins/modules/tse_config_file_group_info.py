@@ -52,6 +52,27 @@ config_file_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Namespace: null
+      Comment: null
+      CreateTime: null
+      CreateBy: null
+      ModifyTime: null
+      ModifyBy: null
+      FileCount: null
+      UserIds: null
+      GroupIds: null
+      RemoveUserIds: null
+      RemoveGroupIds: null
+      Editable: null
+      Owner: null
+      Department: null
+      Business: null
+      ConfigFileGroupTags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of config file groups reported by the API.
   returned: always

@@ -59,6 +59,48 @@ machines:
   returned: always
   type: list
   elements: dict
+  sample:
+    - MachineName: null
+      MachineOs: null
+      MachineStatus: null
+      AgentStatus: null
+      InstanceStatus: null
+      Uuid: null
+      Quuid: null
+      VulNum: null
+      MachineIp: null
+      IsProVersion: null
+      MachineWanIp: null
+      PayMode: null
+      MalwareNum: null
+      Tag:
+        - Rid: null
+          Name: null
+          TagId: null
+      BaselineNum: null
+      CyberAttackNum: null
+      SecurityStatus: null
+      InvasionNum: null
+      RegionInfo: null
+      InstanceState: null
+      LicenseStatus: null
+      ProjectId: null
+      HasAssetScan: null
+      MachineType: null
+      KernelVersion: null
+      ProtectType: null
+      CloudTags:
+        - TagKey: null
+          TagValue: null
+      IsAddedOnTheFifteen: null
+      IpList: null
+      VpcId: null
+      MachineExtraInfo: null
+      InstanceId: null
+      Remark: null
+      AgentVersion: null
+      AppId: null
+      CSIPProtectType: null
 total_count:
   description: Number of machines reported by the API.
   returned: always

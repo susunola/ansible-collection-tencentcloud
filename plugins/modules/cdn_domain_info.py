@@ -62,6 +62,22 @@ domains:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      AppId: null
+      Domain: null
+      Cname: null
+      Status: null
+      ProjectId: null
+      ServiceType: null
+      CreateTime: null
+      UpdateTime: null
+      Origin: null
+      Disable: null
+      Area: null
+      Readonly: null
+      Product: null
+      ParentHost: null
 total_count:
   description: Number of domains reported by the API.
   returned: always

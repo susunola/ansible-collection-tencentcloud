@@ -73,6 +73,80 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      ClusterId: null
+      Ftitle: null
+      ClusterName: null
+      RegionId: null
+      ZoneId: null
+      AppId: null
+      Uin: null
+      ProjectId: null
+      VpcId: null
+      SubnetId: null
+      Status: null
+      AddTime: null
+      RunTime: null
+      Config: null
+      MasterIp: null
+      EmrVersion: null
+      ChargeType: null
+      TradeVersion: null
+      ResourceOrderId: null
+      IsTradeCluster: null
+      AlarmInfo: null
+      IsWoodpeckerCluster: null
+      MetaDb: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      HiveMetaDb: null
+      ServiceClass: null
+      AliasInfo: null
+      ProductId: null
+      Zone: null
+      SceneName: null
+      SceneServiceClass: null
+      SceneEmrVersion: null
+      DisplayName: null
+      VpcName: null
+      SubnetName: null
+      ClusterExternalServiceInfo:
+        - DependType: null
+          Service: null
+          ClusterId: null
+          ClusterStatus: null
+      UniqVpcId: null
+      UniqSubnetId: null
+      TopologyInfoList:
+        - ZoneId: null
+          Zone: null
+          SubnetInfoList:
+            - SubnetName: null
+              SubnetId: null
+          NodeInfoList:
+            - NodeType: null
+              NodeSize: null
+      IsMultiZoneCluster: null
+      IsCvmReplace: null
+      ClusterTitle: null
+      ConfigDetail: null
+      BindFileSystemNum: null
+      ClusterRelationInfoList:
+        - ClusterType: null
+          ClusterIdList: null
+      RedisId: null
+      IsIOHungSelfRecovery: null
+      MetaDBGroupInfo:
+        - MetaDataJdbcUrl: null
+          MetaDataUser: null
+          MetaDataPass: null
+          MetaType: null
+          UnifyMetaInstanceId: null
+          Components: null
+          DefaultMetaVersion: null
+          LinkInstanceId: null
 total_count:
   description: Number of clusters returned (the API reports no total count).
   returned: always

@@ -45,6 +45,19 @@ user_stores:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TenantId: null
+      UserStoreLogo: null
+      UserStoreDesc: null
+      UserStoreName: null
+      UserNum: null
+      UserStoreId: null
+      AppNum: null
+      LastStatus: null
+      DefaultStatus: null
+      CreateDate: null
+      LastStatusTime: null
+      UserStoreProtocolHost: null
 total_count:
   description: Number of user stores returned (the API reports no total count).
   returned: always

@@ -51,6 +51,23 @@ authorization_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      InstanceId: null
+      PolicyName: null
+      Version: null
+      Priority: null
+      Effect: null
+      Actions: null
+      Resources: null
+      ClientId: null
+      Username: null
+      Ip: null
+      Qos: null
+      Retain: null
+      Remark: null
+      CreatedTime: null
+      UpdateTime: null
 total_count:
   description: Number of authorization policies returned (the API reports no total count).
   returned: always

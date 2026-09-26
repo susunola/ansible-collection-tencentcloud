@@ -44,6 +44,12 @@ over_summary:
   description: Matching TDID over summary.
   returned: always
   type: dict
+  sample:
+    AppCounter: null
+    UserCounter: null
+    AppCnt: null
+    DeployCnt: null
+    ChainCnt: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

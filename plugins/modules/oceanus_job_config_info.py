@@ -62,6 +62,63 @@ job_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - JobId: null
+      EntrypointClass: null
+      ProgramArgs: null
+      Remark: null
+      CreateTime: null
+      Version: null
+      DefaultParallelism: null
+      Properties:
+        - Key: null
+          Value: null
+      ResourceRefDetails:
+        - ResourceId: null
+          Version: null
+          Name: null
+          Type: null
+          SystemProvide: null
+          Connector: null
+          ConnectorVersion: null
+      CreatorUin: null
+      UpdateTime: null
+      COSBucket: null
+      LogCollect: null
+      MaxParallelism: null
+      JobManagerSpec: null
+      TaskManagerSpec: null
+      ClsLogsetId: null
+      ClsTopicId: null
+      PythonVersion: null
+      AutoRecover: null
+      LogLevel: null
+      ClazzLevels:
+        - Clazz: null
+          Level: null
+      ExpertModeOn: null
+      ExpertModeConfiguration: null
+      TraceModeOn: null
+      TraceModeConfiguration: null
+      CheckpointRetainedNum: null
+      JobGraph: null
+      EsServerlessIndex: null
+      EsServerlessSpace: null
+      IndexName: null
+      WorkspaceName: null
+      FlinkVersion: null
+      JdkVersion: null
+      JobManagerCpu: null
+      JobManagerMem: null
+      TaskManagerCpu: null
+      TaskManagerMem: null
+      JobConfigItem: null
+      CheckpointTimeoutSecond: null
+      CheckpointIntervalSecond: null
+      VariableReplaceMode: null
+      StateCOSBucket: null
+      LogCOSBucket: null
+      IsLocked: null
 total_count:
   description: Number of job config versions reported by the API.
   returned: always

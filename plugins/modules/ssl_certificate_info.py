@@ -61,6 +61,72 @@ certificates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - OwnerUin: null
+      ProjectId: null
+      From: null
+      PackageType: null
+      CertificateType: null
+      ProductZhName: null
+      Domain: null
+      Alias: null
+      Status: null
+      CertificateExtra: null
+      VulnerabilityStatus: null
+      StatusMsg: null
+      VerifyType: null
+      CertBeginTime: null
+      CertEndTime: null
+      ValidityPeriod: null
+      InsertTime: null
+      CertificateId: null
+      SubjectAltName: null
+      PackageTypeName: null
+      StatusName: null
+      IsVip: null
+      IsDv: null
+      IsWildcard: null
+      IsVulnerability: null
+      RenewAble: null
+      ProjectInfo: null
+      BoundResource: null
+      Deployable: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      IsIgnore: null
+      IsSM: null
+      EncryptAlgorithm: null
+      CAEncryptAlgorithms: null
+      CAEndTimes: null
+      CACommonNames: null
+      PreAuditInfo: null
+      AutoRenewFlag: null
+      HostingStatus: null
+      HostingCompleteTime: null
+      HostingRenewCertId: null
+      HasRenewOrder: null
+      ReplaceOriCertIsDelete: null
+      IsExpiring: null
+      DVAuthDeadline: null
+      ValidationPassedTime: null
+      CertSANs: null
+      AwaitingValidationMsg: null
+      AllowDownload: null
+      IsDNSPODResolve: null
+      IsPackage: null
+      KeyPasswordCustomFlag: null
+      SupportDownloadType: null
+      CertRevokedTime: null
+      HostingResourceTypes: null
+      HostingConfig: null
+      IsHostingUploadRenewCert: null
+      ServiceId: null
+      ServiceStatus: null
+      CertServiceBeginTime: null
+      CertServiceEndTime: null
+      CertServiceShareEnabled: null
+      CertServiceValidCertificateCount: null
 total_count:
   description: Number of certificates reported by the API.
   returned: always

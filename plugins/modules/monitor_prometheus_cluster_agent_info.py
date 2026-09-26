@@ -57,6 +57,21 @@ prometheus_cluster_agents:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterType: null
+      ClusterId: null
+      Status: null
+      ClusterName: null
+      ExternalLabels:
+        - Name: null
+          Value: null
+      Region: null
+      VpcId: null
+      FailedReason: null
+      Name: null
+      EnableExternal: null
+      DesiredAgentNum: null
+      ReadyAgentNum: null
 total_count:
   description: Number of Prometheus cluster agents reported by the API.
   returned: always

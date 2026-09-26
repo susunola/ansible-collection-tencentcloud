@@ -59,6 +59,66 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      ResourceIds: null
+      Region: null
+      PayMode: null
+      RenewFlag: null
+      Mode: null
+      Level: null
+      ValidTime: null
+      BeginTime: null
+      DomainCount: null
+      SubDomainLimit: null
+      MainDomainCount: null
+      MainDomainLimit: null
+      MaxQPS: null
+      QPS: null
+      DomainPkg: null
+      AppId: null
+      Edition: null
+      FraudPkg: null
+      BotPkg: null
+      BotQPS: null
+      ElasticBilling: null
+      AttackLogPost: null
+      MaxBandwidth: null
+      APISecurity: null
+      QpsStandard: null
+      BandwidthStandard: null
+      Status: null
+      SandboxQps: null
+      IsAPISecurityTrial: null
+      MajorEventsPkg: null
+      HybridPkg: null
+      ApiPkg: null
+      MiniPkg: null
+      MiniQpsStandard: null
+      MiniMaxQPS: null
+      LastQpsExceedTime: null
+      MiniExtendPkg: null
+      BillingItem: null
+      FreeDelayFlag: null
+      Last3MaxQPS: null
+      Last3MaxBandwidth: null
+      MajorEventsProPkg: null
+      BasicFlag: null
+      NetworkConfig: null
+      RCEPkg: null
+      ExceedPolicy: null
+      LLMPkg: null
+      ElasticResourceId: null
+      LLMMonPkg: null
+      RegionId: null
+      BotSecurityPkg: null
+      BotMonitorPkg: null
+      DedicatedIPPkg: null
+      DedicatedIPCount: null
+      TagInfos:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of WAF instances reported by the API.
   returned: always

@@ -80,6 +80,12 @@ blocks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BlockNum: null
+      DataHash: null
+      BlockId: null
+      PreHash: null
+      TxCount: null
 total_count:
   description: Number of blocks reported by the API.
   returned: always

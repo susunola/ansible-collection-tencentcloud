@@ -61,6 +61,34 @@ datahub_connections:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      ResourceName: null
+      Description: null
+      Type: null
+      Status: null
+      CreateTime: null
+      ErrorMessage: null
+      DatahubTaskCount: null
+      CurrentStep: null
+      TaskProgress: null
+      StepList: null
+      DtsConnectParam: null
+      MongoDBConnectParam: null
+      EsConnectParam: null
+      ClickHouseConnectParam: null
+      MySQLConnectParam: null
+      PostgreSQLConnectParam: null
+      MariaDBConnectParam: null
+      SQLServerConnectParam: null
+      CtsdbConnectParam: null
+      DorisConnectParam: null
+      KafkaConnectParam: null
+      MqttConnectParam: null
+      IcebergConnectParam: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of datahub connections reported by the API.
   returned: always

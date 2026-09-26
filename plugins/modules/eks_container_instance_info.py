@@ -60,6 +60,76 @@ container_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AutoCreatedEipId: null
+      CamRoleName: null
+      Containers:
+        - Image: null
+          Name: null
+          Args: null
+          Commands: null
+          Cpu: null
+          CurrentState: null
+          EnvironmentVars:
+            - Name: null
+              Value: null
+          GpuLimit: null
+          LivenessProbe: null
+          Memory: null
+          ReadinessProbe: null
+          RestartCount: null
+          SecurityContext: null
+          VolumeMounts:
+            - MountPath: null
+              Name: null
+              MountPropagation: null
+              ReadOnly: null
+              SubPath: null
+              SubPathExpr: null
+          WorkingDir: null
+      Cpu: null
+      CpuType: null
+      CreationTime: null
+      EipAddress: null
+      EksCiId: null
+      EksCiName: null
+      EksCiVolume: null
+      GpuCount: null
+      GpuType: null
+      InitContainers:
+        - Image: null
+          Name: null
+          Args: null
+          Commands: null
+          Cpu: null
+          CurrentState: null
+          EnvironmentVars:
+            - Name: null
+              Value: null
+          GpuLimit: null
+          LivenessProbe: null
+          Memory: null
+          ReadinessProbe: null
+          RestartCount: null
+          SecurityContext: null
+          VolumeMounts:
+            - MountPath: null
+              Name: null
+              MountPropagation: null
+              ReadOnly: null
+              SubPath: null
+              SubPathExpr: null
+          WorkingDir: null
+      Memory: null
+      PersistStatus: null
+      PrivateIp: null
+      RestartPolicy: null
+      SecurityContext: null
+      SecurityGroupIds: null
+      Status: null
+      SubnetId: null
+      SucceededTime: null
+      VpcId: null
 total_count:
   description: Number of container instances reported by the API.
   returned: always

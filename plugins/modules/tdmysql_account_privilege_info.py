@@ -68,6 +68,8 @@ user_privilege:
   description: Matching TDMYSQL user privilege.
   returned: always
   type: dict
+  sample:
+    Privileges: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

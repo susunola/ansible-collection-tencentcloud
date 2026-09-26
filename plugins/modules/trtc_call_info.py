@@ -73,6 +73,15 @@ calls:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RoomStr: null
+      UserId: null
+      JoinTs: null
+      LeaveTs: null
+      DeviceType: null
+      SdkVersion: null
+      ClientIp: null
+      Finished: null
 total_count:
   description: Number of calls reported by the API.
   returned: always

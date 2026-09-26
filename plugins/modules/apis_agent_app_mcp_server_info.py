@@ -58,6 +58,17 @@ agent_app_mcp_servers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      NeedAuth: null
+      AgentCredentialID: null
+      AgentCredentialVO: null
+      McpServerVO: null
+      RelateTime: null
+      SSEResourceIdentifier: null
+      StreamableResourceIdentifier: null
+      AgentAppID: null
+      McpServerID: null
 total_count:
   description: Number of agent app mcp servers reported by the API.
   returned: always

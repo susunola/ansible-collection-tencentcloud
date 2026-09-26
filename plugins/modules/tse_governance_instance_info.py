@@ -52,6 +52,27 @@ governance_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Service: null
+      Namespace: null
+      Host: null
+      Port: null
+      Protocol: null
+      Version: null
+      Weight: null
+      EnableHealthCheck: null
+      Healthy: null
+      Isolate: null
+      CreateTime: null
+      ModifyTime: null
+      Metadatas:
+        - Key: null
+          Value: null
+      Ttl: null
+      InstanceVersion: null
+      HealthStatus: null
+      Comment: null
 total_count:
   description: Number of governance instances reported by the API.
   returned: always

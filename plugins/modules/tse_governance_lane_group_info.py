@@ -52,6 +52,46 @@ governance_lane_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      ID: null
+      TrafficEntries:
+        - EntryType: null
+          TSEGatewaySelector: null
+          ServiceGatewaySelector: null
+          ServiceSelector: null
+      Destinations:
+        - Namespace: null
+          Service: null
+          Labels:
+            - LabelKey: null
+              LabelValue: null
+              LabelType: null
+              LabelValueType: null
+      Description: null
+      Rules:
+        - ID: null
+          Name: null
+          LaneGroup: null
+          Enable: null
+          TrafficLabels:
+            - Type: null
+              Key: null
+              Value: null
+          TrafficMatchMode: null
+          LaneMatchMode: null
+          TrafficGray: null
+          Description: null
+          LaneLabelValue: null
+          CreateTime: null
+          EnableTime: null
+          ModifyTime: null
+          Priority: null
+          Revision: null
+      Revision: null
+      CreateTime: null
+      ModifyTime: null
+      Consistency: null
 total_count:
   description: Number of governance lane groups reported by the API.
   returned: always

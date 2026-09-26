@@ -49,6 +49,12 @@ auto_scaler_resource_strategy_binding_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      NodeConfig: null
+      BindTime: null
+      GroupName: null
+      Status: null
 total_count:
   description: Number of auto scaler resource strategy binding groups reported by the API.
   returned: always

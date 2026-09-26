@@ -61,6 +61,12 @@ entities:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Uin: null
+      RelatedType: null
+      AttachmentTime: null
 total_count:
   description: Number of attached entities reported by the API.
   returned: always

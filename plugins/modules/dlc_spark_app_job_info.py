@@ -53,6 +53,49 @@ spark_app_jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - JobId: null
+      JobName: null
+      JobType: null
+      DataEngine: null
+      Eni: null
+      IsLocal: null
+      JobFile: null
+      RoleArn: null
+      MainClass: null
+      CmdArgs: null
+      JobConf: null
+      IsLocalJars: null
+      JobJars: null
+      IsLocalFiles: null
+      JobFiles: null
+      JobDriverSize: null
+      JobExecutorSize: null
+      JobExecutorNums: null
+      JobMaxAttempts: null
+      JobCreator: null
+      JobCreateTime: null
+      JobUpdateTime: null
+      CurrentTaskId: null
+      JobStatus: null
+      StreamingStat: null
+      DataSource: null
+      IsLocalPythonFiles: null
+      AppPythonFiles: null
+      IsLocalArchives: null
+      JobArchives: null
+      SparkImage: null
+      JobPythonFiles: null
+      TaskNum: null
+      DataEngineStatus: null
+      JobExecutorMaxNumbers: null
+      SparkImageVersion: null
+      SessionId: null
+      DataEngineClusterType: null
+      DataEngineImageVersion: null
+      IsInherit: null
+      IsSessionStarted: null
+      EngineTypeDetail: null
 total_count:
   description: Number of spark app jobs reported by the API.
   returned: always

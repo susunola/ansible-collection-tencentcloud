@@ -61,6 +61,15 @@ targets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EniId: null
+      Port: null
+      TargetId: null
+      TargetIp: null
+      TargetName: null
+      TargetStatus: null
+      TargetType: null
+      Weight: null
 total_count:
   description: Number of targets reported by the API.
   returned: always

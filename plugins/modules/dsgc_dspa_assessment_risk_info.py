@@ -63,6 +63,29 @@ dspa_assessment_risks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RiskId: null
+      RiskDescription: null
+      TemplateId: null
+      TemplateName: null
+      ControlItemId: null
+      ControlItemName: null
+      ControlItemDesc: null
+      RiskLevel: null
+      RiskMitigation: null
+      Status: null
+      CreatedTime: null
+      RiskOwner: null
+      RelatedAsset: null
+      DataSourceId: null
+      DataSourceName: null
+      AssetName: null
+      SecurityProduct:
+        - ProductName: null
+          ReferUrl: null
+      RiskType: null
+      RiskSide: null
+      DataSourceType: null
 total_count:
   description: Number of dspa assessment risks reported by the API.
   returned: always

@@ -56,6 +56,35 @@ private_zones:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ZoneId: null
+      OwnerUin: null
+      Domain: null
+      CreatedOn: null
+      UpdatedOn: null
+      RecordCount: null
+      Remark: null
+      VpcSet:
+        - UniqVpcId: null
+          Region: null
+      Status: null
+      DnsForwardStatus: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      AccountVpcSet:
+        - Uin: null
+          UniqVpcId: null
+          Region: null
+      IsCustomTld: null
+      CnameSpeedupStatus: null
+      ForwardRuleName: null
+      ForwardRuleType: null
+      ForwardAddress: null
+      EndPointName: null
+      DeletedVpcSet:
+        - UniqVpcId: null
+          Region: null
 total_count:
   description: Number of private zones reported by the API.
   returned: always

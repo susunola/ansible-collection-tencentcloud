@@ -61,6 +61,51 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      Name: null
+      AppId: null
+      Region: null
+      Zone: null
+      Product: null
+      Networks:
+        - VpcId: null
+          SubnetId: null
+          Vip: null
+          Port: null
+          PreserveDuration: null
+          ExpireTime: null
+          IsSSL: null
+      ShardNum: null
+      ReplicaNum: null
+      Cpu: null
+      Memory: null
+      Disk: null
+      HealthScore: null
+      Warning: null
+      Project: null
+      ResourceTags:
+        - TagKey: null
+          TagValue: null
+      CreatedAt: null
+      Status: null
+      EngineName: null
+      EngineVersion: null
+      ApiVersion: null
+      PayMode: null
+      Extend: null
+      ExpiredAt: null
+      IsNoExpired: null
+      ProductType: null
+      InstanceType: null
+      NodeType: null
+      WanAddress: null
+      IsolateAt: null
+      AutoRenew: null
+      TaskStatus: null
+      SecurityGroupIds: null
+      UpgradeVersion: null
+      IsInternal: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

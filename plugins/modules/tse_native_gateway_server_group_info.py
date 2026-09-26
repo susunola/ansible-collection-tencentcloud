@@ -53,6 +53,23 @@ native_gateway_server_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      Name: null
+      Description: null
+      NodeConfig: null
+      Status: null
+      CreateTime: null
+      IsFirstGroup: null
+      BindingStrategy: null
+      GatewayId: null
+      InternetMaxBandwidthOut: null
+      ModifyTime: null
+      SubnetIds: null
+      DefaultWeight: null
+      ElasticNumber: null
+      SupportTOA: null
+      SupportIPV6: null
 total_count:
   description: Number of native gateway server groups reported by the API.
   returned: always

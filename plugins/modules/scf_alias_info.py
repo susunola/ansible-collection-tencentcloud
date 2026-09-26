@@ -63,6 +63,13 @@ aliases:
   returned: always
   type: list
   elements: dict
+  sample:
+    - FunctionVersion: null
+      Name: null
+      RoutingConfig: null
+      Description: null
+      AddTime: null
+      ModTime: null
 total_count:
   description: Number of aliases reported by the API.
   returned: always

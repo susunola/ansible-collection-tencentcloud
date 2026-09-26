@@ -53,6 +53,14 @@ index:
   description: The index configuration of the topic.
   returned: always
   type: dict
+  sample:
+    TopicId: null
+    Status: null
+    Rule: null
+    ModifyTime: null
+    IncludeInternalFields: null
+    MetadataFlag: null
+    CoverageField: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

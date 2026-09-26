@@ -58,6 +58,34 @@ applications:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ApplicationId: null
+      ProjectId: null
+      Name: null
+      Description: null
+      Type: null
+      Entrypoint: null
+      CreateTime: null
+      UpdateTime: null
+      Creator: null
+      CreatorId: null
+      VersionCount: null
+      Versions:
+        - Type: null
+          ApplicationVersionId: null
+          Name: null
+          Description: null
+          Entrypoint: null
+          CreateTime: null
+          CreatorName: null
+          CreatorId: null
+          GitInfo: null
+          GitSource: null
+          CosSource: null
+      GitSource: null
+      RunConstraints: null
+      CosSource: null
+      SortOrder: null
 total_count:
   description: Number of applications reported by the API.
   returned: always

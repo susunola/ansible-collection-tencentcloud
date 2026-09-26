@@ -58,6 +58,33 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ModTimeStamp: null
+      IsolateTimeStamp: null
+      AutoRenewFlag: null
+      SetId: null
+      Status: null
+      CmemId: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      InstanceId: null
+      RegionId: null
+      InstanceDesc: null
+      Expire: null
+      SubnetId: null
+      ProjectId: null
+      AddTimeStamp: null
+      ZoneId: null
+      PayMode: null
+      VpcId: null
+      InstanceName: null
+      DeadlineTimeStamp: null
+      UniqVpcId: null
+      Vip: null
+      UniqSubnetId: null
+      AppId: null
+      Vport: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

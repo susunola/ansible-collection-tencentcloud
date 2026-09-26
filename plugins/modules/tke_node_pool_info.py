@@ -57,6 +57,50 @@ node_pools:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NodePoolId: null
+      Name: null
+      ClusterInstanceId: null
+      LifeState: null
+      LaunchConfigurationId: null
+      AutoscalingGroupId: null
+      Labels:
+        - Name: null
+          Value: null
+      Taints:
+        - Key: null
+          Value: null
+          Effect: null
+      Annotations:
+        - Name: null
+          Value: null
+      NodeCountSummary: null
+      AutoscalingGroupStatus: null
+      MaxNodesNum: null
+      MinNodesNum: null
+      DesiredNodesNum: null
+      RuntimeConfig: null
+      NodePoolOs: null
+      OsCustomizeType: null
+      ImageId: null
+      DesiredPodNum: null
+      UserScript: null
+      Tags:
+        - Key: null
+          Value: null
+      DeletionProtection: null
+      ExtraArgs: null
+      GPUArgs: null
+      DockerGraphPath: null
+      DataDisks:
+        - DiskType: null
+          FileSystem: null
+          DiskSize: null
+          AutoFormatAndMount: null
+          MountTarget: null
+          DiskPartition: null
+      Unschedulable: null
+      PreStartUserScript: null
 total_count:
   description: Number of node pools returned (the API reports no pageable total).
   returned: always

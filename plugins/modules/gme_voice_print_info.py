@@ -58,6 +58,15 @@ voice_prints:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VoicePrintId: null
+      AppId: null
+      VoicePrintMetaInfo: null
+      CreateTime: null
+      UpdateTime: null
+      AudioFormat: null
+      AudioName: null
+      ReqTimestamp: null
 total_count:
   description: Number of voice prints reported by the API.
   returned: always

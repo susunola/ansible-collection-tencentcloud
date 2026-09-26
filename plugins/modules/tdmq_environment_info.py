@@ -53,6 +53,22 @@ environments:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvironmentId: null
+      Remark: null
+      MsgTTL: null
+      CreateTime: null
+      UpdateTime: null
+      NamespaceId: null
+      NamespaceName: null
+      TopicNum: null
+      RetentionPolicy: null
+      AutoSubscriptionCreation: null
+      SubscriptionExpirationTime: null
+      SubscriptionExpirationTimeEnable: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of environments reported by the API.
   returned: always

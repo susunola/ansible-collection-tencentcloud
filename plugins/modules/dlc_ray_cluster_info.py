@@ -56,6 +56,36 @@ ray_clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Type: null
+      Name: null
+      ResourcePartitionId: null
+      ResourcePartitionName: null
+      Queue: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
+      SubAccountName: null
+      Status: null
+      StatusMessage: null
+      CreateTime: null
+      GroupId: null
+      GroupName: null
+      ResourceConfig: null
+      ResourceConfigId: null
+      Image: null
+      Catalog: null
+      HistoryUrl: null
+      ImagePullPolicy: null
+      ImagePullType: null
+      AdvancedOptions: null
+      Priority: null
+      StartTime: null
+      StopTime: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of ray clusters reported by the API.
   returned: always

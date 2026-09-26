@@ -54,6 +54,15 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - UserName: null
+      AuthRole:
+        - Mask: null
+          NameSpace: null
+      CreateTime: null
+      UpdateTime: null
+      UserDesc: null
+      ConsolePassUpdateTime: null
 total_count:
   description: Number of accounts returned (the API reports no pageable total).
   returned: always

@@ -49,6 +49,24 @@ resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      AppId: null
+      Duration: null
+      FeatureId: null
+      StartTime: null
+      EndTime: null
+      CreatedAt: null
+      UpdatedAt: null
+      IsUse: null
+      Status: null
+      IsolatedTimestamp: null
+      Name: null
+      Type: null
+      Package: null
+      Application: null
+      ResourceId: null
+      AutoRenewFlag: null
 total_count:
   description: Number of resources reported by the API.
   returned: always

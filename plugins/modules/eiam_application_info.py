@@ -58,6 +58,15 @@ applications:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ApplicationId: null
+      DisplayName: null
+      CreatedDate: null
+      LastModifiedDate: null
+      AppStatus: null
+      Icon: null
+      ApplicationType: null
+      ClientId: null
 total_count:
   description: Number of applications reported by the API.
   returned: always

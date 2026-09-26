@@ -51,6 +51,17 @@ workload_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - WorkloadGroupName: null
+      CpuShare: null
+      MemoryLimit: null
+      EnableMemoryOverCommit: null
+      CpuHardLimit: null
+      MinCpuPercent: null
+      MinMemoryPercent: null
+      MaxConcurrencyNum: null
+      MaxQueueSize: null
+      QueueTimeout: null
 total_count:
   description: Number of workload groups returned (the API reports no total count).
   returned: always

@@ -62,6 +62,16 @@ security_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Ciphers: null
+      CreateTime: null
+      SecurityPolicyId: null
+      SecurityPolicyName: null
+      Status: null
+      TLSVersions: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of security policies reported by the API.
   returned: always

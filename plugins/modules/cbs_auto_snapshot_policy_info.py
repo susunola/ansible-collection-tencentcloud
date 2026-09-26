@@ -66,6 +66,31 @@ auto_snapshot_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DiskIdSet: null
+      IsActivated: null
+      AutoSnapshotPolicyState: null
+      IsCopyToRemote: null
+      IsPermanent: null
+      NextTriggerTime: null
+      AutoSnapshotPolicyName: null
+      AutoSnapshotPolicyId: null
+      Policy:
+        - Hour: null
+          DayOfWeek: null
+          DayOfMonth: null
+          IntervalDays: null
+      CreateTime: null
+      RetentionDays: null
+      CopyToAccountUin: null
+      InstanceIdSet: null
+      RetentionMonths: null
+      RetentionAmount: null
+      AdvancedRetentionPolicy: null
+      CopyFromAccountUin: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of policies reported by the API.
   returned: always

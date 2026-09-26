@@ -58,6 +58,21 @@ libraries:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LibraryId: null
+      Name: null
+      Remark: null
+      BucketName: null
+      BucketRegion: null
+      AccessDomain: null
+      CreationTime: null
+      LibraryExtension: null
+      Size: null
+      DirNum: null
+      FileNum: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of libraries reported by the API.
   returned: always

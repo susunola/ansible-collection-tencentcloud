@@ -56,6 +56,50 @@ labs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ExampleId: null
+      CodeArchiveUrl: null
+      Services:
+        - Key: null
+          Value: null
+      LabImage: null
+      LabImagePullPolicy: null
+      LabImagePullType: null
+      Id: null
+      Type: null
+      Name: null
+      Description: null
+      ResourcePartitionId: null
+      ResourcePartitionName: null
+      Queue: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
+      SubAccountName: null
+      Status: null
+      StatusMessage: null
+      CreateTime: null
+      GroupName: null
+      GroupId: null
+      ResourceConfig: null
+      ResourceConfigId: null
+      RuntimeEnv: null
+      Image: null
+      Catalog: null
+      HistoryUrl: null
+      ImagePullPolicy: null
+      ImagePullType: null
+      AdvancedOptions: null
+      Priority: null
+      StartTime: null
+      StopTime: null
+      DeleteTime: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      PersistentWorkDir: null
+      EnableToken: null
+      Token: null
 total_count:
   description: Number of labs reported by the API.
   returned: always

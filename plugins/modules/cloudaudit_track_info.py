@@ -52,6 +52,15 @@ audit_tracks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      ActionType: null
+      ResourceType: null
+      Status: null
+      EventNames: null
+      Storage: null
+      CreateTime: null
+      TrackId: null
 total_count:
   description: Number of audit tracks reported by the API.
   returned: always

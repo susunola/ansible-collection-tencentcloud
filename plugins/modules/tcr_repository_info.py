@@ -69,6 +69,14 @@ repositories:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Namespace: null
+      CreationTime: null
+      Public: null
+      Description: null
+      BriefDescription: null
+      UpdateTime: null
 total_count:
   description: Number of repositories reported by the API.
   returned: always

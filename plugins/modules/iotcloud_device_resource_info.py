@@ -49,6 +49,16 @@ device_resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProductID: null
+      ProductName: null
+      Name: null
+      Md5: null
+      Size: null
+      UpdateTime: null
+      DeviceName: null
+      Status: null
+      Percent: null
 total_count:
   description: Number of device resources reported by the API.
   returned: always

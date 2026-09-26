@@ -49,6 +49,14 @@ native_gateway_service_sources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GatewayID: null
+      SourceID: null
+      SourceName: null
+      SourceType: null
+      SourceInfo: null
+      CreateTime: null
+      ModifyTime: null
 total_count:
   description: Number of native gateway service sources reported by the API.
   returned: always

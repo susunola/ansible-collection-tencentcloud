@@ -70,6 +70,24 @@ serverless_queues:
   returned: always
   type: list
   elements: dict
+  sample:
+    - QueueName: null
+      Remark: null
+      ConsumerDetail: null
+      QueueType: null
+      MessageHeapCount: null
+      MessageRateIn: null
+      MessageRateOut: null
+      CreateTime: null
+      ModifyTime: null
+      Durable: null
+      AutoDelete: null
+      InstanceId: null
+      VirtualHost: null
+      Node: null
+      Policy: null
+      Arguments: null
+      Exclusive: null
 total_count:
   description: Number of serverless queues reported by the API.
   returned: always

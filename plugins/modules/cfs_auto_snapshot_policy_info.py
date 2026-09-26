@@ -57,6 +57,33 @@ auto_snapshot_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AutoSnapshotPolicyId: null
+      PolicyName: null
+      CreationTime: null
+      FileSystemNums: null
+      DayOfWeek: null
+      Hour: null
+      IsActivated: null
+      NextActiveTime: null
+      Status: null
+      AppId: null
+      AliveDays: null
+      RegionName: null
+      FileSystems:
+        - CreationToken: null
+          FileSystemId: null
+          SizeByte: null
+          StorageType: null
+          TotalSnapshotSize: null
+          CreationTime: null
+          ZoneId: null
+      DayOfMonth: null
+      IntervalDays: null
+      CrossRegionsAliveDays: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of policies reported by the API.
   returned: always

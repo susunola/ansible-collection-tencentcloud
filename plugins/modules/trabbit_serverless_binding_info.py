@@ -70,6 +70,19 @@ serverless_bindings:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BindingId: null
+      VirtualHost: null
+      Source: null
+      DestinationType: null
+      Destination: null
+      RoutingKey: null
+      SourceExchangeType: null
+      CreateTime: null
+      ModifyTime: null
+      Arguments:
+        - Key: null
+          Value: null
 total_count:
   description: Number of serverless bindings reported by the API.
   returned: always

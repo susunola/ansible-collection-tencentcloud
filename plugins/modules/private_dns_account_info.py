@@ -56,6 +56,10 @@ private_dns_accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Uin: null
+      Account: null
+      Nickname: null
 total_count:
   description: Number of private dns accounts reported by the API.
   returned: always

@@ -1,0 +1,18 @@
+---
+minor_changes:
+  - >-
+    scripts/generate_info_modules.py - document the fields inside a generated
+    module's result. A generated ``_info`` module names one aggregated return
+    key (``zones``, ``disk_backups``) and said nothing about the fields inside
+    it, which is the one thing its caller needs; 501 modules were in that
+    state. The generator now emits a ``sample`` built from the SDK response
+    model it already introspects for the resource scaffolds: the field names
+    and their nesting are the API's own, and the values are deliberately
+    empty (``null``, ``[]``) because this repository cannot observe an API it
+    cannot call -- inventing plausible values is how a sample turns into
+    misinformation. ``generate_info_modules.py --check`` re-derives the block
+    from the installed SDK, so it cannot drift from the model it documents.
+    The RETURN sample census moves from 563 to 62; what remains is
+    hand-written modules whose unit tests build a private harness, plus two
+    whose payload is a blob that cannot be wrapped under the line pep8
+    allows.

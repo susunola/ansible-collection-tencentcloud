@@ -65,6 +65,52 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterName: null
+      ClusterId: null
+      Region: null
+      IdlType: null
+      NetworkType: null
+      VpcId: null
+      SubnetId: null
+      CreatedTime: null
+      Password: null
+      PasswordStatus: null
+      ApiAccessId: null
+      ApiAccessIp: null
+      ApiAccessPort: null
+      OldPasswordExpireTime: null
+      ApiAccessIpv6: null
+      ClusterType: null
+      ClusterStatus: null
+      ReadCapacityUnit: null
+      WriteCapacityUnit: null
+      DiskVolume: null
+      ServerList:
+        - ServerUid: null
+          MachineType: null
+          MemoryRate: null
+          DiskRate: null
+          ReadNum: null
+          WriteNum: null
+          Version: null
+      ProxyList:
+        - ProxyUid: null
+          MachineType: null
+          ProcessSpeed: null
+          AverageProcessDelay: null
+          SlowProcessSpeed: null
+          Version: null
+      Censorship: null
+      DbaUins: null
+      DataFlowStatus: null
+      KafkaInfo: null
+      TxhBackupExpireDay: null
+      UlogBackupExpireDay: null
+      IsReadOnlyUlogBackupExpireDay: null
+      RestProxyStatus: null
+      ShardTotalNum: null
+      ShardUsedNum: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

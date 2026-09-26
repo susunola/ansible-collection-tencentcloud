@@ -49,6 +49,11 @@ audit_keywords:
   returned: always
   type: list
   elements: dict
+  sample:
+    - KeywordId: null
+      Content: null
+      Label: null
+      CreateTime: null
 total_count:
   description: Number of audit keywords reported by the API.
   returned: always

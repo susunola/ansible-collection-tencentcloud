@@ -61,6 +61,15 @@ serverless_permissions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      User: null
+      VirtualHost: null
+      ConfigRegexp: null
+      WriteRegexp: null
+      ReadRegexp: null
+      CreateTime: null
+      ModifyTime: null
 total_count:
   description: Number of serverless permissions reported by the API.
   returned: always

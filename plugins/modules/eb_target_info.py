@@ -64,6 +64,15 @@ targets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Type: null
+      EventBusId: null
+      TargetId: null
+      TargetDescription: null
+      RuleId: null
+      EnableBatchDelivery: null
+      BatchTimeout: null
+      BatchEventCount: null
 total_count:
   description: Number of targets reported by the API.
   returned: always

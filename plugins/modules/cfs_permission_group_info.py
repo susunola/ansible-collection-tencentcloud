@@ -49,6 +49,12 @@ permission_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PGroupId: null
+      Name: null
+      DescInfo: null
+      CDate: null
+      BindCfsNum: null
 total_count:
   description: Number of permission groups returned (the API reports no pageable total).
   returned: always

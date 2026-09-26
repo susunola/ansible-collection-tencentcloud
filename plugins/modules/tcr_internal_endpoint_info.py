@@ -53,6 +53,11 @@ internal_endpoints:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VpcId: null
+      SubnetId: null
+      Status: null
+      AccessIp: null
 total_count:
   description: Number of connections reported by the API.
   returned: always

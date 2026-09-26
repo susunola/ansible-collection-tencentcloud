@@ -54,6 +54,10 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      UserName: null
+      Perms: null
 total_count:
   description: Number of accounts reported by the API.
   returned: always

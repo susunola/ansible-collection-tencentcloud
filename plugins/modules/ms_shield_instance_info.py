@@ -58,6 +58,22 @@ shield_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ItemId: null
+      AppName: null
+      AppPkgName: null
+      AppVersion: null
+      AppMd5: null
+      AppSize: null
+      ServiceEdition: null
+      ShieldCode: null
+      AppUrl: null
+      TaskStatus: null
+      ClientIp: null
+      TaskTime: null
+      AppIconUrl: null
+      ShieldMd5: null
+      ShieldSize: null
 total_count:
   description: Number of shield instances reported by the API.
   returned: always

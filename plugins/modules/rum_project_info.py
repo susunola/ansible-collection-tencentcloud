@@ -53,6 +53,25 @@ projects:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Creator: null
+      InstanceID: null
+      Type: null
+      CreateTime: null
+      Repo: null
+      URL: null
+      Rate: null
+      Key: null
+      EnableURLGroup: null
+      InstanceName: null
+      ID: null
+      InstanceKey: null
+      Desc: null
+      IsStar: null
+      ProjectStatus: null
+      AccessPoint: null
+      Kafka: null
 total_count:
   description: Number of projects reported by the API.
   returned: always

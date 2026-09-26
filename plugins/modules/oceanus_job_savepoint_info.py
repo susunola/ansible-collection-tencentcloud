@@ -62,6 +62,24 @@ job_savepoints:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      VersionId: null
+      Status: null
+      CreateTime: null
+      UpdateTime: null
+      Path: null
+      Size: null
+      RecordType: null
+      JobRuntimeId: null
+      Description: null
+      Timeout: null
+      SerialId: null
+      TimeConsuming: null
+      PathStatus: null
+      FlinkVersion: null
+      IsIncremental: null
+      CheckpointSize: null
 total_count:
   description: Number of job savepoints reported by the API.
   returned: always

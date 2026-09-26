@@ -57,6 +57,12 @@ parameter_templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TemplateId: null
+      TemplateName: null
+      DBMajorVersion: null
+      DBEngine: null
+      TemplateDescription: null
 total_count:
   description: Number of templates reported by the API.
   returned: always

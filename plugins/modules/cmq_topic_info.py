@@ -66,6 +66,26 @@ cmq_topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TopicId: null
+      TopicName: null
+      MsgRetentionSeconds: null
+      MaxMsgSize: null
+      Qps: null
+      FilterType: null
+      CreateTime: null
+      LastModifyTime: null
+      MsgCount: null
+      CreateUin: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Trace: null
+      TenantId: null
+      NamespaceName: null
+      Status: null
+      BrokerType: null
+      SubscriptionCount: null
 total_count:
   description: Number of cmq topics reported by the API.
   returned: always

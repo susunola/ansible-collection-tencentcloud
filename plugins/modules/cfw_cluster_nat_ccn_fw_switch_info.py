@@ -53,6 +53,35 @@ cluster_nat_ccn_fw_switches:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InsObj: null
+      ObjName: null
+      FwType: null
+      AssetType: null
+      Region: null
+      SwitchMode: null
+      RoutingMode: null
+      Status: null
+      IpVersion: null
+      NonCluster: null
+      IpsAction: null
+      TransEnable: null
+      Bypass: null
+      AttachId: null
+      AttachName: null
+      NatVpcId: null
+      NatVpcName: null
+      AttachIns:
+        - InsId: null
+          InsName: null
+          Cidr: null
+      Endpoints:
+        - EndpointId: null
+          VpcId: null
+          Region: null
+          VpcCidr: null
+      Progress: null
+      CheckResult: null
 total_count:
   description: Number of cluster nat ccn fw switches reported by the API.
   returned: always

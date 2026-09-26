@@ -65,6 +65,39 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      ClusterName: null
+      ClusterDescription: null
+      ClusterVersion: null
+      ClusterOs: null
+      ClusterType: null
+      ClusterNetworkSettings: null
+      ClusterNodeNum: null
+      ProjectId: null
+      TagSpecification:
+        - ResourceType: null
+          Tags:
+            - Key: null
+              Value: null
+      ClusterStatus: null
+      Property: null
+      ClusterMaterNodeNum: null
+      ImageId: null
+      OsCustomizeType: null
+      ContainerRuntime: null
+      CreatedTime: null
+      DeletionProtection: null
+      EnableExternalNode: null
+      ClusterLevel: null
+      AutoUpgradeClusterLevel: null
+      QGPUShareEnable: null
+      RuntimeVersion: null
+      ClusterEtcdNodeNum: null
+      CdcId: null
+      IsHighAvailability: null
+      ClusterCategory: null
+      SecurityModeConfig: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

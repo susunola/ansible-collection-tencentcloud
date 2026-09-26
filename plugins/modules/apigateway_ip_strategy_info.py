@@ -55,6 +55,35 @@ ip_strategies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StrategyId: null
+      StrategyName: null
+      StrategyType: null
+      StrategyData: null
+      CreatedTime: null
+      ModifiedTime: null
+      ServiceId: null
+      BindApiTotalCount: null
+      BindApis:
+        - ServiceId: null
+          ApiId: null
+          ApiDesc: null
+          CreatedTime: null
+          ModifiedTime: null
+          ApiName: null
+          VpcId: null
+          UniqVpcId: null
+          ApiType: null
+          Protocol: null
+          IsDebugAfterCharge: null
+          AuthType: null
+          ApiBusinessType: null
+          AuthRelationApiId: null
+          OauthConfig: null
+          RelationBuniessApiIds: null
+          Tags: null
+          Path: null
+          Method: null
 total_count:
   description: Number of ip strategies reported by the API.
   returned: always

@@ -57,6 +57,43 @@ cluster_snapshots:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SnapshotName: null
+      Uuid: null
+      Repository: null
+      Version: null
+      Indices: null
+      DataStreams: null
+      State: null
+      StartTime: null
+      EndTime: null
+      DurationInMillis: null
+      TotalShards: null
+      FailedShards: null
+      SuccessfulShards: null
+      Failures:
+        - Index: null
+          ShardId: null
+          Reason: null
+          Status: null
+      UserBackUp: null
+      EsRepositoryType: null
+      PaasEsRepository: null
+      UserEsRepository: null
+      StorageDuration: null
+      AutoBackupInterval: null
+      CosRetention: null
+      RetainUntilDate: null
+      RetentionGraceTime: null
+      IsLocked: null
+      RemoteCos: null
+      RemoteCosRegion: null
+      CosEncryption: null
+      KmsKey: null
+      StrategyName: null
+      MultiAz: null
+      MaxSnapshotPerSec: null
+      InstanceId: null
 total_count:
   description: Number of cluster snapshots returned (the API reports no total count).
   returned: always

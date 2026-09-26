@@ -58,6 +58,13 @@ lib_samples:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      Content: null
+      Label: null
+      CreateTime: null
+      Remark: null
+      WordType: null
 total_count:
   description: Number of lib samples reported by the API.
   returned: always

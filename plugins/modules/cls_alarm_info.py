@@ -56,6 +56,51 @@ alarms:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      AlarmTargets:
+        - LogsetId: null
+          LogsetName: null
+          TopicId: null
+          TopicName: null
+          Query: null
+          Number: null
+          StartTimeOffset: null
+          EndTimeOffset: null
+          SyntaxRule: null
+          BizType: null
+      MonitorTime: null
+      Condition: null
+      TriggerCount: null
+      AlarmPeriod: null
+      AlarmNoticeIds: null
+      Status: null
+      AlarmId: null
+      CreateTime: null
+      UpdateTime: null
+      MessageTemplate: null
+      CallBack: null
+      Analysis:
+        - Name: null
+          Type: null
+          Content: null
+          ConfigInfo:
+            - Key: null
+              Value: null
+      GroupTriggerStatus: null
+      GroupTriggerCondition: null
+      Tags:
+        - Key: null
+          Value: null
+      MonitorObjectType: null
+      AlarmLevel: null
+      Classifications:
+        - Key: null
+          Value: null
+      MultiConditions:
+        - Condition: null
+          AlarmLevel: null
+      MonitorNotice: null
 total_count:
   description: Number of alarms reported by the API.
   returned: always

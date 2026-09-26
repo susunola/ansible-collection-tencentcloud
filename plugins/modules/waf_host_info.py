@@ -53,6 +53,41 @@ hosts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Domain: null
+      DomainId: null
+      MainDomain: null
+      Mode: null
+      Status: null
+      State: null
+      Engine: null
+      IsCdn: null
+      LoadBalancerSet:
+        - LoadBalancerId: null
+          LoadBalancerName: null
+          ListenerId: null
+          ListenerName: null
+          Vport: null
+          Region: null
+          Protocol: null
+          Zone: null
+          Vip: null
+          NumericalVpcId: null
+          LoadBalancerType: null
+          LoadBalancerDomain: null
+          MemberAppId: null
+          MemberUin: null
+      Region: null
+      Edition: null
+      FlowMode: null
+      ClsStatus: null
+      Level: null
+      CdcClusters: null
+      AlbType: null
+      IpHeaders: null
+      EngineType: null
+      CloudType: null
+      Note: null
 total_count:
   description: Number of protected hosts reported by the API.
   returned: always

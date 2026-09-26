@@ -63,6 +63,20 @@ privileges:
   description: The account privileges (global, database, table and column level).
   returned: always
   type: dict
+  sample:
+    GlobalPrivileges: null
+    DatabasePrivileges:
+      - Privileges: null
+        Database: null
+    TablePrivileges:
+      - Database: null
+        Table: null
+        Privileges: null
+    ColumnPrivileges:
+      - Database: null
+        Table: null
+        Column: null
+        Privileges: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

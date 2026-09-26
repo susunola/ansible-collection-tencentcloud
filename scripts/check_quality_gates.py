@@ -81,14 +81,19 @@ IDEMPOTENCY_RATCHET = 0
 # and rejected: it produced 110 lines of ``"string"`` and ``0`` for
 # cvm_instance, which is longer than the curated sample and says less.
 #
-# The way in is the module's own unit tests: each already builds a payload and
-# asserts on it, so ``scripts/add_return_samples.py`` records what every module
-# produced under test and documents that, minus ``None`` values and Ansible's
-# own keys.  413 modules gained a sample that way, which is why this moved
-# from 976 to 563.  What is left is generated modules (the generator owns
-# their RETURN and its --check would flag an edit) and modules whose tests
-# build a private harness instead of the shared one.
-RETURN_SAMPLE_RATCHET = 563
+# Two sources closed it. ``scripts/add_return_samples.py`` records the payload
+# a module's own unit test produced and documents that -- 413 modules, the
+# hand-written ones whose tests use the shared harness.  The generated modules
+# are owned by ``generate_info_modules.py``, which now emits the *structure* of
+# the SDK response model it already introspects: the field names are the API's
+# own and the values are deliberately empty, because inventing values for an
+# API nobody here can call is how a sample becomes misinformation.  That is
+# another 501 modules, so this moved from 976 to 62.
+#
+# What is left is hand-written modules whose tests build a private harness (so
+# no payload is captured) and two whose payload is a blob that cannot be
+# wrapped under the line pep8 allows.
+RETURN_SAMPLE_RATCHET = 62
 
 # Write modules that claim ``check_mode: full`` with no dry-run test. The
 # claim is user-facing and load-bearing: a user runs --check expecting no

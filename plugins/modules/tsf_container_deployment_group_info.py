@@ -52,6 +52,24 @@ container_deployment_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      CreateTime: null
+      Server: null
+      RepoName: null
+      TagName: null
+      ClusterId: null
+      ClusterName: null
+      NamespaceId: null
+      NamespaceName: null
+      CpuRequest: null
+      CpuLimit: null
+      MemRequest: null
+      MemLimit: null
+      Alias: null
+      KubeInjectEnable: null
+      UpdatedTime: null
 total_count:
   description: Number of container deployment groups reported by the API.
   returned: always

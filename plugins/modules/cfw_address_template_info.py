@@ -70,6 +70,19 @@ address_templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Uuid: null
+      Name: null
+      Detail: null
+      IpString: null
+      InsertTime: null
+      UpdateTime: null
+      Type: null
+      RulesNum: null
+      TemplateId: null
+      ProtocolType: null
+      IPNum: null
+      IpVersion: null
 total_count:
   description: Number of address templates reported by the API.
   returned: always

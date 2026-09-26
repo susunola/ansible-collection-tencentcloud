@@ -54,6 +54,13 @@ instance_backups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StartTime: null
+      BackupId: null
+      BackupType: null
+      Remark: null
+      Status: null
+      Locked: null
 total_count:
   description: Number of instance backups reported by the API.
   returned: always

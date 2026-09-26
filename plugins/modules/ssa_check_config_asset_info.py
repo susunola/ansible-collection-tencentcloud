@@ -49,6 +49,20 @@ check_config_assets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Instid: null
+      Url: null
+      Taskid: null
+      Result: null
+      Updatetime: null
+      Tag: null
+      IsIgnore: null
+      IsChecked: null
+      AssetInfo: null
+      AssetId: null
+      Detail: null
+      Remarks: null
 total_count:
   description: Number of check config assets reported by the API.
   returned: always

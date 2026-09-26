@@ -51,6 +51,13 @@ cls_log_topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TopicId: null
+      TopicName: null
+      Enabled: null
+      CreateTime: null
+      Channel: null
+      Deleted: null
 total_count:
   description: Number of cls log topics returned (the API reports no total count).
   returned: always

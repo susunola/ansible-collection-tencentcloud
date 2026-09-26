@@ -63,6 +63,16 @@ ktv_robots:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RobotId: null
+      Status: null
+      Playlists: null
+      CurIndex: null
+      Position: null
+      SetAudioParamInput: null
+      JoinRoomInput: null
+      RTCSystem: null
+      SetPlayModeInput: null
 total_count:
   description: Number of ktv robots reported by the API.
   returned: always

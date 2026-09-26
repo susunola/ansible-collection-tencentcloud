@@ -53,6 +53,8 @@ rotation:
   description: The key rotation status.
   returned: always
   type: dict
+  sample:
+    KeyRotationEnabled: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

@@ -65,6 +65,86 @@ model_service_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ServiceGroupId: null
+      ServiceGroupName: null
+      CreatedBy: null
+      CreateTime: null
+      UpdateTime: null
+      Uin: null
+      ServiceCount: null
+      RunningServiceCount: null
+      Services:
+        - ServiceGroupId: null
+          ServiceId: null
+          ServiceGroupName: null
+          ServiceDescription: null
+          ServiceInfo: null
+          ClusterId: null
+          Region: null
+          Namespace: null
+          ChargeType: null
+          ResourceGroupId: null
+          ResourceGroupName: null
+          Tags:
+            - TagKey: null
+              TagValue: null
+          IngressName: null
+          CreatedBy: null
+          CreateTime: null
+          UpdateTime: null
+          Uin: null
+          SubUin: null
+          AppId: null
+          BusinessStatus: null
+          ServiceLimit: null
+          ScheduledAction: null
+          CreateFailedReason: null
+          Status: null
+          BillingInfo: null
+          Weight: null
+          CreateSource: null
+          Version: null
+          LatestVersion: null
+          ResourceGroupSWType: null
+          ArchiveStatus: null
+          DeployType: null
+          InstancePerReplicas: null
+          MonitorSource: null
+          SubUinName: null
+          SchedulingPolicy: null
+          ExternalResourceGroups:
+            - ResourceGroupId: null
+              ResourceGroupName: null
+          ProjectId: null
+          Changer: null
+          ChangerName: null
+          ResourceSupplyAttribute: null
+      Status: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      LatestVersion: null
+      BusinessStatus: null
+      BillingInfo: null
+      CreateSource: null
+      WeightUpdateStatus: null
+      ReplicasCount: null
+      AvailableReplicasCount: null
+      SubUin: null
+      AppId: null
+      AuthorizationEnable: null
+      AuthTokens:
+        - Base: null
+          Limits:
+            - Strategy: null
+              Max: null
+      MonitorSource: null
+      SubUinName: null
+      GatewayLogConfig: null
+      GatewayConfig: null
+      Changer: null
+      ChangerName: null
 total_count:
   description: Number of model service groups reported by the API.
   returned: always

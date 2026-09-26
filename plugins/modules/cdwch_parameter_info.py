@@ -54,6 +54,21 @@ parameters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConfKey: null
+      ConfValue: null
+      DefaultValue: null
+      NeedRestart: null
+      Editable: null
+      ConfDesc: null
+      FileName: null
+      ModifyRuleType: null
+      ModifyRuleValue: null
+      Uin: null
+      ModifyTime: null
+      ValueRange: null
+      AbnormalParam: null
+      ConfigEffective: null
 total_count:
   description: Number of parameters returned (the API reports no total count).
   returned: always

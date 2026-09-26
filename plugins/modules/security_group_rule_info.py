@@ -56,6 +56,8 @@ policies:
   description: Security group policy set with Ingress and Egress rule lists.
   returned: always
   type: dict
+  sample:
+    SecurityGroupPolicySet: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

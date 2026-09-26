@@ -57,6 +57,21 @@ records:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RecordId: null
+      Value: null
+      Status: null
+      UpdatedOn: null
+      Name: null
+      Line: null
+      LineId: null
+      Type: null
+      Weight: null
+      MonitorStatus: null
+      Remark: null
+      TTL: null
+      MX: null
+      DefaultNS: null
 total_count:
   description: Total number of records of the domain reported by the API.
   returned: always

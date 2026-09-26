@@ -53,6 +53,11 @@ account_vpcs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VpcId: null
+      Region: null
+      Uin: null
+      VpcName: null
 total_count:
   description: Number of account vpcs reported by the API.
   returned: always

@@ -48,6 +48,11 @@ audits:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AuditStatus: null
+      CosBucketName: null
+      AuditName: null
+      LogFilePrefix: null
 total_count:
   description: Number of audits returned (the API reports no total count).
   returned: always

@@ -54,6 +54,12 @@ rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleId: null
+      AuthClientIp: null
+      RWPermission: null
+      UserPermission: null
+      Priority: null
 total_count:
   description: Number of rules returned (the API reports no pageable total).
   returned: always

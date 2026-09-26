@@ -229,33 +229,72 @@ instead of reported. Three ALB modules were in exactly that state — they build
 a diff and never said so — and the hole is closed.
 
 **The samples.** 976 of the 1,027 modules named their return keys and never
-showed the shape behind them. The obvious generator — walk the SDK response
-model — was tried and rejected: it produced 110 lines of `"string"` and `0` for
-`cvm_instance`, longer than the curated sample and saying less. The source that
-does work is the module's own unit tests: each already builds a payload and
-asserts on it, so `scripts/add_return_samples.py` runs the module test suite
+showed the shape behind them; the census is 62 now. Two sources closed it, and
+they are different on purpose.
+
+*The hand-written modules* have unit tests that already build a payload and
+assert on it, so `scripts/add_return_samples.py` runs the module test suite
 with a recorder on the harness's `exit_json`, keeps what every module actually
 produced, and documents that — minus `None` values and the keys Ansible adds to
-every result. 413 modules gained a sample that way, and the census moved from
-976 to 563.
+every result. 413 modules gained a sample that way. A sample the script wrote
+carries a marker comment (YAML drops comments, so the rendered docs are
+unchanged) and `--check` re-runs the capture and fails when one stops matching
+the payloads its tests produce. Hand-written samples are exempt on purpose:
+`vpc` documents the fields the API returns while its unit test stubs six of
+them, and a check that called that a defect would be wrong about the
+documentation rather than about the code.
 
-Two limits are deliberate rather than worked around:
+*The generated modules* are owned by `generate_info_modules.py`, and the first
+attempt at generating their samples was rejected for a reason worth keeping:
+walking the SDK response model for `cvm_instance` produced 110 lines of
+`"string"` and `0`, longer than the curated sample and saying less. What works
+is a narrower claim. The generator already introspects the SDK for its resource
+scaffolds, so it now emits the *structure* of the response model — the field
+names and their nesting are the API's own, and every value is deliberately
+empty (`null`, `[]`), because this repository cannot call the API and inventing
+plausible values is how a sample becomes misinformation. 501 modules gained a
+block like this one:
 
-- **generated modules are skipped.** `generate_info_modules.py` owns their
-  `RETURN` and its `--check` would flag the edit, so the 502 generated modules
-  keep an unsampled `RETURN` until the generator learns to emit one.
-- **only what a test produced is written.** A documented key no payload
-  carried keeps its description and no sample, rather than gaining something
-  plausible. Two keys are in that state for a different reason: their payload
-  is a base64 blob or a one-line JSON document that cannot be wrapped under
-  the 160-character line the pep8 test allows.
+```yaml
+address_templates:
+  description: Matching address templates.
+  returned: always
+  type: list
+  elements: dict
+  sample:
+    - AddressTemplateName: null
+      AddressTemplateId: null
+      AddressSet: null
+      CreatedTime: null
+      UpdatedTime: null
+      AddressExtraSet:
+        - Address: null
+          Description: null
+          UpdatedTime: null
+      TagSet:
+        - Key: null
+          Value: null
+```
 
-A sample the script wrote carries a marker comment (YAML drops comments, so
-the rendered docs are unchanged) and `--check` re-runs the capture and fails
-when one stops matching the payloads its tests produce. Hand-written samples
-are exempt on purpose: `vpc` documents the fields the API returns while its
-unit test stubs six of them, and a check that called that a defect would be
-wrong about the documentation rather than about the code.
+The field list is not hand-maintained: `generate_info_modules.py --check`
+re-derives the block from the installed SDK on every CI run, so it cannot drift
+from the model it documents — a stronger guarantee than the marker gives the
+captured samples, and the reason the generated modules did not simply get
+recorded payloads from their own tests (those fixtures assert on a single
+`Marker` field, which would have documented nothing).
+
+Three limits are deliberate rather than worked around:
+
+- **only what a test produced is written** for hand-written modules. A
+  documented key no payload carried keeps its description and no sample,
+  rather than gaining something plausible; two keys are in that state because
+  their payload is a base64 blob or a one-line JSON document that cannot be
+  wrapped under the 160-character line the pep8 test allows.
+- **generated samples carry no values.** A reader learns the field names and
+  the nesting, not what a value looks like. That is the honest half of the
+  claim, and it is the half a caller needs to write `result.items[0].TagSet`.
+- **the 62 that remain** are hand-written modules whose unit tests build a
+  private harness (so no payload is captured) and the two blob cases above.
 
 ### Every module that can delete shows how
 
@@ -494,8 +533,8 @@ packages are absent from 3.1.174. That is the mechanism by which a module can
 be shipped that no user of the documented range can run.
 
 Two censuses of existing debt are also frozen as shrink-only lists
-(`scripts/quality_baselines/`) rather than left as bare ceiling numbers: 563
-`RETURN` blocks with no `sample` (was 976 before the capture above) and 135
+(`scripts/quality_baselines/`) rather than left as bare ceiling numbers: 62
+`RETURN` blocks with no `sample` (976 before the samples work above) and 135
 core-subset write modules with no integration target. A stock ceiling cannot tell "fixed three, broke three"
 apart from "fixed nothing", and it charges a new module for the sins of the
 old ones. A module that is not on a list must not have the finding, a listed

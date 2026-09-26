@@ -62,6 +62,22 @@ resource_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      ResourceType: null
+      Region: null
+      AppId: null
+      OwnerUin: null
+      CreatorUin: null
+      ResourceLoc: null
+      CreateTime: null
+      Version: null
+      Remark: null
+      Status: null
+      RefJobCount: null
+      RefJobStatusCountSet:
+        - JobStatus: null
+          Count: null
 total_count:
   description: Number of resource config versions reported by the API.
   returned: always

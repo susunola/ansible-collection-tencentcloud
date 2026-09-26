@@ -61,6 +61,70 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      PayMode: null
+      ProjectId: null
+      ClusterType: null
+      Region: null
+      Zone: null
+      NetType: null
+      VpcId: null
+      SubnetId: null
+      Status: null
+      Vip: null
+      Vport: null
+      CreateTime: null
+      DeadLine: null
+      MongoVersion: null
+      Memory: null
+      Volume: null
+      CpuNum: null
+      MachineType: null
+      SecondaryNum: null
+      ReplicationSetNum: null
+      AutoRenewFlag: null
+      UsedVolume: null
+      MaintenanceStart: null
+      MaintenanceEnd: null
+      ReplicaSets:
+        - UsedVolume: null
+          ReplicaSetId: null
+          ReplicaSetName: null
+          Memory: null
+          Volume: null
+          OplogSize: null
+          SecondaryNum: null
+          RealReplicaSetId: null
+      ReadonlyInstances:
+        - InstanceId: null
+          Region: null
+      StandbyInstances:
+        - InstanceId: null
+          Region: null
+      CloneInstances:
+        - InstanceId: null
+          Region: null
+      RelatedInstance: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      InstanceVer: null
+      ClusterVer: null
+      Protocol: null
+      InstanceType: null
+      InstanceStatusDesc: null
+      RealInstanceId: null
+      ZoneList: null
+      MongosNodeNum: null
+      MongosMemory: null
+      MongosCpuNum: null
+      ConfigServerNodeNum: null
+      ConfigServerMemory: null
+      ConfigServerVolume: null
+      ConfigServerCpuNum: null
+      ReadonlyNodeNum: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

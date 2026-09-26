@@ -53,6 +53,38 @@ rabbit_mq_serverless_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      InstanceVersion: null
+      Status: null
+      MaxTps: null
+      MaxBandWidth: null
+      ExpireTime: null
+      AutoRenewFlag: null
+      PayMode: null
+      Remark: null
+      SpecName: null
+      ExceptionInformation: null
+      PublicAccessEndpoint: null
+      Vpcs:
+        - VpcId: null
+          SubnetId: null
+          VpcEndpoint: null
+          VpcDataStreamEndpointStatus: null
+          PublicNetwork: null
+          AccessStrategy: null
+          Bandwidth: null
+      ClusterStatus: null
+      InstanceType: null
+      CreateTime: null
+      NodeCount: null
+      MaxStorage: null
+      IsolatedTime: null
+      ServerlessExt: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of rabbit mq serverless instances reported by the API.
   returned: always

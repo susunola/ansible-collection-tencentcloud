@@ -49,6 +49,32 @@ cloud_native_api_gateway_canary_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Priority: null
+      Enabled: null
+      ConditionList:
+        - Type: null
+          Key: null
+          Operator: null
+          Value: null
+          Delimiter: null
+          GlobalConfigId: null
+          GlobalConfigName: null
+      BalancedServiceList:
+        - ServiceID: null
+          ServiceName: null
+          UpstreamName: null
+          Percent: null
+      ServiceId: null
+      ServiceName: null
+      RuleType: null
+      MatchType: null
+      GroupId: null
+      GroupName: null
+      LaneId: null
+      LaneName: null
+      MatchMode: null
+      LaneTag: null
 total_count:
   description: Number of cloud native api gateway canary rules reported by the API.
   returned: always

@@ -53,6 +53,15 @@ oidc_provider:
   description: The OIDC provider configuration.
   returned: always
   type: dict
+  sample:
+    ProviderType: null
+    IdentityUrl: null
+    IdentityKey: null
+    ClientId: null
+    Status: null
+    Description: null
+    Name: null
+    AutoRotateKey: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

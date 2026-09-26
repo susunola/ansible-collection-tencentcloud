@@ -49,6 +49,17 @@ activities:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ActivityId: null
+      ActivityName: null
+      ActivityState: null
+      ActivityType: null
+      StartTime: null
+      EndTime: null
+      MainPhoto: null
+      PrivacyAgreementId: null
+      UpdateTime: null
+      ActivityDataList: null
 total_count:
   description: Number of activities returned (the API reports no total count).
   returned: always

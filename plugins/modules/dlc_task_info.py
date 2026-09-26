@@ -62,6 +62,79 @@ tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DatabaseName: null
+      DataAmount: null
+      Id: null
+      UsedTime: null
+      OutputPath: null
+      CreateTime: null
+      State: null
+      SQLType: null
+      SQL: null
+      ResultExpired: null
+      RowAffectInfo: null
+      DataSet: null
+      Error: null
+      Percentage: null
+      OutputMessage: null
+      TaskType: null
+      ProgressDetail: null
+      UpdateTime: null
+      DataEngineId: null
+      OperateUin: null
+      DataEngineName: null
+      InputType: null
+      InputConf: null
+      DataNumber: null
+      CanDownload: null
+      UserAlias: null
+      SparkJobName: null
+      SparkJobId: null
+      SparkJobFile: null
+      UiUrl: null
+      TotalTime: null
+      CmdArgs: null
+      ImageVersion: null
+      DriverSize: null
+      ExecutorSize: null
+      ExecutorNums: null
+      ExecutorMaxNumbers: null
+      CommonMetrics: null
+      SparkMonitorMetrics: null
+      PrestoMonitorMetrics: null
+      ResultFormat: null
+      EngineTypeDetail: null
+      ResourceGroupName: null
+      Source: null
+      SourceExtra: null
+      CreatorUin: null
+      CreatorAlias: null
+      CustomizedConf: null
+      TaskTimeSum: null
+      StageStartTime: null
+      InputRecordsSum: null
+      AnalysisStatusType: null
+      OutputRecordsSum: null
+      OutputBytesSum: null
+      OutputFilesNum: null
+      OutputSmallFilesNum: null
+      ShuffleReadRecordsSum: null
+      ShuffleReadBytesSum: null
+      SparkAppId: null
+      TaskCategory: null
+      TaskName: null
+      EngineType: null
+      EngineHasListenerConfig: null
+      ResourceGroupId: null
+      JobTimeSum: null
+      LaunchTime: null
+      GpuDriverSize: null
+      GpuExecutorSize: null
+      ShuffleWriteBytesSum: null
+      ActiveCore: null
+      QueueTime: null
+      ResourceGroupType: null
 total_count:
   description: Number of tasks reported by the API.
   returned: always

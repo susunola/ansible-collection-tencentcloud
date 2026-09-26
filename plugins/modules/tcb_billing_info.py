@@ -58,6 +58,24 @@ billings:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvId: null
+      PackageId: null
+      IsAutoRenew: null
+      Status: null
+      PayMode: null
+      IsolatedTime: null
+      ExpireTime: null
+      CreateTime: null
+      UpdateTime: null
+      IsAlwaysFree: null
+      PaymentChannel: null
+      OrderInfo: null
+      FreeQuota: null
+      EnableOverrun: null
+      ExtPackageType: null
+      EnvCharged: null
+      EnvActivated: null
 total_count:
   description: Number of billings reported by the API.
   returned: always

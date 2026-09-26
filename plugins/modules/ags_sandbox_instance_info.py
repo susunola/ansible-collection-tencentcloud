@@ -62,6 +62,29 @@ sandbox_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      ToolId: null
+      ToolName: null
+      Status: null
+      Persistent: null
+      TimeoutSeconds: null
+      ExpiresAt: null
+      StopReason: null
+      CreateTime: null
+      UpdateTime: null
+      MountOptions:
+        - Name: null
+          MountPath: null
+          SubPath: null
+          ReadOnly: null
+      CustomConfiguration: null
+      ComputerConfiguration: null
+      NetworkMode: null
+      Metadata:
+        - Name: null
+          Value: null
+      AuthMode: null
 total_count:
   description: Number of sandbox instances reported by the API.
   returned: always

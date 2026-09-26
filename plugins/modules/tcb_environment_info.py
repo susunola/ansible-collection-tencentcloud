@@ -62,6 +62,70 @@ envs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvId: null
+      Source: null
+      Alias: null
+      CreateTime: null
+      UpdateTime: null
+      Status: null
+      Databases:
+        - InstanceId: null
+          Status: null
+          Region: null
+          UpdateTime: null
+      Storages:
+        - Region: null
+          Bucket: null
+          CdnDomain: null
+          AppId: null
+          ExternalStorage: null
+      Functions:
+        - Namespace: null
+          Region: null
+      PackageId: null
+      PackageName: null
+      LogServices:
+        - LogsetName: null
+          LogsetId: null
+          TopicName: null
+          TopicId: null
+          Region: null
+          Period: null
+      StaticStorages:
+        - StaticDomain: null
+          DefaultDirName: null
+          Status: null
+          Region: null
+          Bucket: null
+          AccessExpire: null
+          ExternalStorage: null
+      IsAutoDegrade: null
+      EnvChannel: null
+      PayMode: null
+      IsDefault: null
+      Region: null
+      Tags:
+        - Key: null
+          Value: null
+      CustomLogServices:
+        - ClsRegion: null
+          ClsLogsetId: null
+          ClsTopicId: null
+          CreateTime: null
+      EnvType: null
+      IsDauPackage: null
+      PackageType: null
+      ArchitectureType: null
+      Recycle: null
+      Meta:
+        - Key: null
+          Value: null
+      PostgreSQL:
+        - Name: null
+          InstanceName: null
+          Status: null
+          Region: null
 total_count:
   description: Number of envs reported by the API.
   returned: always

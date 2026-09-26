@@ -59,6 +59,21 @@ private_zone_records:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RecordId: null
+      ZoneId: null
+      SubDomain: null
+      RecordType: null
+      RecordValue: null
+      TTL: null
+      MX: null
+      Status: null
+      Weight: null
+      CreatedOn: null
+      UpdatedOn: null
+      Extra: null
+      Enabled: null
+      Remark: null
 total_count:
   description: Number of private zone records reported by the API.
   returned: always

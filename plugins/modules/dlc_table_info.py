@@ -56,6 +56,40 @@ tables:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TableBaseInfo: null
+      Columns:
+        - Name: null
+          Type: null
+          Comment: null
+          Precision: null
+          Scale: null
+          Nullable: null
+          Position: null
+          CreateTime: null
+          ModifiedTime: null
+          IsPartition: null
+          DataMaskStrategyInfo: null
+          TypeText: null
+      Partitions:
+        - Name: null
+          Type: null
+          Comment: null
+          Transform: null
+          TransformArgs: null
+          CreateTime: null
+      Location: null
+      Properties:
+        - Key: null
+          Value: null
+      ModifiedTime: null
+      CreateTime: null
+      InputFormat: null
+      StorageSize: null
+      RecordCount: null
+      MapMaterializedViewName: null
+      HeatValue: null
+      InputFormatShort: null
 total_count:
   description: Number of tables reported by the API.
   returned: always

@@ -67,6 +67,24 @@ snapshots:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CreationTime: null
+      SnapshotName: null
+      SnapshotId: null
+      Status: null
+      RegionName: null
+      FileSystemId: null
+      Size: null
+      AliveDay: null
+      Percent: null
+      AppId: null
+      DeleteTime: null
+      FsName: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      SnapshotType: null
+      SnapshotTime: null
 total_count:
   description: Number of snapshots reported by the API.
   returned: always

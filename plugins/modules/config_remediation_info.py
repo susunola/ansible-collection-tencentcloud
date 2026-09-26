@@ -54,6 +54,14 @@ remediations:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RemediationTemplateId: null
+      RemediationId: null
+      RemediationSourceType: null
+      RemediationType: null
+      OwnerUin: null
+      InvokeType: null
+      RuleId: null
 total_count:
   description: Number of remediations reported by the API.
   returned: always

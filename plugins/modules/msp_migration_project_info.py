@@ -49,6 +49,9 @@ migration_projects:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProjectId: null
+      ProjectName: null
 total_count:
   description: Number of migration projects reported by the API.
   returned: always

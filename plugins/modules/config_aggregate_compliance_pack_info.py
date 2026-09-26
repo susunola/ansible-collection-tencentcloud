@@ -49,6 +49,16 @@ aggregate_compliance_packs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Status: null
+      CompliancePackId: null
+      Description: null
+      CompliancePackName: null
+      RiskLevel: null
+      ComplianceResult: null
+      CreateTime: null
+      NoCompliantNames: null
+      RuleCount: null
 total_count:
   description: Number of aggregate compliance packs reported by the API.
   returned: always

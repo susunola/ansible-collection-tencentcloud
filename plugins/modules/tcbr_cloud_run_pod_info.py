@@ -59,6 +59,11 @@ cloud_run_pods:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Webshell: null
+      PodId: null
+      Status: null
+      CreateTime: null
 total_count:
   description: Number of cloud run pods reported by the API.
   returned: always

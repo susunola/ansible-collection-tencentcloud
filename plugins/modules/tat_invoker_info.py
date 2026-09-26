@@ -65,6 +65,21 @@ invokers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InvokerId: null
+      Name: null
+      Type: null
+      CommandId: null
+      Username: null
+      Parameters: null
+      InstanceIds: null
+      Enable: null
+      ScheduleSettings: null
+      CreatedTime: null
+      UpdatedTime: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of invokers reported by the API.
   returned: always

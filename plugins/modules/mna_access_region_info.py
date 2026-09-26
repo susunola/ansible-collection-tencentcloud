@@ -45,6 +45,10 @@ access_regions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RegionId: null
+      RegionName: null
+      RegionAbbr: null
 total_count:
   description: Number of access regions returned (the API reports no total count).
   returned: always

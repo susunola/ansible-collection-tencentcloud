@@ -57,6 +57,13 @@ mount_points:
   returned: always
   type: list
   elements: dict
+  sample:
+    - MountPointId: null
+      MountPointName: null
+      FileSystemId: null
+      Status: null
+      CreateTime: null
+      AccessGroupIds: null
 total_count:
   description: Number of mount points returned (the API reports no total count).
   returned: always

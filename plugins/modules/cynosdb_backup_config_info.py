@@ -53,6 +53,16 @@ backup_config:
   description: The backup configuration of the cluster.
   returned: always
   type: dict
+  sample:
+    BackupTimeBeg: null
+    BackupTimeEnd: null
+    ReserveDuration: null
+    BackupFreq: null
+    BackupType: null
+    LogicCrossRegionsConfigUpdateTime: null
+    LogicBackupConfig: null
+    SnapshotSecondaryBackupConfig: null
+    SparseBackupConfig: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

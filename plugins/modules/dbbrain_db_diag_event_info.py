@@ -58,6 +58,21 @@ db_diag_events:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DiagType: null
+      EndTime: null
+      StartTime: null
+      EventId: null
+      Severity: null
+      Outline: null
+      DiagItem: null
+      InstanceId: null
+      Metric: null
+      Region: null
+      ClusterId: null
+      ClusterName: null
+      Vip: null
+      Vport: null
 total_count:
   description: Number of db diag events reported by the API.
   returned: always

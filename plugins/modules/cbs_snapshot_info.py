@@ -65,6 +65,35 @@ snapshots:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Placement: null
+      CopyFromRemote: null
+      SnapshotState: null
+      IsPermanent: null
+      SnapshotName: null
+      DeadlineTime: null
+      Percent: null
+      Images:
+        - ImageName: null
+          ImageId: null
+      ShareReference: null
+      SnapshotType: null
+      DiskSize: null
+      DiskId: null
+      CopyingToRegions: null
+      Encrypt: null
+      CreateTime: null
+      ImageCount: null
+      DiskUsage: null
+      SnapshotId: null
+      TimeStartShare: null
+      Tags:
+        - Key: null
+          Value: null
+      IsLocked: null
+      LatestModifyTime: null
+      AutoSnapshotPolicyId: null
+      SnapshotMode: null
 total_count:
   description: Number of snapshots reported by the API.
   returned: always

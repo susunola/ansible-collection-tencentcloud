@@ -55,6 +55,10 @@ usage_plan_secret_ids:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccessKeyId: null
+      SecretName: null
+      Status: null
 total_count:
   description: Number of usage plan secret ids reported by the API.
   returned: always

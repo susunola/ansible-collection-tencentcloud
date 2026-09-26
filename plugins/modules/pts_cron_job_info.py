@@ -58,6 +58,25 @@ cron_jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CronJobId: null
+      Name: null
+      ProjectId: null
+      ScenarioId: null
+      ScenarioName: null
+      CronExpression: null
+      EndTime: null
+      AbortReason: null
+      Status: null
+      NoticeId: null
+      CreatedAt: null
+      UpdatedAt: null
+      FrequencyType: null
+      Note: null
+      JobOwner: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
 total_count:
   description: Number of cron jobs reported by the API.
   returned: always

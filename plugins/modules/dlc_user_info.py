@@ -56,6 +56,43 @@ users:
   returned: always
   type: list
   elements: dict
+  sample:
+    - UserId: null
+      UserDescription: null
+      PolicySet:
+        - Database: null
+          Catalog: null
+          Table: null
+          Operation: null
+          PolicyType: null
+          Function: null
+          View: null
+          Column: null
+          DataEngine: null
+          ReAuth: null
+          Source: null
+          Mode: null
+          Operator: null
+          CreateTime: null
+          SourceId: null
+          SourceName: null
+          Id: null
+          EngineGeneration: null
+          Model: null
+          IsAdminPolicy: null
+          PolicyId: null
+      Creator: null
+      CreateTime: null
+      WorkGroupSet:
+        - WorkGroupId: null
+          WorkGroupName: null
+          WorkGroupDescription: null
+          Creator: null
+          CreateTime: null
+      IsOwner: null
+      UserType: null
+      UserAlias: null
+      AccountType: null
 total_count:
   description: Number of users reported by the API.
   returned: always

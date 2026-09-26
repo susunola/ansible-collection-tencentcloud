@@ -65,6 +65,19 @@ scheduled_actions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ScheduledActionId: null
+      ScheduledActionName: null
+      AutoScalingGroupId: null
+      StartTime: null
+      Recurrence: null
+      EndTime: null
+      MaxSize: null
+      DesiredCapacity: null
+      MinSize: null
+      CreatedTime: null
+      ScheduledType: null
+      DisableUpdateDesiredCapacity: null
 total_count:
   description: Number of scheduled actions reported by the API.
   returned: always

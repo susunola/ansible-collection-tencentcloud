@@ -63,6 +63,11 @@ tags:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TagKey: null
+      TagValue: null
+      CanDelete: null
+      Category: null
 total_count:
   description: Number of tags reported by the API.
   returned: always

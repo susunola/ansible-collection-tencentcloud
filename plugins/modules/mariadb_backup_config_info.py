@@ -53,6 +53,20 @@ backup_config:
   description: The backup configuration of the instance.
   returned: always
   type: dict
+  sample:
+    InstanceId: null
+    Days: null
+    StartBackupTime: null
+    EndBackupTime: null
+    WeekDays: null
+    ArchiveDays: null
+    BackupConfigSet:
+      - EnableBackupPolicy: null
+        BeginDate: null
+        MaxRetentionDays: null
+        Frequency: null
+        WeekDays: null
+        BackupCount: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

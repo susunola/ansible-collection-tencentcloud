@@ -58,6 +58,36 @@ replication_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AppId: null
+      RegionId: null
+      GroupId: null
+      GroupName: null
+      Status: null
+      InstanceCount: null
+      Instances:
+        - AppId: null
+          InstanceId: null
+          InstanceName: null
+          RegionId: null
+          ZoneId: null
+          RedisReplicasNum: null
+          RedisShardNum: null
+          RedisShardSize: null
+          DiskSize: null
+          Engine: null
+          Role: null
+          Vip: null
+          Vip6: null
+          IPv6: null
+          VpcID: null
+          VPort: null
+          Status: null
+          GrocerySysId: null
+          ProductType: null
+          CreateTime: null
+          UpdateTime: null
+      Remark: null
 total_count:
   description: Number of replication groups reported by the API.
   returned: always

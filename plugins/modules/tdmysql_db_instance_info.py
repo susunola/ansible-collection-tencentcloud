@@ -56,6 +56,109 @@ db_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ComputeNodeNum: null
+      Zone: null
+      CreateVersion: null
+      InitParams:
+        - Param: null
+          Value: null
+      Status: null
+      InstanceId: null
+      StorageNodeNum: null
+      ResourceTags:
+        - TagKey: null
+          TagValue: null
+      InstanceName: null
+      Cpu: null
+      VpcId: null
+      Mem: null
+      Vip: null
+      SubnetId: null
+      Vport: null
+      Disk: null
+      CreateTime: null
+      Region: null
+      StatusDesc: null
+      MCCpu: null
+      MCMem: null
+      ComputerNodeCpu: null
+      ComputerNodeMem: null
+      StorageNodeCpu: null
+      StorageNodeMem: null
+      MCNum: null
+      RenewFlag: null
+      PayMode: null
+      AccountTag: null
+      InstanceType: null
+      StorageType: null
+      DestroyedAt: null
+      ExpireAt: null
+      IsolatedAt: null
+      IsolatedFrom: null
+      Replications: null
+      FullReplications: null
+      AppId: null
+      SubAccountUin: null
+      Uin: null
+      Zones: null
+      Nodes:
+        - ID: null
+          InstanceId: null
+          NodeId: null
+          Ip: null
+          EniIp: null
+          Port: null
+          SpecCode: null
+          NodeName: null
+          Cpu: null
+          Mem: null
+          Disk: null
+          Type: null
+          Status: null
+          Version: null
+          Zone: null
+          LocalDNS: null
+          Region: null
+          LogDisk: null
+          DataDisk: null
+          ZoneID: null
+          SpecName: null
+          Replicas: null
+          Shards: null
+          DataReplicas: null
+          Params: null
+          StorageType: null
+      BinlogStatus: null
+      CdcNodeCpu: null
+      CdcNodeMem: null
+      CdcNodeNum: null
+      AZMode: null
+      StandbyFlag: null
+      StandbySecondaryNum: null
+      ColumnarNodeCpu: null
+      ColumnarNodeMem: null
+      ColumnarNodeNum: null
+      ColumnarNodeDisk: null
+      ColumnarNodeStorageType: null
+      InstanceCategory: null
+      ExclusiveClusterId: null
+      SQLMode: null
+      InstanceMode: null
+      ClusterId: null
+      AutoScaleConfig: null
+      AnalysisMode: null
+      AnalysisRelationInfos:
+        - PrimaryInstanceId: null
+          AnalysisInstanceId: null
+          Status: null
+          CreateAt: null
+          UpdateAt: null
+      AnalysisInstanceInfo: null
+      AutoScaleConfigs:
+        - RangeMin: null
+          RangeMax: null
+          ResourceType: null
 total_count:
   description: Number of db instances reported by the API.
   returned: always

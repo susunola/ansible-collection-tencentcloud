@@ -63,6 +63,28 @@ node_data_disks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DiskId: null
+      DiskUsage: null
+      DiskName: null
+      DiskSize: null
+      DiskType: null
+      DeleteWithInstance: null
+      DiskChargeType: null
+      DiskState: null
+      RenewFlag: null
+      DeadlineTime: null
+      Attached: null
+      DifferDaysOfDeadline: null
+      InstanceIdList: null
+      InstanceId: null
+      Shareable: null
+      EmrResourceId: null
+      UnderwriteExpiredTime: null
+      Tags:
+        - Key: null
+          Value: null
+      ThroughputPerformance: null
 total_count:
   description: Number of node data disks reported by the API.
   returned: always

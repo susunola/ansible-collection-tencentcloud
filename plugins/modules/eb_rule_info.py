@@ -61,6 +61,19 @@ rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Status: null
+      ModTime: null
+      Enable: null
+      Description: null
+      RuleId: null
+      AddTime: null
+      EventBusId: null
+      RuleName: null
+      Targets:
+        - TargetId: null
+          Type: null
+      DeadLetterConfig: null
 total_count:
   description: Number of rules reported by the API.
   returned: always

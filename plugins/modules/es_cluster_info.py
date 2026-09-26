@@ -58,6 +58,147 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      Region: null
+      Zone: null
+      AppId: null
+      Uin: null
+      VpcUid: null
+      SubnetUid: null
+      Status: null
+      RenewFlag: null
+      ChargeType: null
+      ChargePeriod: null
+      NodeType: null
+      NodeNum: null
+      CpuNum: null
+      MemSize: null
+      DiskType: null
+      DiskSize: null
+      EsDomain: null
+      EsVip: null
+      EsPort: null
+      KibanaUrl: null
+      EsVersion: null
+      EsConfig: null
+      EsAcl: null
+      CreateTime: null
+      UpdateTime: null
+      Deadline: null
+      InstanceType: null
+      IkConfig: null
+      MasterNodeInfo: null
+      CosBackup: null
+      AllowCosBackup: null
+      TagList:
+        - TagKey: null
+          TagValue: null
+      LicenseType: null
+      RealLicenseType: null
+      EnableHotWarmMode: null
+      WarmNodeType: null
+      WarmNodeNum: null
+      WarmCpuNum: null
+      WarmMemSize: null
+      WarmDiskType: null
+      WarmDiskSize: null
+      NodeInfoList:
+        - NodeNum: null
+          NodeType: null
+          Type: null
+          DiskType: null
+          DiskSize: null
+          LocalDiskInfo: null
+          DiskCount: null
+          DiskEncrypt: null
+          KmsKeyId: null
+          KmsKeyName: null
+          CpuNum: null
+          MemSize: null
+          DiskEnhance: null
+          GpuInfo: null
+      EsPublicUrl: null
+      MultiZoneInfo:
+        - Zone: null
+          SubnetId: null
+          Hidden: null
+      DeployMode: null
+      PublicAccess: null
+      EsPublicAcl: null
+      KibanaPrivateUrl: null
+      KibanaPublicAccess: null
+      KibanaPrivateAccess: null
+      SecurityType: null
+      SceneType: null
+      KibanaConfig: null
+      KibanaNodeInfo: null
+      WebNodeTypeInfo: null
+      Jdk: null
+      Protocol: null
+      SecurityGroups: null
+      ColdNodeType: null
+      ColdNodeNum: null
+      ColdCpuNum: null
+      ColdMemSize: null
+      ColdDiskType: null
+      ColdDiskSize: null
+      FrozenNodeType: null
+      FrozenNodeNum: null
+      FrozenCpuNum: null
+      FrozenMemSize: null
+      FrozenDiskType: null
+      FrozenDiskSize: null
+      HealthStatus: null
+      EsPrivateUrl: null
+      EsPrivateDomain: null
+      EsConfigSets:
+        - Type: null
+          EsConfig: null
+      OperationDuration: null
+      OptionalWebServiceInfos:
+        - Type: null
+          Status: null
+          PublicUrl: null
+          PrivateUrl: null
+          PublicAccess: null
+          PrivateAccess: null
+          Version: null
+          PrivateVip: null
+          CustomPrivateUrl: null
+      AutoIndexEnabled: null
+      EnableHybridStorage: null
+      ProcessPercent: null
+      KibanaAlteringPublicAccess: null
+      HasKernelUpgrade: null
+      CdcId: null
+      KibanaPrivateVip: null
+      CustomKibanaPrivateUrl: null
+      OutboundPublicAcls:
+        - NodeType: null
+          WhiteHostList: null
+      NetConnectScheme: null
+      DisasterRecoverGroupAffinity: null
+      SubProductCode: null
+      CosBucketStorageSize: null
+      ReadWriteMode: null
+      EnableScheduleRecoverGroup: null
+      EnableScheduleOperationDuration: null
+      EnableDestroyProtection: null
+      ShowKibanaIpPort: null
+      IsCdzLite: null
+      EsPrivateTcpUrl: null
+      IsInRecycleBin: null
+      RecycleLockEnabled: null
+      MayDestroyPoint: null
+      DelayDestroyInterval: null
+      EnableAutoReplace: null
+      OpenMTLS: null
+      ServerCertSource: null
+      OldEsVip: null
+      OldEsPrivateTcpUrl: null
+      NeedOfflineOldNodesNotify: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

@@ -53,6 +53,40 @@ cloud_native_api_gateways:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GatewayId: null
+      Status: null
+      Name: null
+      Type: null
+      GatewayVersion: null
+      NodeConfig: null
+      VpcConfig: null
+      Description: null
+      CreateTime: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      EnableCls: null
+      TradeType: null
+      FeatureVersion: null
+      InternetMaxBandwidthOut: null
+      AutoRenewFlag: null
+      CurDeadline: null
+      IsolateTime: null
+      EnableInternet: null
+      EngineRegion: null
+      IngressClassName: null
+      InternetPayMode: null
+      GatewayMinorVersion: null
+      InstancePort: null
+      LoadBalancerType: null
+      PublicIpAddresses: null
+      DeleteProtect: null
+      AvailableVersions: null
+      AvailableUpgradeVersions: null
+      AvailableUpgrade: null
+      AvailableRollbackVersion: null
+      ForceHTTPSRedirect: null
 total_count:
   description: Number of cloud native api gateways reported by the API.
   returned: always

@@ -58,6 +58,10 @@ resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Record:
+        - Key: null
+          Value: null
 total_count:
   description: Number of resources reported by the API.
   returned: always

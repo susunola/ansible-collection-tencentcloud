@@ -58,6 +58,14 @@ platforms:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Platform: null
+      Description: null
+      VodSubAppId: null
+      LicenseId: null
+      Status: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of platforms reported by the API.
   returned: always

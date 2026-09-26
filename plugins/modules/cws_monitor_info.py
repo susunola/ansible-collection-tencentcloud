@@ -53,6 +53,23 @@ monitors:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Basic: null
+      Sites:
+        - SiteId: null
+          Url: null
+      SiteNumber: null
+      ImpactSites:
+        - SiteId: null
+          Url: null
+      ImpactSiteNumber: null
+      VulsHighNumber: null
+      VulsMiddleNumber: null
+      VulsLowNumber: null
+      VulsNoticeNumber: null
+      Progress: null
+      PageCount: null
+      ContentNumber: null
 total_count:
   description: Number of monitors reported by the API.
   returned: always

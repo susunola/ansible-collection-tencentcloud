@@ -62,6 +62,33 @@ compute_env_creates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvId: null
+      EnvName: null
+      EnvDescription: null
+      EnvType: null
+      EnvData: null
+      MountDataDisks:
+        - LocalPath: null
+          FileSystemType: null
+      InputMappings:
+        - SourcePath: null
+          DestinationPath: null
+          MountOptionParameter: null
+          MountType: null
+      Authentications:
+        - Scene: null
+          SecretId: null
+          SecretKey: null
+      Notifications:
+        - TopicName: null
+          EventConfigs:
+            - EventName: null
+              EventVars: null
+      DesiredComputeNodeCount: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of compute env creates reported by the API.
   returned: always

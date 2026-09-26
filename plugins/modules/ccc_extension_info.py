@@ -58,6 +58,18 @@ extensions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SdkAppId: null
+      FullExtensionId: null
+      ExtensionId: null
+      SkillGroupId: null
+      ExtensionName: null
+      CreateTime: null
+      ModifyTime: null
+      Status: null
+      Register: null
+      Relation: null
+      RelationName: null
 total_count:
   description: Number of extensions reported by the API.
   returned: always

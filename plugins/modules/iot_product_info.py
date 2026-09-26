@@ -49,6 +49,21 @@ products:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProductId: null
+      ProductKey: null
+      AppId: null
+      Name: null
+      Description: null
+      Domain: null
+      AuthType: null
+      DataProtocol: null
+      Deleted: null
+      Message: null
+      CreateTime: null
+      CommProtocol: null
+      Region: null
+      DeviceType: null
 total_count:
   description: Number of products reported by the API.
   returned: always

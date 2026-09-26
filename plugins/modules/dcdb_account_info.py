@@ -51,6 +51,16 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - UserName: null
+      Host: null
+      Description: null
+      CreateTime: null
+      UpdateTime: null
+      ReadOnly: null
+      DelayThresh: null
+      SlaveConst: null
+      MaxUserConnections: null
 total_count:
   description: Number of accounts returned (the API reports no total count).
   returned: always

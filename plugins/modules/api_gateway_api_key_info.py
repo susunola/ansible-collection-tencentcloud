@@ -56,6 +56,17 @@ api_keys:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccessKeyId: null
+      AccessKeySecret: null
+      AccessKeyType: null
+      SecretName: null
+      ModifiedTime: null
+      Status: null
+      CreatedTime: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of api keys reported by the API.
   returned: always

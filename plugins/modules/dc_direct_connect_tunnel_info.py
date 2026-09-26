@@ -65,6 +65,43 @@ direct_connect_tunnels:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DirectConnectTunnelId: null
+      DirectConnectId: null
+      State: null
+      DirectConnectOwnerAccount: null
+      OwnerAccount: null
+      NetworkType: null
+      NetworkRegion: null
+      VpcId: null
+      DirectConnectGatewayId: null
+      RouteType: null
+      BgpPeer: null
+      RouteFilterPrefixes:
+        - Cidr: null
+      Vlan: null
+      TencentAddress: null
+      CustomerAddress: null
+      DirectConnectTunnelName: null
+      CreatedTime: null
+      Bandwidth: null
+      TagSet:
+        - Key: null
+          Value: null
+      NetDetectId: null
+      EnableBGPCommunity: null
+      NatType: null
+      VpcRegion: null
+      BfdEnable: null
+      AccessPointType: null
+      DirectConnectGatewayName: null
+      VpcName: null
+      TencentBackupAddress: null
+      SignLaw: null
+      CloudAttachId: null
+      ShareOrNot: null
+      AccessPointName: null
+      AccessPointId: null
 total_count:
   description: Number of direct connect tunnels reported by the API.
   returned: always

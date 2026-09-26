@@ -59,6 +59,16 @@ running_tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SdkAppID: null
+      TaskID: null
+      TaskType: null
+      CreateTime: null
+      CancelTime: null
+      Status: null
+      Progress: null
+      FileURL: null
+      RoomID: null
 total_count:
   description: Number of running tasks reported by the API.
   returned: always

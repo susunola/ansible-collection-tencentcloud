@@ -53,6 +53,12 @@ user_data_engine_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DataEngineId: null
+      DataEngineConfigPairs:
+        - ConfigItem: null
+          ConfigValue: null
+      SessionResourceTemplate: null
 total_count:
   description: Number of user data engine configs reported by the API.
   returned: always

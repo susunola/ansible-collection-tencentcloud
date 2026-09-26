@@ -44,6 +44,8 @@ login_session_duration:
   description: Matching IAP login session duration.
   returned: always
   type: dict
+  sample:
+    Duration: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

@@ -52,6 +52,32 @@ members:
   returned: always
   type: list
   elements: dict
+  sample:
+    - MemberUin: null
+      Name: null
+      MemberType: null
+      OrgPolicyType: null
+      OrgPolicyName: null
+      OrgPermission:
+        - Id: null
+          Name: null
+      NodeId: null
+      NodeName: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      IsAllowQuit: null
+      PayUin: null
+      PayName: null
+      OrgIdentity:
+        - IdentityId: null
+          IdentityAliasName: null
+      BindStatus: null
+      PermissionStatus: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      NickName: null
 total_count:
   description: Number of members reported by the API.
   returned: always

@@ -52,6 +52,59 @@ work_spaces:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SerialId: null
+      AppId: null
+      OwnerUin: null
+      CreatorUin: null
+      WorkSpaceName: null
+      Region: null
+      CreateTime: null
+      UpdateTime: null
+      Status: null
+      Description: null
+      ClusterGroupSetItem:
+        - ClusterId: null
+          Name: null
+          Region: null
+          Zone: null
+          AppId: null
+          OwnerUin: null
+          CreatorUin: null
+          CuNum: null
+          CuMem: null
+          Status: null
+          StatusDesc: null
+          CreateTime: null
+          UpdateTime: null
+          Remark: null
+          NetEnvironmentType: null
+          FreeCuNum: null
+          FreeCu: null
+          RunningCu: null
+          PayMode: null
+          SubEks: null
+          BillingResourceMode: null
+          TotalCpu: null
+          TotalMem: null
+          RunningCpu: null
+          RunningMem: null
+      RoleAuth:
+        - AppId: null
+          WorkSpaceSerialId: null
+          OwnerUin: null
+          CreatorUin: null
+          AuthSubAccountUin: null
+          Permission: null
+          CreateTime: null
+          UpdateTime: null
+          Status: null
+          Id: null
+          WorkSpaceId: null
+          RoleName: null
+      RoleAuthCount: null
+      WorkSpaceId: null
+      JobsCount: null
 total_count:
   description: Number of workspaces reported by the API.
   returned: always

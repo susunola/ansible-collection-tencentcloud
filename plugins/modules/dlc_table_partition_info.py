@@ -52,6 +52,15 @@ table_partitions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Partition: null
+      Records: null
+      DataFileSize: null
+      DataFileStorage: null
+      CreateTime: null
+      UpdateTime: null
+      LastUpdateSnapshotId: null
+      Location: null
 total_count:
   description: Number of table partitions returned (the API reports no total count).
   returned: always

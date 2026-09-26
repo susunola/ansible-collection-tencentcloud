@@ -56,6 +56,17 @@ usage_plans:
   returned: always
   type: list
   elements: dict
+  sample:
+    - UsagePlanId: null
+      UsagePlanName: null
+      UsagePlanDesc: null
+      MaxRequestNumPreSec: null
+      MaxRequestNum: null
+      CreatedTime: null
+      ModifiedTime: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of usage plans reported by the API.
   returned: always

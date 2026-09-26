@@ -59,6 +59,10 @@ topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      Topic: null
+      Remark: null
 total_count:
   description: Number of topics reported by the API.
   returned: always

@@ -52,6 +52,38 @@ subscriptions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TopicName: null
+      EnvironmentId: null
+      ConnectedSince: null
+      ConsumerAddr: null
+      ConsumerCount: null
+      ConsumerName: null
+      MsgBacklog: null
+      MsgRateExpired: null
+      MsgRateOut: null
+      MsgThroughputOut: null
+      SubscriptionName: null
+      ConsumerSets:
+        - ConnectedSince: null
+          ConsumerAddr: null
+          ConsumerName: null
+          ClientVersion: null
+          Partition: null
+      IsOnline: null
+      ConsumersScheduleSets:
+        - Partitions: null
+          NumberOfEntries: null
+          MsgBacklog: null
+          MsgRateOut: null
+          MsgThroughputOut: null
+          MsgRateExpired: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      SubType: null
+      BlockedSubscriptionOnUnackedMsgs: null
+      MaxUnackedMsgNum: null
 total_count:
   description: Number of subscriptions reported by the API.
   returned: always

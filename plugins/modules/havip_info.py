@@ -65,6 +65,28 @@ havips:
   returned: always
   type: list
   elements: dict
+  sample:
+    - HaVipId: null
+      HaVipName: null
+      Vip: null
+      VpcId: null
+      SubnetId: null
+      NetworkInterfaceId: null
+      InstanceId: null
+      AddressIp: null
+      State: null
+      CreatedTime: null
+      Business: null
+      HaVipAssociationSet:
+        - InstanceId: null
+          HaVipId: null
+          InstanceType: null
+      CheckAssociate: null
+      CdcId: null
+      FlushedTime: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of HAVIPs reported by the API.
   returned: always

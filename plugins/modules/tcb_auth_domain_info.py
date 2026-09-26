@@ -51,6 +51,13 @@ auth_domains:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Domain: null
+      Type: null
+      Status: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of auth domains returned (the API reports no total count).
   returned: always

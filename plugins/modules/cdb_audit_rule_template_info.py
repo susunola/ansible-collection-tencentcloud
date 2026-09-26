@@ -71,6 +71,20 @@ audit_rule_templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleTemplateId: null
+      RuleTemplateName: null
+      RuleFilters:
+        - Type: null
+          Compare: null
+          Value: null
+      Description: null
+      CreateAt: null
+      AlarmLevel: null
+      AlarmPolicy: null
+      AffectedInstances: null
+      Status: null
+      UpdateAt: null
 total_count:
   description: Number of audit rule templates reported by the API.
   returned: always

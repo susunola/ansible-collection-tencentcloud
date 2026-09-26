@@ -52,6 +52,31 @@ governance_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Namespace: null
+      Metadatas:
+        - Key: null
+          Value: null
+      Comment: null
+      CreateTime: null
+      ModifyTime: null
+      Department: null
+      Business: null
+      HealthyInstanceCount: null
+      TotalInstanceCount: null
+      Id: null
+      Editable: null
+      UserIds: null
+      GroupIds: null
+      RemoveUserIds: null
+      RemoveGroupIds: null
+      ExportTo: null
+      Revision: null
+      SyncToGlobalRegistry: null
+      IsolateInstanceCount: null
+      ServiceStatus: null
+      Type: null
 total_count:
   description: Number of governance services reported by the API.
   returned: always

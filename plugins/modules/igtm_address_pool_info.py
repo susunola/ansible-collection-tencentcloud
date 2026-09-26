@@ -53,6 +53,30 @@ address_pools:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PoolId: null
+      PoolName: null
+      AddrType: null
+      TrafficStrategy: null
+      MonitorId: null
+      Status: null
+      AddressNum: null
+      MonitorGroupNum: null
+      MonitorTaskNum: null
+      InstanceInfo:
+        - InstanceId: null
+          InstanceName: null
+      AddressSet:
+        - Addr: null
+          IsEnable: null
+          AddressId: null
+          Location: null
+          Status: null
+          Weight: null
+          CreatedOn: null
+          UpdatedOn: null
+      CreatedOn: null
+      UpdatedOn: null
 total_count:
   description: Number of address pools reported by the API.
   returned: always

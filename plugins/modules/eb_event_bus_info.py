@@ -56,6 +56,20 @@ event_buses:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ModTime: null
+      Description: null
+      AddTime: null
+      EventBusName: null
+      EventBusId: null
+      Type: null
+      PayMode: null
+      ConnectionBriefs:
+        - Type: null
+          Status: null
+      TargetBriefs:
+        - TargetId: null
+          Type: null
 total_count:
   description: Number of event buses reported by the API.
   returned: always

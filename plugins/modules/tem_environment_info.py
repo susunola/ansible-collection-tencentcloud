@@ -62,6 +62,34 @@ environments:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvironmentId: null
+      Channel: null
+      EnvironmentName: null
+      Region: null
+      Description: null
+      Status: null
+      Vpc: null
+      CreateDate: null
+      ModifyDate: null
+      Modifier: null
+      Creator: null
+      ApplicationNum: null
+      RunInstancesNum: null
+      SubnetId: null
+      ClusterStatus: null
+      EnableTswTraceService: null
+      Locked: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
+      ClusterId: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      HasAuthority: null
+      EnvType: null
+      RegionId: null
 total_count:
   description: Number of environments reported by the API.
   returned: always

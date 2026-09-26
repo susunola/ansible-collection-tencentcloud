@@ -65,6 +65,26 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      ClusterName: null
+      VpcId: null
+      SubnetIds: null
+      K8SVersion: null
+      Status: null
+      ClusterDesc: null
+      CreatedTime: null
+      ServiceSubnetId: null
+      DnsServers:
+        - Domain: null
+          DnsServers: null
+      NeedDeleteCbs: null
+      EnableVpcCoreDNS: null
+      TagSpecification:
+        - ResourceType: null
+          Tags:
+            - Key: null
+              Value: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

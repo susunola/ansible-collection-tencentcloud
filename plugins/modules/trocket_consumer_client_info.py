@@ -58,6 +58,13 @@ consumer_clients:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClientId: null
+      ClientAddr: null
+      Language: null
+      Version: null
+      ConsumerLag: null
+      ChannelProtocol: null
 total_count:
   description: Number of consumer clients reported by the API.
   returned: always

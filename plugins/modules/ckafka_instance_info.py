@@ -65,6 +65,44 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      Vip: null
+      Vport: null
+      VipList:
+        - Vip: null
+          Vport: null
+      Status: null
+      Bandwidth: null
+      DiskSize: null
+      ZoneId: null
+      VpcId: null
+      SubnetId: null
+      RenewFlag: null
+      Healthy: null
+      HealthyMessage: null
+      CreateTime: null
+      ExpireTime: null
+      IsInternal: null
+      TopicNum: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Version: null
+      ZoneIds: null
+      Cvm: null
+      InstanceType: null
+      DiskType: null
+      MaxTopicNumber: null
+      MaxPartitionNumber: null
+      RebalanceTime: null
+      PartitionNumber: null
+      PublicNetworkChargeType: null
+      PublicNetwork: null
+      ClusterType: null
+      Features: null
+      RetentionBytes: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

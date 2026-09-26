@@ -53,6 +53,43 @@ rabbit_mq_vip_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      InstanceVersion: null
+      Status: null
+      NodeCount: null
+      ConfigDisplay: null
+      MaxTps: null
+      MaxBandWidth: null
+      MaxStorage: null
+      ExpireTime: null
+      AutoRenewFlag: null
+      PayMode: null
+      Remark: null
+      SpecName: null
+      ExceptionInformation: null
+      ClusterStatus: null
+      PublicAccessEndpoint: null
+      Vpcs:
+        - VpcId: null
+          SubnetId: null
+          VpcEndpoint: null
+          VpcDataStreamEndpointStatus: null
+          VpcTlsEndpoint: null
+          VpcErrorMessage: null
+          Id: null
+          VpcStreamEndpoint: null
+      CreateTime: null
+      InstanceType: null
+      IsolatedTime: null
+      EnableDeletionProtection: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      PublicStreamAccessEndpoint: null
+      ClusterType: null
+      CdcClusterId: null
 total_count:
   description: Number of rabbit mq vip instances reported by the API.
   returned: always

@@ -58,6 +58,51 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      InstanceType: null
+      InstanceName: null
+      Status: null
+      StatusDesc: null
+      InstanceStateInfo: null
+      InstanceID: null
+      CreateTime: null
+      Region: null
+      Zone: null
+      RegionDesc: null
+      ZoneDesc: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Version: null
+      Charset: null
+      CNNodes:
+        - SpecName: null
+          DataDisk: null
+          CvmCount: null
+      DNNodes:
+        - SpecName: null
+          DataDisk: null
+          CvmCount: null
+      RegionId: null
+      ZoneId: null
+      VpcId: null
+      SubnetId: null
+      ExpireTime: null
+      PayMode: null
+      RenewFlag: null
+      InstanceId: null
+      AccessDetails:
+        - Address: null
+          Protocol: null
+      IsAz: null
+      SecondaryZone: null
+      SecondarySubnet: null
+      AccessInfo: null
+      GTMNodes:
+        - SpecName: null
+          DataDisk: null
+          CvmCount: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

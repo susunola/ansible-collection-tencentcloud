@@ -54,6 +54,14 @@ devices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DeviceId: null
+      DeviceName: null
+      DeviceStatus: null
+      DeviceType: null
+      ModifyTime: null
+      LastReportTime: null
+      ProjectId: null
 total_count:
   description: Number of devices reported by the API.
   returned: always

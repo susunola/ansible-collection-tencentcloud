@@ -51,6 +51,10 @@ cool_down_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PolicyName: null
+      CooldownDatetime: null
+      CooldownTtl: null
 total_count:
   description: Number of cool down policies returned (the API reports no total count).
   returned: always

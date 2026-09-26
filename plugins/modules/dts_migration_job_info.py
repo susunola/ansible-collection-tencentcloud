@@ -96,6 +96,28 @@ migration_jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - JobId: null
+      JobName: null
+      CreateTime: null
+      UpdateTime: null
+      StartTime: null
+      EndTime: null
+      BriefMsg: null
+      Status: null
+      RunMode: null
+      ExpectRunTime: null
+      Action: null
+      StepInfo: null
+      SrcInfo: null
+      DstInfo: null
+      CompareTask: null
+      TradeInfo: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      AutoRetryTimeRangeMinutes: null
+      DumperResumeCtrl: null
 total_count:
   description: Number of migration jobs reported by the API.
   returned: always

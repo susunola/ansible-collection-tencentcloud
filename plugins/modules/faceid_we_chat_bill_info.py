@@ -45,6 +45,21 @@ we_chat_bills:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BizToken: null
+      ChargeCount: null
+      ChargeDetails:
+        - ReqTime: null
+          Seq: null
+          IdCard: null
+          Idcard: null
+          Name: null
+          Sim: null
+          IsNeedCharge: null
+          ChargeType: null
+          ErrorCode: null
+          ErrorMessage: null
+      RuleId: null
 total_count:
   description: Number of we chat bills returned (the API reports no total count).
   returned: always

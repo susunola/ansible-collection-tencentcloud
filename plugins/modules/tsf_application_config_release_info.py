@@ -52,6 +52,29 @@ config_releases:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConfigReleaseId: null
+      ConfigId: null
+      ConfigName: null
+      ConfigVersion: null
+      ReleaseTime: null
+      GroupId: null
+      GroupName: null
+      NamespaceId: null
+      NamespaceName: null
+      ClusterId: null
+      ClusterName: null
+      ReleaseDesc: null
+      ApplicationId: null
+      ConfigCenters:
+        - ConfigType: null
+          ConfigCenterInstanceId: null
+          ConfigCenterInstanceName: null
+          RegionId: null
+          NamespaceId: null
+          CurrentVersion: null
+          TargetVersion: null
+      DaulStatus: null
 total_count:
   description: Number of config releases reported by the API.
   returned: always

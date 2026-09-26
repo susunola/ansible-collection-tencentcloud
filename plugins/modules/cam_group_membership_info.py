@@ -58,6 +58,11 @@ groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      CreateTime: null
+      Remark: null
 total_count:
   description: Number of groups reported by the API.
   returned: always

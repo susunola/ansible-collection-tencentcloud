@@ -58,6 +58,41 @@ models:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ModelName: null
+      ModelId: null
+      ExtraModelIds: null
+      DisplayName: null
+      Description: null
+      Summary: null
+      ModelType: null
+      Brand: null
+      ModelImage: null
+      Provider: null
+      Status: null
+      Tags: null
+      ModelChargingInfo:
+        - Type: null
+          Name: null
+          Scenario: null
+          ChargingItems:
+            - PriceName: null
+              DisplayName: null
+              Price: null
+              PriceUnit: null
+              PeakPrice: null
+              Specification: null
+              Usage: null
+              ReferencePrice: null
+          ChargeUnit: null
+          Reference: null
+      ModelSpec: null
+      ReleaseAt: null
+      RecommendWeight: null
+      ModelAccessInfo: null
+      FreeTrialInfo: null
+      OfflineAt: null
+      DiscontinuedAt: null
 total_count:
   description: Number of models reported by the API.
   returned: always

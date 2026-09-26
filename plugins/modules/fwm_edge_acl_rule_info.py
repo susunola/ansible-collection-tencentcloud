@@ -53,6 +53,38 @@ edge_acl_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleId: null
+      Sequence: null
+      Direction: null
+      SourceContent: null
+      SourceType: null
+      SourceName: null
+      TargetContent: null
+      TargetType: null
+      TargetName: null
+      Port: null
+      Protocol: null
+      RuleAction: null
+      Description: null
+      Scope: null
+      CountryName: null
+      CityName: null
+      ParamTemplateId: null
+      ParamTemplateName: null
+      Invalid: null
+      BelongMember: null
+      CountryCode: null
+      CityCode: null
+      IsRegion: null
+      CloudCode: null
+      IsCloud: null
+      InstanceName: null
+      CountryKey: null
+      CityKey: null
+      CreateTime: null
+      UpdateTime: null
+      DnsParseCnt: null
 total_count:
   description: Number of edge acl rules reported by the API.
   returned: always

@@ -71,6 +71,17 @@ nat_fw_dnat_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      IpProtocol: null
+      PublicIpAddress: null
+      PublicPort: null
+      PrivateIpAddress: null
+      PrivatePort: null
+      Description: null
+      IsReferenced: null
+      FwInsId: null
+      NatGwId: null
 total_count:
   description: Number of nat fw dnat rules reported by the API.
   returned: always

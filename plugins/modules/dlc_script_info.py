@@ -56,6 +56,13 @@ scripts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ScriptId: null
+      ScriptName: null
+      ScriptDesc: null
+      DatabaseName: null
+      SQLStatement: null
+      UpdateTime: null
 total_count:
   description: Number of scripts reported by the API.
   returned: always

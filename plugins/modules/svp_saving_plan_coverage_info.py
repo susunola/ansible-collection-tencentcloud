@@ -59,6 +59,24 @@ saving_plan_coverages:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      RegionId: null
+      ProductCode: null
+      SubProductCode: null
+      StartDate: null
+      EndDate: null
+      SpCoveredAmount: null
+      SpUncoveredAmount: null
+      TotalRealAmount: null
+      ExpectedAmount: null
+      SpCoverage: null
+      PayerUinName: null
+      OwnerUinName: null
+      PayerUin: null
+      SubBillingItemName: null
+      BillingItemName: null
+      SubProductName: null
 total_count:
   description: Number of saving plan coverages reported by the API.
   returned: always

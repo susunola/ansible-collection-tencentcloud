@@ -53,6 +53,21 @@ resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      ResourceAlias: null
+      Uin: null
+      ResourceType: null
+      RegionCode: null
+      ZoneCode: null
+      PayMode: null
+      CreateTime: null
+      ExpireTime: null
+      PrivateIpAddress: null
+      PublicIpAddress: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of resources returned (the API reports no total count).
   returned: always

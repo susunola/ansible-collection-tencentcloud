@@ -52,6 +52,16 @@ aggregators:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Description: null
+      OwnerUin: null
+      CreateTime: null
+      AccountCount: null
+      Type: null
+      AccountGroupId: null
+      AggregatorStatus: null
+      MemberName: null
 total_count:
   description: Number of aggregators reported by the API.
   returned: always

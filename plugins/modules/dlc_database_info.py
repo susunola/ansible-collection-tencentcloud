@@ -52,6 +52,22 @@ databases:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DatabaseName: null
+      Comment: null
+      Properties:
+        - Key: null
+          Value: null
+      CreateTime: null
+      ModifiedTime: null
+      Location: null
+      UserAlias: null
+      UserSubUin: null
+      GovernPolicy: null
+      DatabaseId: null
+      CatalogName: null
+      CatalogType: null
+      IsInformationSchema: null
 total_count:
   description: Number of databases reported by the API.
   returned: always

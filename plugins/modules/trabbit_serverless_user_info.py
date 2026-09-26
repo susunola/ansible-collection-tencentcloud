@@ -65,6 +65,17 @@ serverless_users:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      User: null
+      Password: null
+      Description: null
+      Tags: null
+      CreateTime: null
+      ModifyTime: null
+      Type: null
+      MaxConnections: null
+      MaxChannels: null
 total_count:
   description: Number of serverless users reported by the API.
   returned: always

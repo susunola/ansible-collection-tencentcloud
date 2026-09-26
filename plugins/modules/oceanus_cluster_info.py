@@ -65,6 +65,165 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      Name: null
+      Region: null
+      AppId: null
+      OwnerUin: null
+      CreatorUin: null
+      Status: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      CuNum: null
+      CuMem: null
+      Zone: null
+      StatusDesc: null
+      CCNs:
+        - VpcId: null
+          SubnetId: null
+          CcnId: null
+      NetEnvironmentType: null
+      FreeCuNum: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      IsolatedTime: null
+      ExpireTime: null
+      SecondsUntilExpiry: null
+      AutoRenewFlag: null
+      DefaultCOSBucket: null
+      CLSLogSet: null
+      CLSTopicId: null
+      CLSLogName: null
+      CLSTopicName: null
+      Version: null
+      FreeCu: null
+      DefaultLogCollectConf: null
+      CustomizedDNSEnabled: null
+      Correlations:
+        - ClusterGroupId: null
+          ClusterGroupSerialId: null
+          ClusterName: null
+          WorkSpaceId: null
+          WorkSpaceName: null
+          Status: null
+          ProjectId: null
+          ProjectIdStr: null
+      RunningCu: null
+      PayMode: null
+      IsNeedManageNode: null
+      ClusterSessions:
+        - ClusterGroupSerialId: null
+          AppId: null
+          OwnerUin: null
+          CreatorUin: null
+          Region: null
+          Zone: null
+          Status: null
+          CuNum: null
+          FlinkVersion: null
+          WebUIUrl: null
+          Properties:
+            - Key: null
+              Value: null
+          ResourceRefs:
+            - WorkspaceId: null
+              ResourceId: null
+              Version: null
+              Type: null
+          JobManagerCuSpec: null
+          TaskManagerCuSpec: null
+          TaskManagerNum: null
+          CreateTime: null
+          UpdateTime: null
+          JobManagerCpu: null
+          JobManagerMem: null
+          TaskManagerCpu: null
+          TaskManagerMem: null
+          JdkVersion: null
+      ArchGeneration: null
+      ClusterType: null
+      Orders:
+        - Type: null
+          AutoRenewFlag: null
+          OperateUin: null
+          ComputeCu: null
+          OrderTime: null
+      SqlGateways:
+        - SerialId: null
+          FlinkVersion: null
+          Status: null
+          CreatorUin: null
+          ResourceRefs:
+            - WorkspaceId: null
+              ResourceId: null
+              Version: null
+              Type: null
+          CuSpec: null
+          CreateTime: null
+          UpdateTime: null
+          Properties:
+            - Key: null
+              Value: null
+          Cpu: null
+          Mem: null
+          JdkVersion: null
+          SessionClusterId: null
+          PgUser: null
+          Endpoints:
+            - Type: null
+              Address: null
+              Enabled: null
+              Extra: null
+      WebUIType: null
+      Type: null
+      SubEks: null
+      AgentSerialId: null
+      ResourceType: null
+      BillingResourceMode: null
+      MemRatio: null
+      CrossTenantEniMode: null
+      TotalCpu: null
+      TotalMem: null
+      RunningCpu: null
+      RunningMem: null
+      Setats: null
+      Yarns:
+        - ClusterGroupSerialId: null
+          Status: null
+          Cpu: null
+          Mem: null
+          CreateTime: null
+          UpdateTime: null
+          Config: null
+          CreatorUin: null
+      DeploymentMode: null
+      SlaveZones:
+        - VpcId: null
+          SubnetId: null
+          Zone: null
+      LogCOSBucket: null
+      CdcId: null
+      ClusterProcessMsg: null
+      MaxCuPerJob: null
+      HiveMetastore: null
+      SecurityGroupIds: null
+      NetEniType: null
+      ClusterBuckets:
+        - SerialId: null
+          ClusterId: null
+          Bucket: null
+          BucketType: null
+          AuthMode: null
+          IsDefault: null
+          Status: null
+          JobCount: null
+          Region: null
+          CreateTime: null
+          UpdateTime: null
+      IsolationPolicyVersion: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

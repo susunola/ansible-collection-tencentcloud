@@ -65,6 +65,78 @@ datasets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DatasetId: null
+      DatasetName: null
+      Creator: null
+      DatasetVersion: null
+      DatasetType: null
+      DatasetTags:
+        - TagKey: null
+          TagValue: null
+      DatasetAnnotationTaskName: null
+      DatasetAnnotationTaskId: null
+      Process: null
+      DatasetStatus: null
+      ErrorMsg: null
+      CreateTime: null
+      UpdateTime: null
+      ExternalTaskType: null
+      DatasetSize: null
+      FileNum: null
+      StorageDataPath: null
+      StorageLabelPath: null
+      DatasetVersions:
+        - DatasetId: null
+          DatasetName: null
+          Creator: null
+          DatasetVersion: null
+          DatasetType: null
+          DatasetTags:
+            - TagKey: null
+              TagValue: null
+          DatasetAnnotationTaskName: null
+          DatasetAnnotationTaskId: null
+          Process: null
+          DatasetStatus: null
+          ErrorMsg: null
+          CreateTime: null
+          UpdateTime: null
+          ExternalTaskType: null
+          DatasetSize: null
+          FileNum: null
+          StorageDataPath: null
+          StorageLabelPath: null
+          AnnotationStatus: null
+          AnnotationType: null
+          AnnotationFormat: null
+          DatasetScope: null
+          OcrScene: null
+          AnnotationKeyStatus: null
+          ContentType: null
+          DatasetScene: null
+          CFSConfig: null
+          SceneTags: null
+          NumAnnotated: null
+          AnnotationSpecification: null
+          AnnotationSchemaConfigured: null
+          CreatorNickname: null
+          IsCfsUpdated: null
+      AnnotationStatus: null
+      AnnotationType: null
+      AnnotationFormat: null
+      DatasetScope: null
+      OcrScene: null
+      AnnotationKeyStatus: null
+      ContentType: null
+      DatasetScene: null
+      CFSConfig: null
+      SceneTags: null
+      NumAnnotated: null
+      AnnotationSpecification: null
+      AnnotationSchemaConfigured: null
+      CreatorNickname: null
+      IsCfsUpdated: null
 total_count:
   description: Number of datasets reported by the API.
   returned: always

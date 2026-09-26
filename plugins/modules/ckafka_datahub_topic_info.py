@@ -64,6 +64,14 @@ datahub_topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      TopicName: null
+      TopicId: null
+      PartitionNum: null
+      RetentionMs: null
+      Note: null
+      Status: null
 total_count:
   description: Number of datahub topics reported by the API.
   returned: always

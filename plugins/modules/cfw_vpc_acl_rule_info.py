@@ -71,6 +71,39 @@ vpc_ac_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Description: null
+      DestContent: null
+      DestType: null
+      EdgeId: null
+      Enable: null
+      OrderIndex: null
+      Port: null
+      Protocol: null
+      RuleAction: null
+      SourceContent: null
+      SourceType: null
+      BetaList:
+        - LastTime: null
+          TaskId: null
+          TaskName: null
+      CreateTime: null
+      Deleted: null
+      DestValueType: null
+      DetectedTimes: null
+      EdgeName: null
+      FwGroupId: null
+      FwGroupName: null
+      InternalUuid: null
+      Invalid: null
+      IpVersion: null
+      ParamTemplateId: null
+      ParamTemplateName: null
+      RulePartition: null
+      SourceName: null
+      TargetName: null
+      UpdateTime: null
+      Uuid: null
 total_count:
   description: Number of vpc ac rules reported by the API.
   returned: always

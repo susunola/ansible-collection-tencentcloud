@@ -58,6 +58,22 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Remark: null
+      CreateTime: null
+      Status: null
+      UpdateTime: null
+      PassTime: null
+      InternalStatus: null
+      Dbs:
+        - DBName: null
+          Privilege: null
+      IsAdmin: null
+      IsCam: null
+      Authentication: null
+      Host: null
+      AccountType: null
 total_count:
   description: Number of accounts reported by the API.
   returned: always

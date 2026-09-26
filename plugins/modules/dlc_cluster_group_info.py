@@ -56,6 +56,18 @@ cluster_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Description: null
+      Config: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
+      CreateTime: null
+      UpdateTime: null
+      Deleted: null
+      DeleteTime: null
 total_count:
   description: Number of cluster groups reported by the API.
   returned: always

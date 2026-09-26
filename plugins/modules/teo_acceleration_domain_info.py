@@ -57,6 +57,24 @@ acceleration_domains:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ZoneId: null
+      DomainName: null
+      DomainStatus: null
+      Cname: null
+      IPv6Status: null
+      IdentificationStatus: null
+      OwnershipVerification: null
+      OriginDetail: null
+      OriginProtocol: null
+      HttpOriginPort: null
+      HttpsOriginPort: null
+      Certificate: null
+      CreatedOn: null
+      ModifiedOn: null
+      ComplianceRestrictions:
+        - Reason: null
+          Region: null
 total_count:
   description: Number of acceleration domains reported by the API.
   returned: always

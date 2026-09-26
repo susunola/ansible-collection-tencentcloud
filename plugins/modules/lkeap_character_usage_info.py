@@ -44,6 +44,9 @@ character_usage:
   description: Matching LKEAP character usage.
   returned: always
   type: dict
+  sample:
+    Used: null
+    Total: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

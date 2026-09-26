@@ -57,6 +57,19 @@ replication_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      Name: null
+      Description: null
+      Filters:
+        - Type: null
+          Value: null
+      Override: null
+      Enabled: null
+      SrcResource: null
+      DestResource: null
+      CreationTime: null
+      UpdateTime: null
 total_count:
   description: Number of replication rules reported by the API.
   returned: always

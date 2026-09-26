@@ -44,6 +44,11 @@ auth:
   description: Matching BA auth.
   returned: always
   type: dict
+  sample:
+    IsTenPayMasked: null
+    IsAuthenticated: null
+    Type: null
+    Level: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

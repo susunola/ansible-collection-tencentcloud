@@ -49,6 +49,15 @@ cloud_native_api_gateway_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      Name: null
+      Tags: null
+      UpstreamInfo: null
+      UpstreamType: null
+      CreatedTime: null
+      Editable: null
+      Path: null
 total_count:
   description: Number of cloud native api gateway services reported by the API.
   returned: always

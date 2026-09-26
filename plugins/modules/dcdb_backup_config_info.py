@@ -51,6 +51,13 @@ backup_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnableBackupPolicy: null
+      BeginDate: null
+      MaxRetentionDays: null
+      Frequency: null
+      WeekDays: null
+      BackupCount: null
 total_count:
   description: Number of backup configs returned (the API reports no total count).
   returned: always

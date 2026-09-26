@@ -56,6 +56,27 @@ functions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ModTime: null
+      AddTime: null
+      Runtime: null
+      FunctionName: null
+      FunctionId: null
+      Namespace: null
+      Status: null
+      StatusDesc: null
+      Description: null
+      Tags:
+        - Key: null
+          Value: null
+      Type: null
+      StatusReasons:
+        - ErrorCode: null
+          ErrorMessage: null
+      TotalProvisionedConcurrencyMem: null
+      ReservedConcurrencyMem: null
+      AsyncRunEnable: null
+      TraceEnable: null
 total_count:
   description: Number of functions reported by the API.
   returned: always

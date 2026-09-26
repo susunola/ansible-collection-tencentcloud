@@ -57,6 +57,18 @@ anti_info_leak_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleId: null
+      Name: null
+      Status: null
+      Action: null
+      CreateTime: null
+      Strategies:
+        - Field: null
+          CompareFunc: null
+          Content: null
+      Uri: null
+      ModifyTime: null
 total_count:
   description: Number of anti-info-leak rules reported by the API.
   returned: always

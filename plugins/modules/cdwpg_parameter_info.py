@@ -59,6 +59,20 @@ parameters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NodeType: null
+      NodeName: null
+      TotalCount: null
+      Details:
+        - ParamName: null
+          DefaultValue: null
+          NeedRestart: null
+          RunningValue: null
+          ValueRange: null
+          Unit: null
+          ShortDesc: null
+          ParameterName: null
+          LatestValue: null
 total_count:
   description: Number of parameters reported by the API.
   returned: always

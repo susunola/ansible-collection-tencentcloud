@@ -57,6 +57,24 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      VpcId: null
+      SubnetId: null
+      InstanceStatus: null
+      ChargeStatus: null
+      EnableGrafana: null
+      GrafanaURL: null
+      InstanceChargeType: null
+      SpecName: null
+      DataRetentionTime: null
+      ExpireTime: null
+      AutoRenewFlag: null
+      BoundTotal: null
+      BoundNormal: null
+      ResourcePackageStatus: null
+      ResourcePackageSpecName: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

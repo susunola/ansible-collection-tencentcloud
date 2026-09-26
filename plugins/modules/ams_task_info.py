@@ -49,6 +49,23 @@ tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DataId: null
+      TaskId: null
+      Status: null
+      Name: null
+      BizType: null
+      Type: null
+      Suggestion: null
+      MediaInfo: null
+      Labels:
+        - Label: null
+          Suggestion: null
+          Score: null
+          SubLabel: null
+      CreatedAt: null
+      UpdatedAt: null
+      InputInfo: null
 total_count:
   description: Number of tasks returned (the API reports no total count).
   returned: always

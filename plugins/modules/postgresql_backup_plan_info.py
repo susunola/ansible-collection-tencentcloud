@@ -54,6 +54,19 @@ backup_plans:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BackupPeriod: null
+      BaseBackupRetentionPeriod: null
+      MinBackupStartTime: null
+      MaxBackupStartTime: null
+      BackupMethod: null
+      PlanId: null
+      PlanName: null
+      LogBackupRetentionPeriod: null
+      CreatedTime: null
+      UpdatedTime: null
+      PlanType: null
+      BackupPeriodType: null
 total_count:
   description: Number of plans returned (the API reports no pageable total).
   returned: always

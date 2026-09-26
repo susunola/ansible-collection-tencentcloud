@@ -50,6 +50,8 @@ instance_ssl:
   description: Matching TDMYSQL instance ssl.
   returned: always
   type: dict
+  sample:
+    SSLStatus: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

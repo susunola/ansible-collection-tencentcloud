@@ -49,6 +49,28 @@ rocket_mq_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      ConsumerNum: null
+      TPS: null
+      TotalAccumulative: null
+      ConsumptionMode: null
+      ReadEnabled: null
+      RetryPartitionNum: null
+      CreateTime: null
+      UpdateTime: null
+      ClientProtocol: null
+      Remark: null
+      ConsumerType: null
+      BroadcastEnabled: null
+      GroupType: null
+      RetryMaxTimes: null
+      InstanceId: null
+      Namespace: null
+      SubscribeTopicNum: null
+      TagList:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of rocket mq groups reported by the API.
   returned: always

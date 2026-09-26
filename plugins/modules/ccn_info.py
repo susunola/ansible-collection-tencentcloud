@@ -65,6 +65,36 @@ ccns:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CcnId: null
+      CcnName: null
+      CcnDescription: null
+      InstanceCount: null
+      CreateTime: null
+      State: null
+      QosLevel: null
+      InstanceChargeType: null
+      InstanceMeteringType: null
+      BandwidthLimitType: null
+      TagSet:
+        - Key: null
+          Value: null
+      RoutePriorityFlag: null
+      RouteTableCount: null
+      RouteTableFlag: null
+      IsSecurityLock: null
+      RouteBroadcastPolicyFlag: null
+      RouteECMPFlag: null
+      RouteOverlapFlag: null
+      TrafficMarkingPolicyFlag: null
+      RouteSelectPolicyFlag: null
+      DirectConnectAccelerateChannelFlag: null
+      Ipv6Flag: null
+      MrtbAggregatePolicyFlag: null
+      MrtbPolicyValueFlag: null
+      RouteTablePolicyValueCommunityFlag: null
+      PolicyBasedRoutingFlag: null
+      ServiceLevelMode: null
 total_count:
   description: Number of CCN instances reported by the API.
   returned: always

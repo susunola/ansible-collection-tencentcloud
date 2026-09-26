@@ -58,6 +58,17 @@ member_auth_identities:
   returned: always
   type: list
   elements: dict
+  sample:
+    - IdentityId: null
+      IdentityRoleName: null
+      IdentityRoleAliasName: null
+      Description: null
+      CreateTime: null
+      UpdateTime: null
+      IdentityType: null
+      Status: null
+      MemberUin: null
+      MemberName: null
 total_count:
   description: Number of member auth identities reported by the API.
   returned: always

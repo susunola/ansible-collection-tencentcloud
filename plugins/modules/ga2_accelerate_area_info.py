@@ -53,6 +53,17 @@ accelerate_areas:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccelerateRegion: null
+      Bandwidth: null
+      IspType: null
+      IpVersion: null
+      AcceleratorAreaId: null
+      IpAddress: null
+      IpAddressInfoSet:
+        - IpAddress: null
+          IspType: null
+          DdosProtectionType: null
 total_count:
   description: Number of accelerate areas reported by the API.
   returned: always

@@ -49,6 +49,17 @@ cloud_native_api_gateway_consumer_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConsumerGroupId: null
+      Name: null
+      Status: null
+      Description: null
+      CreateTime: null
+      ModifyTime: null
+      BindCount: null
+      SyncStatus: null
+      SourceType: null
+      SyncedVersion: null
 total_count:
   description: Number of cloud native api gateway consumer groups reported by the API.
   returned: always

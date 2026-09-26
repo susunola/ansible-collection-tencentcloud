@@ -64,6 +64,20 @@ filesets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - FsetId: null
+      FsetName: null
+      FsetDir: null
+      QuotaSizeLimit: null
+      QuotaSizeUsed: null
+      QuotaSizeUsedPercent: null
+      QuotaFilesLimit: null
+      QuotaFilesUsed: null
+      QuotaFilesUsedPercent: null
+      AuditState: null
+      CreateTime: null
+      ModifyTime: null
+      Status: null
 total_count:
   description: Number of filesets returned (the API reports no total count).
   returned: always

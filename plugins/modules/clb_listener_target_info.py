@@ -63,6 +63,42 @@ listeners:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ListenerId: null
+      Protocol: null
+      Port: null
+      Rules:
+        - LocationId: null
+          Domain: null
+          Url: null
+          Targets:
+            - Type: null
+              InstanceId: null
+              Port: null
+              Weight: null
+              PublicIpAddresses: null
+              PrivateIpAddresses: null
+              InstanceName: null
+              RegisteredTime: null
+              EniId: null
+              Tag: null
+              Zone: null
+          FunctionTargets:
+            - Function: null
+              Weight: null
+      Targets:
+        - Type: null
+          InstanceId: null
+          Port: null
+          Weight: null
+          PublicIpAddresses: null
+          PrivateIpAddresses: null
+          InstanceName: null
+          RegisteredTime: null
+          EniId: null
+          Tag: null
+          Zone: null
+      EndPort: null
 total_count:
   description: Number of listeners returned (the API reports no pageable total).
   returned: always

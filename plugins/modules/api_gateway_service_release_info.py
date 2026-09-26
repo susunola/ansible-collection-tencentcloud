@@ -58,6 +58,10 @@ service_environment_release_histories:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VersionName: null
+      VersionDesc: null
+      ReleaseTime: null
 total_count:
   description: Number of service environment release histories reported by the API.
   returned: always

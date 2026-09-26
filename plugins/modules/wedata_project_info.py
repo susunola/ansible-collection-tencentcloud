@@ -58,6 +58,19 @@ projects:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProjectId: null
+      ProjectName: null
+      DisplayName: null
+      Description: null
+      CreateTime: null
+      CreatorUin: null
+      ProjectOwnerUin: null
+      Status: null
+      ProjectModel: null
+      WorkspaceExt:
+        - Key: null
+          Value: null
 total_count:
   description: Number of projects reported by the API.
   returned: always

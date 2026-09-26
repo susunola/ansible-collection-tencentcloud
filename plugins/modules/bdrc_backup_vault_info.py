@@ -62,6 +62,24 @@ backup_vaults:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VaultId: null
+      VaultName: null
+      Description: null
+      Status: null
+      EncryptType: null
+      KmsKeyId: null
+      VaultType: null
+      BackupPolicySet:
+        - Type: null
+          Count: null
+      BackupSet:
+        - Type: null
+          Count: null
+      Region: null
+      CreateTime: null
+      SourceDataSize: null
+      VaultDataSize: null
 total_count:
   description: Number of backup vaults reported by the API.
   returned: always

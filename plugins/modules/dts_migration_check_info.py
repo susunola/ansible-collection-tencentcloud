@@ -51,6 +51,22 @@ migration_check_jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StepNo: null
+      StepId: null
+      StepName: null
+      StepStatus: null
+      StepMessage: null
+      DetailCheckItems:
+        - CheckItemName: null
+          Description: null
+          CheckResult: null
+          FailureReason: null
+          Solution: null
+          ErrorLog: null
+          HelpDoc: null
+          SkipInfo: null
+      HasSkipped: null
 total_count:
   description: Number of migration check jobs returned (the API reports no total count).
   returned: always

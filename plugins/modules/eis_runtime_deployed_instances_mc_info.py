@@ -49,6 +49,19 @@ runtime_deployed_instances_mcs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      ProjectId: null
+      ProjectName: null
+      InstanceId: null
+      InstanceVersion: null
+      InstanceCreatedAt: null
+      Status: null
+      CreatedAt: null
+      UpdatedAt: null
+      ProjectType: null
+      ProjectVersion: null
 total_count:
   description: Number of runtime deployed instances mcs reported by the API.
   returned: always

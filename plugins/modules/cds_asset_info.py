@@ -49,6 +49,58 @@ assets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AddTime: null
+      Aid: null
+      AssetsIp: null
+      AssetsName: null
+      AssetsPort: null
+      AssetsType: null
+      AssetsVersion: null
+      AssetsAddType: null
+      Status: null
+      UpdateTime: null
+      VpcId: null
+      RegionId: null
+      Permission: null
+      InstanceId: null
+      InstanceName: null
+      AddType: null
+      AssetSubnetId: null
+      UploadPem: null
+      AliveStatus: null
+      AgentOn: null
+      CasbOn: null
+      GroupId: null
+      Available: null
+      CdbOn: null
+      DbPlatform: null
+      DbCharset: null
+      OsPolicy: null
+      BidirectionOn: null
+      BidirectionMaxLine: null
+      BidirectionMaxStorage: null
+      BidirectionAllow: null
+      BidirectionDelivery: null
+      RoStatus: null
+      AgentBound: null
+      CdbErrorMsg: null
+      DsgcBindingInfo: null
+      BindingRules:
+        - Id: null
+          Name: null
+      BindingModels:
+        - Id: null
+          Name: null
+      GroupName: null
+      AssetGroupId: null
+      IsNewCloudAudit: null
+      TrafficMirrorOn: null
+      AuditScope: null
+      InstanceGroupId: null
+      AssetGroups:
+        - Id: null
+          Name: null
 total_count:
   description: Number of assets reported by the API.
   returned: always

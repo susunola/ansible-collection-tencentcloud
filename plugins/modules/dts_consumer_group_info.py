@@ -55,6 +55,24 @@ consumer_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Account: null
+      ConsumerGroupName: null
+      Description: null
+      ConsumerGroupOffset: null
+      ConsumerGroupLag: null
+      Latency: null
+      StateOfPartition:
+        - PartitionNo: null
+          ConsumerGroupOffset: null
+          ConsumerGroupLag: null
+          Latency: null
+      CreatedAt: null
+      UpdatedAt: null
+      ConsumerGroupState: null
+      PartitionAssignment:
+        - ClientId: null
+          PartitionNo: null
 total_count:
   description: Number of consumer groups reported by the API.
   returned: always

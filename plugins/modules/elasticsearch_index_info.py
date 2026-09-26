@@ -77,6 +77,29 @@ indexes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - IndexType: null
+      IndexName: null
+      IndexMetaJson: null
+      IndexStatus: null
+      IndexStorage: null
+      IndexCreateTime: null
+      BackingIndices:
+        - IndexName: null
+          IndexStatus: null
+          IndexStorage: null
+          IndexPhrase: null
+          IndexCreateTime: null
+          IndexUuid: null
+      ClusterId: null
+      ClusterName: null
+      ClusterVersion: null
+      IndexPolicyField: null
+      IndexOptionsField: null
+      IndexSettingsField: null
+      IndexAliasesField: null
+      AppId: null
+      IndexDocs: null
 total_count:
   description: Number of indexes reported by the API.
   returned: always

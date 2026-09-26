@@ -65,6 +65,31 @@ commands:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CommandId: null
+      CommandName: null
+      Description: null
+      Content: null
+      CommandType: null
+      WorkingDirectory: null
+      Timeout: null
+      CreatedTime: null
+      UpdatedTime: null
+      EnableParameter: null
+      DefaultParameters: null
+      DefaultParameterConfs:
+        - ParameterName: null
+          ParameterValue: null
+          ParameterDescription: null
+      Scenes: null
+      FormattedDescription: null
+      CreatedBy: null
+      Tags:
+        - Key: null
+          Value: null
+      Username: null
+      OutputCOSBucketUrl: null
+      OutputCOSKeyPrefix: null
 total_count:
   description: Number of commands reported by the API.
   returned: always

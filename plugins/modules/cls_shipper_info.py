@@ -57,6 +57,35 @@ shippers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ShipperId: null
+      TopicId: null
+      Bucket: null
+      Prefix: null
+      ShipperName: null
+      Interval: null
+      MaxSize: null
+      Status: null
+      FilterRules:
+        - Key: null
+          Regex: null
+          Value: null
+      Partition: null
+      Compress: null
+      Content: null
+      CreateTime: null
+      FilenameMode: null
+      StartTime: null
+      EndTime: null
+      Progress: null
+      RemainTime: null
+      HistoryStatus: null
+      StorageType: null
+      RoleArn: null
+      ExternalId: null
+      TaskStatus: null
+      TimeZone: null
+      DSLFilter: null
 total_count:
   description: Number of shippers reported by the API.
   returned: always

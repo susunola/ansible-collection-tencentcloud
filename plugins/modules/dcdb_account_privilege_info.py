@@ -68,6 +68,11 @@ account_privilege:
   description: Matching DCDB account privilege.
   returned: always
   type: dict
+  sample:
+    InstanceId: null
+    Privileges: null
+    UserName: null
+    Host: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

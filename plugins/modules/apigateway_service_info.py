@@ -59,6 +59,28 @@ services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InnerHttpsPort: null
+      ServiceDesc: null
+      Protocol: null
+      ModifiedTime: null
+      NetTypes: null
+      ExclusiveSetName: null
+      ServiceId: null
+      IpVersion: null
+      AvailableEnvironments: null
+      ServiceName: null
+      OuterSubDomain: null
+      CreatedTime: null
+      InnerHttpPort: null
+      InnerSubDomain: null
+      TradeIsolateStatus: null
+      Tags:
+        - Key: null
+          Value: null
+      InstanceId: null
+      SetType: null
+      DeploymentType: null
 total_count:
   description: Number of services reported by the API.
   returned: always

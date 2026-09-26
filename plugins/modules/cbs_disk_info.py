@@ -66,6 +66,53 @@ disks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DeleteWithInstance: null
+      RenewFlag: null
+      DiskType: null
+      DiskState: null
+      SnapshotCount: null
+      AutoRenewFlagError: null
+      Rollbacking: null
+      InstanceIdList: null
+      Encrypt: null
+      DiskName: null
+      BackupDisk: null
+      Tags:
+        - Key: null
+          Value: null
+      InstanceId: null
+      AttachMode: null
+      AutoSnapshotPolicyIds: null
+      ThroughputPerformance: null
+      Migrating: null
+      DiskId: null
+      SnapshotSize: null
+      Placement: null
+      IsReturnable: null
+      DeadlineTime: null
+      Attached: null
+      DiskSize: null
+      MigratePercent: null
+      DiskUsage: null
+      DiskChargeType: null
+      Portable: null
+      SnapshotAbility: null
+      DeadlineError: null
+      RollbackPercent: null
+      DifferDaysOfDeadline: null
+      ReturnFailCode: null
+      Shareable: null
+      CreateTime: null
+      DeleteSnapshot: null
+      DiskBackupQuota: null
+      DiskBackupCount: null
+      InstanceType: null
+      LastAttachInsId: null
+      ErrorPrompt: null
+      BurstPerformance: null
+      EncryptType: null
+      KmsKeyId: null
 total_count:
   description: Number of disks reported by the API.
   returned: always

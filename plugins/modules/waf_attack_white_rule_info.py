@@ -57,6 +57,27 @@ attack_white_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - WhiteRuleId: null
+      SignatureId: null
+      Status: null
+      MatchField: null
+      MatchParams: null
+      MatchMethod: null
+      MatchContent: null
+      CreateTime: null
+      ModifyTime: null
+      SignatureIds: null
+      TypeIds: null
+      TypeId: null
+      Mode: null
+      Name: null
+      MatchInfo:
+        - MatchField: null
+          MatchMethod: null
+          MatchContent: null
+          MatchParams: null
+      MatchInfoStr: null
 total_count:
   description: Number of attack-whitelist rules reported by the API.
   returned: always

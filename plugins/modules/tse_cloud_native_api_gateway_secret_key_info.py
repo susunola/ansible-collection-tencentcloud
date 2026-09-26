@@ -49,6 +49,34 @@ cloud_native_api_gateway_secret_keys:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SecretKeyId: null
+      Name: null
+      SecretType: null
+      Status: null
+      GenerateType: null
+      SecretValue: null
+      KmsKeyName: null
+      KmsKeyVersion: null
+      Description: null
+      CanBind: null
+      CreateTime: null
+      ModifyTime: null
+      BindCount: null
+      ResourceType: null
+      JWTCredentialConfig: null
+      OAuthCredentialConfig: null
+      OIDCCredentialConfig: null
+      Provider: null
+      AKSKCredentialConfig: null
+      CAMCredentialConfig: null
+      BearerTokenCredentialConfig: null
+      BasicCredentialConfig: null
+      CustomHeaderCredentialConfig: null
+      QueryParamCredentialConfig: null
+      SyncStatus: null
+      SourceType: null
+      SyncedVersion: null
 total_count:
   description: Number of cloud native api gateway secret keys reported by the API.
   returned: always

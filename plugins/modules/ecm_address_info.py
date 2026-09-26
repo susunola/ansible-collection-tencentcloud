@@ -62,6 +62,23 @@ addresses:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AddressId: null
+      AddressName: null
+      AddressStatus: null
+      AddressIp: null
+      InstanceId: null
+      CreatedTime: null
+      NetworkInterfaceId: null
+      PrivateAddressIp: null
+      IsArrears: null
+      IsBlocked: null
+      IsEipDirectConnection: null
+      AddressType: null
+      CascadeRelease: null
+      InternetServiceProvider: null
+      Bandwidth: null
+      PayMode: null
 total_count:
   description: Number of addresses reported by the API.
   returned: always

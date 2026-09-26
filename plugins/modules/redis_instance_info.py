@@ -61,6 +61,89 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceName: null
+      InstanceId: null
+      Appid: null
+      ProjectId: null
+      RegionId: null
+      ZoneId: null
+      VpcId: null
+      SubnetId: null
+      Status: null
+      WanIp: null
+      Port: null
+      Createtime: null
+      Size: null
+      SizeUsed: null
+      Type: null
+      AutoRenewFlag: null
+      DeadlineTime: null
+      Engine: null
+      ProductType: null
+      UniqVpcId: null
+      UniqSubnetId: null
+      BillingMode: null
+      InstanceTitle: null
+      OfflineTime: null
+      SubStatus: null
+      Tags: null
+      InstanceNode:
+        - Id: null
+          InstanceClusterNode:
+            - Name: null
+              RunId: null
+              Role: null
+              Status: null
+              Connected: null
+              CreateTime: null
+              DownTime: null
+              Slots: null
+              Keys: null
+              Qps: null
+              QpsSlope: null
+              Storage: null
+              StorageSlope: null
+      RedisShardSize: null
+      RedisShardNum: null
+      RedisReplicasNum: null
+      PriceId: null
+      CloseTime: null
+      SlaveReadWeight: null
+      InstanceTags:
+        - TagKey: null
+          TagValue: null
+      ProjectName: null
+      NoAuth: null
+      ClientLimit: null
+      DtsStatus: null
+      NetLimit: null
+      PasswordFree: null
+      Vip6: null
+      IPv6: null
+      ReadOnly: null
+      RemainBandwidthDuration: null
+      DiskSize: null
+      MonitorVersion: null
+      ClientLimitMin: null
+      ClientLimitMax: null
+      NodeSet:
+        - NodeType: null
+          NodeId: null
+          ZoneId: null
+          ZoneName: null
+      Region: null
+      WanAddress: null
+      PolarisServer: null
+      RedisClusterId: null
+      DedicatedClusterId: null
+      ProductVersion: null
+      CurrentProxyVersion: null
+      CurrentRedisVersion: null
+      UpgradeProxyVersion: null
+      UpgradeRedisVersion: null
+      BackupMode: null
+      DeleteProtectionSwitch: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

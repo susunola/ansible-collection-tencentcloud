@@ -53,6 +53,19 @@ backup_config:
   description: The backup rules of the instance.
   returned: always
   type: dict
+  sample:
+    BackupSaveTime: null
+    BackupFrequency: null
+    BackupTime: null
+    BackupMethod: null
+    ActiveWeekdays: null
+    LongTermInterval: null
+    LongTermActiveDays: null
+    LongTermExpiredDays: null
+    OplogExpiredDays: null
+    BackupVersion: null
+    BackupTotalSize: null
+    AlertThreshold: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

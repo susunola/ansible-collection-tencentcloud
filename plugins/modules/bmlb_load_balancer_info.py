@@ -58,6 +58,35 @@ load_balancers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LoadBalancerId: null
+      ProjectId: null
+      LoadBalancerName: null
+      LoadBalancerType: null
+      Exclusive: null
+      TgwSetType: null
+      Domain: null
+      VpcId: null
+      SubnetId: null
+      Status: null
+      PayMode: null
+      LatestPayMode: null
+      CreateTime: null
+      StatusTime: null
+      VpcName: null
+      VpcCidrBlock: null
+      LoadBalancerVips: null
+      SupportListenerTypes: null
+      Bandwidth: null
+      ConfId: null
+      ConfName: null
+      LoadBalancerVipv6s: null
+      IpProtocolType: null
+      BzPayMode: null
+      BzL4Metrics: null
+      BzL7Metrics: null
+      IntVpcId: null
+      CurVips: null
 total_count:
   description: Number of load balancers reported by the API.
   returned: always

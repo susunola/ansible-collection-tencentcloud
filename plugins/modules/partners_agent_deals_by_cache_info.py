@@ -58,6 +58,42 @@ agent_deals_by_caches:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DealId: null
+      DealName: null
+      GoodsCategoryId: null
+      OwnerUin: null
+      AppId: null
+      GoodsNum: null
+      GoodsPrice: null
+      Creater: null
+      CreatTime: null
+      PayEndTime: null
+      BillId: null
+      Payer: null
+      DealStatus: null
+      Status: null
+      GoodsName: null
+      ClientRemark: null
+      ActionType: null
+      VoucherDecline: null
+      BigDealId: null
+      ClientType: null
+      ProjectType: null
+      SalesUin: null
+      PayerMode: null
+      ActivityId: null
+      OverdueTime: null
+      ProductInfo:
+        - Name: null
+          Value: null
+      PaymentMethod: null
+      UpdateTime: null
+      ResourceIds: null
+      RefundMap:
+        - DealName: null
+          RefundAmount: null
+      SubGoodsName: null
 total_count:
   description: Number of agent deals by caches reported by the API.
   returned: always

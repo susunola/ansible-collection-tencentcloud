@@ -52,6 +52,56 @@ zones:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ZoneId: null
+      ZoneName: null
+      AliasZoneName: null
+      Area: null
+      Type: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Resources:
+        - Id: null
+          PayMode: null
+          CreateTime: null
+          EnableTime: null
+          ExpireTime: null
+          Status: null
+          Sv:
+            - Key: null
+              Value: null
+              Pack: null
+              InstanceId: null
+              ProtectionSpecs: null
+          AutoRenewFlag: null
+          PlanId: null
+          Area: null
+          Group: null
+          ZoneNumber: null
+          Type: null
+      NSDetail: null
+      CNAMEDetail: null
+      DNSPodDetail: null
+      CreatedOn: null
+      ModifiedOn: null
+      Status: null
+      CnameStatus: null
+      ActiveStatus: null
+      LockStatus: null
+      Paused: null
+      IsFake: null
+      CnameSpeedUp: null
+      OwnershipVerification: null
+      OriginalNameServers: null
+      NameServers: null
+      VanityNameServers: null
+      VanityNameServersIps:
+        - Name: null
+          IPv4: null
+      WorkModeInfos:
+        - ConfigGroupType: null
+          WorkMode: null
 total_count:
   description: Number of zones reported by the API.
   returned: always

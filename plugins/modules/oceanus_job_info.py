@@ -57,6 +57,63 @@ jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - JobId: null
+      Region: null
+      Zone: null
+      AppId: null
+      OwnerUin: null
+      CreatorUin: null
+      Name: null
+      JobType: null
+      Status: null
+      CreateTime: null
+      StartTime: null
+      StopTime: null
+      UpdateTime: null
+      TotalRunMillis: null
+      Remark: null
+      LastOpResult: null
+      ClusterName: null
+      LatestJobConfigVersion: null
+      LatestValidJobConfigVersion: null
+      PublishedJobConfigVersion: null
+      RunningCuNum: null
+      CuMem: null
+      StatusDesc: null
+      CurrentRunMillis: null
+      ClusterId: null
+      WebUIUrl: null
+      SchedulerType: null
+      ClusterStatus: null
+      RunningCu: null
+      FlinkVersion: null
+      WorkSpaceId: null
+      WorkSpaceName: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      EventInfo: null
+      Description: null
+      ScalingType: null
+      RunningCpu: null
+      RunningMem: null
+      OpenJobDefaultAlarm: null
+      ProgressDesc: null
+      ContinueAlarm: null
+      RestartCount: null
+      ExpectJobDefaultAlarmStatus: null
+      JdkVersion: null
+      StateCOSBucket: null
+      NewStateCOSBucket: null
+      StateCOSBucketType: null
+      NewStateCOSBucketType: null
+      HealthScore: null
+      LastDiagnoseTime: null
+      ManagerUin: null
+      StartupPoint: null
+      IsEvent: null
+      IsAlarm: null
 total_count:
   description: Number of jobs reported by the API.
   returned: always

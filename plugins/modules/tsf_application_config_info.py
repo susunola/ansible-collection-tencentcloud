@@ -52,6 +52,19 @@ application_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConfigId: null
+      ConfigName: null
+      ConfigVersion: null
+      ConfigVersionDesc: null
+      ConfigValue: null
+      ConfigType: null
+      CreationTime: null
+      ApplicationId: null
+      ApplicationName: null
+      DeleteFlag: null
+      LastUpdateTime: null
+      ConfigVersionCount: null
 total_count:
   description: Number of application configs reported by the API.
   returned: always

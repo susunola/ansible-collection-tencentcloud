@@ -49,6 +49,16 @@ scan_tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TaskID: null
+      TaskType: null
+      TaskStatus: null
+      TaskErrMsg: null
+      Source: null
+      AppInfo: null
+      StartTime: null
+      EndTime: null
+      ContactName: null
 total_count:
   description: Number of scan tasks reported by the API.
   returned: always

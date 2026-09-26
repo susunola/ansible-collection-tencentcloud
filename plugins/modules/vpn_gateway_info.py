@@ -65,6 +65,34 @@ vpn_gateways:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VpnGatewayId: null
+      VpcId: null
+      VpnGatewayName: null
+      Type: null
+      State: null
+      PublicIpAddress: null
+      RenewFlag: null
+      InstanceChargeType: null
+      InternetMaxBandwidthOut: null
+      CreatedTime: null
+      ExpiredTime: null
+      IsAddressBlocked: null
+      NewPurchasePlan: null
+      RestrictState: null
+      Zone: null
+      VpnGatewayQuotaSet:
+        - Bandwidth: null
+          Cname: null
+          Name: null
+      Version: null
+      NetworkInstanceId: null
+      CdcId: null
+      MaxConnection: null
+      BgpAsn: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of VPN gateways reported by the API.
   returned: always

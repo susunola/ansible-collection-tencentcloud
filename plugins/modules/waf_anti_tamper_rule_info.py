@@ -57,6 +57,15 @@ anti_tamper_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Domain: null
+      Uri: null
+      Protocol: null
+      Status: null
+      ModifyTime: null
+      CreateTime: null
 total_count:
   description: Number of anti-tamper rules reported by the API.
   returned: always

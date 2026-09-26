@@ -60,6 +60,22 @@ target_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CreateTime: null
+      HealthCheckConfig: null
+      KeepaliveEnabled: null
+      Protocol: null
+      RelatedLoadBalancersCount: null
+      SchedulerAlgorithm: null
+      StickySessionConfig: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      TargetGroupId: null
+      TargetGroupName: null
+      TargetGroupStatus: null
+      TargetType: null
+      VpcId: null
 total_count:
   description: Number of target groups reported by the API.
   returned: always

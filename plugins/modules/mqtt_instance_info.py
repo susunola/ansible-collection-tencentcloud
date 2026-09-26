@@ -56,6 +56,32 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      Version: null
+      InstanceType: null
+      InstanceStatus: null
+      TopicNumLimit: null
+      Remark: null
+      TopicNum: null
+      SkuCode: null
+      TpsLimit: null
+      CreateTime: null
+      MaxSubscriptionPerClient: null
+      ClientNumLimit: null
+      RenewFlag: null
+      PayMode: null
+      ExpiryTime: null
+      DestroyTime: null
+      AuthorizationPolicyLimit: null
+      MaxCaNum: null
+      MaxSubscription: null
+      SharedSubscriptionGroupLimit: null
+      MaxTopicFilterPerSharedSubscriptionGroup: null
+      AutoSubscriptionPolicyLimit: null
+      MaxTopicFilterPerAutoSubscriptionPolicy: null
+      DeleteProtect: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

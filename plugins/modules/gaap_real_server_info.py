@@ -62,6 +62,14 @@ real_servers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RealServerIP: null
+      RealServerId: null
+      RealServerName: null
+      ProjectId: null
+      TagSet:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of real servers reported by the API.
   returned: always

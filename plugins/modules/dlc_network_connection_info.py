@@ -52,6 +52,26 @@ network_connections:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      AssociateId: null
+      HouseId: null
+      DatasourceConnectionId: null
+      State: null
+      CreateTime: null
+      UpdateTime: null
+      Appid: null
+      HouseName: null
+      DatasourceConnectionName: null
+      NetworkConnectionType: null
+      Uin: null
+      SubAccountUin: null
+      NetworkConnectionDesc: null
+      DatasourceConnectionVpcId: null
+      DatasourceConnectionSubnetId: null
+      DatasourceConnectionCidrBlock: null
+      DatasourceConnectionSubnetCidrBlock: null
+      EGSupport: null
 total_count:
   description: Number of network connections reported by the API.
   returned: always

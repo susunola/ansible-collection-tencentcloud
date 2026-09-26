@@ -61,6 +61,14 @@ templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TemplateId: null
+      International: null
+      StatusCode: null
+      ReviewReply: null
+      TemplateName: null
+      CreateTime: null
+      TemplateContent: null
 total_count:
   description: Number of templates returned (the API reports no total count).
   returned: always

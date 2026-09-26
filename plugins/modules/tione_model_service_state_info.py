@@ -54,6 +54,52 @@ model_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ServiceGroupId: null
+      ServiceId: null
+      ServiceGroupName: null
+      ServiceDescription: null
+      ServiceInfo: null
+      ClusterId: null
+      Region: null
+      Namespace: null
+      ChargeType: null
+      ResourceGroupId: null
+      ResourceGroupName: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      IngressName: null
+      CreatedBy: null
+      CreateTime: null
+      UpdateTime: null
+      Uin: null
+      SubUin: null
+      AppId: null
+      BusinessStatus: null
+      ServiceLimit: null
+      ScheduledAction: null
+      CreateFailedReason: null
+      Status: null
+      BillingInfo: null
+      Weight: null
+      CreateSource: null
+      Version: null
+      LatestVersion: null
+      ResourceGroupSWType: null
+      ArchiveStatus: null
+      DeployType: null
+      InstancePerReplicas: null
+      MonitorSource: null
+      SubUinName: null
+      SchedulingPolicy: null
+      ExternalResourceGroups:
+        - ResourceGroupId: null
+          ResourceGroupName: null
+      ProjectId: null
+      Changer: null
+      ChangerName: null
+      ResourceSupplyAttribute: null
 total_count:
   description: Number of model services returned (the API reports no total count).
   returned: always

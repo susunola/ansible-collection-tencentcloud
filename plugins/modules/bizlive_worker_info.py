@@ -45,6 +45,9 @@ workers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Idle: null
+      Region: null
 total_count:
   description: Number of workers returned (the API reports no total count).
   returned: always

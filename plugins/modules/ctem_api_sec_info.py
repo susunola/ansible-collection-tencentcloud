@@ -62,6 +62,19 @@ api_secs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      DisplayToolCommon: null
+      Url: null
+      Host: null
+      Path: null
+      Method: null
+      Status: null
+      Code: null
+      Request: null
+      Response: null
+      IsRiskAPI: null
+      AggregationCount: null
 total_count:
   description: Number of api secs reported by the API.
   returned: always

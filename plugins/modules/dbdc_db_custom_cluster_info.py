@@ -65,6 +65,20 @@ db_custom_clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      ClusterName: null
+      Region: null
+      ClusterLevel: null
+      ClusterStatus: null
+      ClusterVersion: null
+      ClusterNodeNum: null
+      ClusterDescription: null
+      CreatedTime: null
+      Tags:
+        - Key: null
+          Value: null
+      DeletionProtection: null
 total_count:
   description: Number of db custom clusters reported by the API.
   returned: always

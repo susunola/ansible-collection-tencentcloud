@@ -64,6 +64,20 @@ cmq_subscriptions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SubscriptionName: null
+      SubscriptionId: null
+      TopicOwner: null
+      MsgCount: null
+      LastModifyTime: null
+      CreateTime: null
+      BindingKey: null
+      Endpoint: null
+      FilterTags: null
+      Protocol: null
+      NotifyStrategy: null
+      NotifyContentFormat: null
+      TopicName: null
 total_count:
   description: Number of cmq subscriptions reported by the API.
   returned: always

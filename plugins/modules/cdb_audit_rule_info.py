@@ -58,6 +58,17 @@ audit_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleId: null
+      CreateTime: null
+      ModifyTime: null
+      RuleName: null
+      Description: null
+      RuleFilters:
+        - Type: null
+          Compare: null
+          Value: null
+      AuditAll: null
 total_count:
   description: Number of audit rules reported by the API.
   returned: always

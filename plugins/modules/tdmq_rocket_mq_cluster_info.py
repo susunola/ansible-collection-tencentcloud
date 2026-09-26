@@ -62,6 +62,10 @@ rocket_mq_clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Info: null
+      Config: null
+      Status: null
 total_count:
   description: Number of rocket mq clusters reported by the API.
   returned: always

@@ -62,6 +62,26 @@ apis:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ServiceId: null
+      ApiId: null
+      ApiDesc: null
+      CreatedTime: null
+      ModifiedTime: null
+      ApiName: null
+      VpcId: null
+      UniqVpcId: null
+      ApiType: null
+      Protocol: null
+      IsDebugAfterCharge: null
+      AuthType: null
+      ApiBusinessType: null
+      AuthRelationApiId: null
+      OauthConfig: null
+      RelationBuniessApiIds: null
+      Tags: []
+      Path: null
+      Method: null
 total_count:
   description: Number of APIs reported by the API.
   returned: always

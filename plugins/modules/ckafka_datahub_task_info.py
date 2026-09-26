@@ -67,6 +67,24 @@ datahub_tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TaskId: null
+      TaskName: null
+      TaskType: null
+      Status: null
+      SourceResource: null
+      TargetResource: null
+      CreateTime: null
+      ErrorMessage: null
+      TaskProgress: null
+      TaskCurrentStep: null
+      DatahubId: null
+      StepList: null
+      Description: null
+      TaskMax: null
+      SyncThrottleLimit: null
+      AutoExpandFlag: null
+      WarnMessage: null
 total_count:
   description: Number of datahub tasks reported by the API.
   returned: always

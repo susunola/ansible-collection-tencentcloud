@@ -54,6 +54,22 @@ db_security_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProjectId: null
+      CreateTime: null
+      SecurityGroupId: null
+      SecurityGroupName: null
+      SecurityGroupRemark: null
+      Inbound:
+        - CidrIp: null
+          Action: null
+          PortRange: null
+          IpProtocol: null
+      Outbound:
+        - CidrIp: null
+          Action: null
+          PortRange: null
+          IpProtocol: null
 total_count:
   description: Number of db security groups returned (the API reports no total count).
   returned: always

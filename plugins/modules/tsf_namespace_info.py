@@ -52,6 +52,50 @@ namespaces:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NamespaceId: null
+      NamespaceCode: null
+      NamespaceName: null
+      NamespaceDesc: null
+      IsDefault: null
+      NamespaceStatus: null
+      DeleteFlag: null
+      CreateTime: null
+      UpdateTime: null
+      ClusterList:
+        - ClusterId: null
+          ClusterName: null
+          ClusterDesc: null
+          ClusterType: null
+          VpcId: null
+          ClusterStatus: null
+          ClusterCIDR: null
+          ClusterTotalCpu: null
+          ClusterTotalMem: null
+          ClusterUsedCpu: null
+          ClusterUsedMem: null
+          InstanceCount: null
+          RunInstanceCount: null
+          NormalInstanceCount: null
+          DeleteFlag: null
+          CreateTime: null
+          UpdateTime: null
+          TsfRegionId: null
+          TsfRegionName: null
+          TsfZoneId: null
+          TsfZoneName: null
+          DeleteFlagReason: null
+          ClusterLimitCpu: null
+          ClusterLimitMem: null
+          RunServiceInstanceCount: null
+          SubnetId: null
+          OperationInfo: null
+          ClusterVersion: null
+      ClusterId: null
+      NamespaceResourceType: null
+      NamespaceType: null
+      IsHaEnable: null
+      KubeInjectEnable: null
 total_count:
   description: Number of namespaces reported by the API.
   returned: always

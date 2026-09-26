@@ -61,6 +61,13 @@ action_timers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TimerAction: null
+      ActionTime: null
+      Externals: null
+      ActionTimerId: null
+      Status: null
+      InstanceId: null
 total_count:
   description: Number of action timers returned (the API reports no pageable total).
   returned: always

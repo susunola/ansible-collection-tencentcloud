@@ -12,6 +12,39 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[3]
 GENERATOR_PATH = REPO_ROOT / "scripts" / "generate_info_modules.py"
 TARGETS_PATH = REPO_ROOT / "scripts" / "info_specs_targets.py"
+AUTO_SPECS_PATH = REPO_ROOT / "scripts" / "info_specs_auto.py"
+
+
+def _stamped_sdk():
+    """Return the SDK release the generated artifacts were produced with.
+
+    The return samples are read out of the SDK response model, so regenerating
+    the tree needs that release installed -- which is what CI does, after
+    ``scripts/check_sdk_drift.py --check`` has insisted on it. A developer
+    running a newer SDK gets the drift sentinel's explanation instead of a
+    diff from this test.
+    """
+    text = AUTO_SPECS_PATH.read_text(encoding="utf-8")
+    return re.search(r"GENERATED_SDK_VERSION\s*=\s*['\"]([^'\"]+)['\"]",
+                     text).group(1)
+
+
+def _installed_sdk():
+    try:
+        from importlib.metadata import PackageNotFoundError, version
+    except ImportError:  # pragma: no cover - Python 3.7 and older
+        return None
+    try:
+        return version("tencentcloud-sdk-python")
+    except PackageNotFoundError:
+        return None
+
+
+requires_stamped_sdk = pytest.mark.skipif(
+    _installed_sdk() != _stamped_sdk(),
+    reason="the SDK artifacts are generated against %s, but %s is installed: "
+           "run scripts/check_sdk_drift.py --check for the fix"
+           % (_stamped_sdk(), _installed_sdk()))
 
 
 def _load_generator():
@@ -83,6 +116,7 @@ def test_every_spec_renders_valid_documentation_yaml(generator):
         assert set(returned) == expected_return
 
 
+@requires_stamped_sdk
 def test_generated_files_are_up_to_date(generator):
     for spec in generator.SPECS:
         path = generator.module_path(spec)

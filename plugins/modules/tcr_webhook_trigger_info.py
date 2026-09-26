@@ -58,6 +58,20 @@ webhook_triggers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Targets:
+        - Address: null
+          Headers:
+            - Key: null
+              Values: null
+      EventTypes: null
+      Condition: null
+      Enabled: null
+      Id: null
+      Description: null
+      NamespaceId: null
+      NamespaceName: null
 total_count:
   description: Number of webhook triggers reported by the API.
   returned: always

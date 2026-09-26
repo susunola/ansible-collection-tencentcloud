@@ -62,6 +62,18 @@ functions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - FunctionId: null
+      ZoneId: null
+      Name: null
+      Remark: null
+      Content: null
+      Domain: null
+      DomainComplianceRestrictions:
+        - Reason: null
+          Region: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of functions reported by the API.
   returned: always

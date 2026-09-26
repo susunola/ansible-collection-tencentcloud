@@ -62,6 +62,28 @@ android_apps:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AndroidAppId: null
+      Name: null
+      State: null
+      AndroidAppVersionInfo:
+        - AndroidAppVersion: null
+          State: null
+          CreateTime: null
+          Command: null
+          UninstallCommand: null
+          CleanupMode: null
+          AndroidAppVersionName: null
+          Activity: null
+          VersionName: null
+          MD5: null
+          FileSize: null
+          PackageName: null
+      CreateTime: null
+      UserId: null
+      AppMode: null
+      UpdateState: null
+      PackageName: null
 total_count:
   description: Number of android apps reported by the API.
   returned: always

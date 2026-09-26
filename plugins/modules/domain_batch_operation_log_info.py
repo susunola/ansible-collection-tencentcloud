@@ -49,6 +49,15 @@ batch_operation_logs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Action: null
+      Domain: null
+      Status: null
+      Reason: null
+      CreatedOn: null
+      UpdatedOn: null
+      BigDealId: null
 total_count:
   description: Number of batch operation logs reported by the API.
   returned: always

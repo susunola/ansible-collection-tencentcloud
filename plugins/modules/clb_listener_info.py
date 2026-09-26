@@ -63,6 +63,64 @@ listeners:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ListenerId: null
+      Protocol: null
+      Port: null
+      Certificate: null
+      HealthCheck: null
+      Scheduler: null
+      SessionExpireTime: null
+      SniSwitch: null
+      Rules:
+        - LocationId: null
+          Domain: null
+          Url: null
+          SessionExpireTime: null
+          HealthCheck: null
+          Certificate: null
+          Scheduler: null
+          ListenerId: null
+          RewriteTarget: null
+          HttpGzip: null
+          BeAutoCreated: null
+          DefaultServer: null
+          Http2: null
+          ForwardType: null
+          CreateTime: null
+          TargetType: null
+          TargetGroup: null
+          WafDomainId: null
+          TrpcCallee: null
+          TrpcFunc: null
+          QuicStatus: null
+          Domains: null
+          TargetGroupList:
+            - TargetGroupId: null
+              TargetGroupName: null
+              Weight: null
+          OAuth: null
+          CookieName: null
+      ListenerName: null
+      CreateTime: null
+      EndPort: null
+      TargetType: null
+      TargetGroup: null
+      SessionType: null
+      KeepaliveEnable: null
+      Toa: null
+      DeregisterTargetRst: null
+      AttrFlags: null
+      TargetGroupList:
+        - TargetGroupId: null
+          TargetGroupName: null
+          Weight: null
+      MaxConn: null
+      MaxCps: null
+      IdleConnectTimeout: null
+      RescheduleInterval: null
+      DataCompressMode: null
+      RescheduleStartTime: null
 total_count:
   description: Number of listeners returned (the API reports no pageable total).
   returned: always

@@ -65,6 +65,51 @@ scaling_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AutoScalingGroupId: null
+      AutoScalingGroupName: null
+      AutoScalingGroupStatus: null
+      CreatedTime: null
+      DefaultCooldown: null
+      DesiredCapacity: null
+      EnabledStatus: null
+      ForwardLoadBalancerSet:
+        - LoadBalancerId: null
+          ListenerId: null
+          TargetAttributes:
+            - Port: null
+              Weight: null
+          LocationId: null
+          Region: null
+      InstanceCount: null
+      InServiceInstanceCount: null
+      LaunchConfigurationId: null
+      LaunchConfigurationName: null
+      LoadBalancerIdSet: null
+      MaxSize: null
+      MinSize: null
+      ProjectId: null
+      SubnetIdSet: null
+      TerminationPolicySet: null
+      VpcId: null
+      ZoneSet: null
+      RetryPolicy: null
+      InActivityStatus: null
+      Tags:
+        - Key: null
+          Value: null
+          ResourceType: null
+      ServiceSettings: null
+      Ipv6AddressCount: null
+      MultiZoneSubnetPolicy: null
+      HealthCheckType: null
+      LoadBalancerHealthCheckGracePeriod: null
+      InstanceAllocationPolicy: null
+      SpotMixedAllocationPolicy: null
+      CapacityRebalance: null
+      InstanceNameIndexSettings: null
+      HostNameIndexSettings: null
+      ConcurrentScaleOutForDesiredCapacity: null
 total_count:
   description: Number of auto scaling groups reported by the API.
   returned: always

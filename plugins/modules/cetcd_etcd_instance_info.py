@@ -62,6 +62,20 @@ etcd_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      Name: null
+      Description: null
+      VpcId: null
+      Version: null
+      Status: null
+      Members:
+        - Name: null
+          Version: null
+          Zone: null
+          Status: null
+      Endpoint: null
+      DeletionProtection: null
 total_count:
   description: Number of etcd instances reported by the API.
   returned: always

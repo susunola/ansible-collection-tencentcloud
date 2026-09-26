@@ -52,6 +52,45 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      ClusterName: null
+      ClusterDesc: null
+      ClusterType: null
+      VpcId: null
+      ClusterStatus: null
+      ClusterCIDR: null
+      ClusterTotalCpu: null
+      ClusterTotalMem: null
+      ClusterUsedCpu: null
+      ClusterUsedMem: null
+      InstanceCount: null
+      RunInstanceCount: null
+      NormalInstanceCount: null
+      DeleteFlag: null
+      CreateTime: null
+      UpdateTime: null
+      TsfRegionId: null
+      TsfRegionName: null
+      TsfZoneId: null
+      TsfZoneName: null
+      DeleteFlagReason: null
+      SubnetId: null
+      ClusterLimitCpu: null
+      ClusterLimitMem: null
+      RunServiceInstanceCount: null
+      OperationInfo: null
+      ClusterVersion: null
+      GroupCount: null
+      RunGroupCount: null
+      StopGroupCount: null
+      AbnormalGroupCount: null
+      ClusterRemarkName: null
+      KuberneteApiServer: null
+      KuberneteNativeType: null
+      KuberneteNativeSecret: null
+      EnableLogCollection: null
+      Reason: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

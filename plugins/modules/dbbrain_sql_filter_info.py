@@ -66,6 +66,18 @@ sql_filters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Status: null
+      SqlType: null
+      OriginKeys: null
+      OriginRule: null
+      RejectedSqlCount: null
+      CurrentConcurrency: null
+      MaxConcurrency: null
+      CreateTime: null
+      CurrentTime: null
+      ExpireTime: null
 total_count:
   description: Number of sql filters reported by the API.
   returned: always

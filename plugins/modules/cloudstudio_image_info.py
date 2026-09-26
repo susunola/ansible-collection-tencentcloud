@@ -45,6 +45,10 @@ images:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Repository: null
+      Tags: null
 total_count:
   description: Number of images returned (the API reports no total count).
   returned: always

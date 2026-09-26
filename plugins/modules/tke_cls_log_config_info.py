@@ -56,6 +56,10 @@ log_config:
   description: Matching TKE log config.
   returned: always
   type: dict
+  sample:
+    Total: null
+    Message: null
+    LogConfigs: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

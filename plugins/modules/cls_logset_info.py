@@ -57,6 +57,18 @@ logsets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LogsetId: null
+      LogsetName: null
+      CreateTime: null
+      AssumerUin: null
+      AssumerName: null
+      Tags:
+        - Key: null
+          Value: null
+      TopicCount: null
+      RoleName: null
+      MetricTopicCount: null
 total_count:
   description: Number of logsets reported by the API.
   returned: always

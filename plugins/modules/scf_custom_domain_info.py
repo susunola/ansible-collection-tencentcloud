@@ -62,6 +62,23 @@ custom_domains:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Domain: null
+      Protocol: null
+      EndpointsConfig:
+        - Namespace: null
+          FunctionName: null
+          Qualifier: null
+          PathMatch: null
+          PathRewrite:
+            - Path: null
+              Type: null
+              Rewrite: null
+      CertConfig: null
+      WafConfig: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of custom domains reported by the API.
   returned: always

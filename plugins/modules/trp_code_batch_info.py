@@ -49,6 +49,35 @@ code_batches:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BatchId: null
+      CorpId: null
+      BatchCode: null
+      CodeCnt: null
+      MerchantId: null
+      ProductId: null
+      BatchType: null
+      Remark: null
+      MpTpl: null
+      Status: null
+      CreateTime: null
+      UpdateTime: null
+      MerchantName: null
+      ProductName: null
+      Ext: null
+      TplName: null
+      Job: null
+      ProductionDate: null
+      ValidDate: null
+      Attrs:
+        - Name: null
+          Value: null
+          Type: null
+          ReadOnly: null
+          Hidden: null
+          Values: null
+          Key: null
+          Ext: null
 total_count:
   description: Number of code batches reported by the API.
   returned: always

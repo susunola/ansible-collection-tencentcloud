@@ -53,6 +53,54 @@ cloud_native_api_gateway_llm_model_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      CreateTime: null
+      ModifyTime: null
+      ServiceType: null
+      ModelProvider: null
+      ModelProtocol: null
+      UpstreamURL: null
+      ModelSelector: null
+      DefaultModel: null
+      EnableModelFallback: null
+      ModelFallbackRule: null
+      EnableModelParamCheck: null
+      ModelParamCheckRule: null
+      Description: null
+      ConnectTimeout: null
+      WriteTimeout: null
+      ReadTimeout: null
+      Retries: null
+      UpstreamUrlMode: null
+      SNI: null
+      QuotaLimit: null
+      Tags: null
+      SecretKeyIds: null
+      ModelRewriteRules:
+        - SourceModel: null
+          TargetModel: null
+      SourceId: null
+      Namespace: null
+      ServiceName: null
+      Protocol: null
+      ExtParams:
+        - Key: null
+          Value: null
+      CustomProviderName: null
+      KeyRotationEnabled: null
+      KeyRotationPeriodDays: null
+      ExternalInstanceId: null
+      LoadBalanceConfig: null
+      PublishStatus: null
+      CanPublish: null
+      SyncStatus: null
+      SourceType: null
+      SyncedVersion: null
+      Status: null
+      EnableHealthCheck: null
+      HealthCheck: null
 total_count:
   description: Number of cloud native api gateway llm model services reported by the API.
   returned: always

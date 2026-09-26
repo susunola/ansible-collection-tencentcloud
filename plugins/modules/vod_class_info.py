@@ -53,6 +53,13 @@ classes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClassId: null
+      ParentId: null
+      Name: null
+      Level: null
+      SubClassIdSet: null
+      ClassName: null
 total_count:
   description: Number of top-level classes returned (the API reports no total count).
   returned: always

@@ -59,6 +59,12 @@ users:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Username: null
+      Password: null
+      Remark: null
+      CreatedTime: null
+      ModifiedTime: null
 total_count:
   description: Number of users reported by the API.
   returned: always

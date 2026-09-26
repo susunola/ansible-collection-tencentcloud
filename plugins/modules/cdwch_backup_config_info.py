@@ -51,6 +51,14 @@ backup_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Database: null
+      Table: null
+      TotalBytes: null
+      VCluster: null
+      Ips: null
+      ZooPath: null
+      Rip: null
 total_count:
   description: Number of backup configs returned (the API reports no total count).
   returned: always

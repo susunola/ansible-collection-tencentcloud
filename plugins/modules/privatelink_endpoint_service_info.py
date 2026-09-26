@@ -74,6 +74,41 @@ end_point_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EndPointServiceId: null
+      VpcId: null
+      ServiceOwner: null
+      ServiceName: null
+      ServiceVip: null
+      ServiceInstanceId: null
+      AutoAcceptFlag: null
+      EndPointCount: null
+      EndPointSet:
+        - EndPointId: null
+          VpcId: null
+          SubnetId: null
+          EndPointOwner: null
+          EndPointName: null
+          ServiceVpcId: null
+          ServiceVip: null
+          EndPointServiceId: null
+          EndPointVip: null
+          State: null
+          CreateTime: null
+          GroupSet: null
+          ServiceName: null
+          CdcId: null
+          TagSet:
+            - Key: null
+              Value: null
+      CreateTime: null
+      ServiceType: null
+      CdcId: null
+      ServiceUin: null
+      BusinessIpType: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of end point services reported by the API.
   returned: always

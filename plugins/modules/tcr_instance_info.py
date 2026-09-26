@@ -65,6 +65,26 @@ registries:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RegistryId: null
+      RegistryName: null
+      RegistryType: null
+      Status: null
+      PublicDomain: null
+      CreatedAt: null
+      RegionName: null
+      RegionId: null
+      EnableAnonymous: null
+      TokenValidTime: null
+      InternalEndpoint: null
+      TagSpecification: null
+      ExpiredAt: null
+      PayMod: null
+      RenewFlag: null
+      DeletionProtection: null
+      AIFeature: null
+      EnableCosMAZ: null
+      EnableCosVersioning: null
 total_count:
   description: Number of registries reported by the API.
   returned: always

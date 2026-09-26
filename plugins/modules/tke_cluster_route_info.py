@@ -55,6 +55,10 @@ cluster_routes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RouteTableName: null
+      DestinationCidrBlock: null
+      GatewayIp: null
 total_count:
   description: Number of cluster routes reported by the API.
   returned: always

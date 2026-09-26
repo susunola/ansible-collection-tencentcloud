@@ -45,6 +45,10 @@ resource_usages:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceName: null
+      Total: null
+      UnusedCount: null
 total_count:
   description: Number of resource usages reported by the API.
   returned: always

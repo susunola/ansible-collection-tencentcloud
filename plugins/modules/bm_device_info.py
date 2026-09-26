@@ -58,6 +58,35 @@ devices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      VpcId: null
+      SubnetId: null
+      DeviceStatus: null
+      OperateStatus: null
+      OsTypeId: null
+      RaidId: null
+      Alias: null
+      AppId: null
+      Zone: null
+      WanIp: null
+      LanIp: null
+      DeliverTime: null
+      Deadline: null
+      AutoRenewFlag: null
+      DeviceClassCode: null
+      Tags:
+        - TagKey: null
+          TagValues: null
+      CpmPayMode: null
+      DhcpIp: null
+      VpcName: null
+      SubnetName: null
+      VpcCidrBlock: null
+      SubnetCidrBlock: null
+      IsLuckyDevice: null
+      MaintainStatus: null
+      MaintainMessage: null
 total_count:
   description: Number of devices reported by the API.
   returned: always

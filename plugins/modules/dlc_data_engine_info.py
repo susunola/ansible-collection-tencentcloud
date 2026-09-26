@@ -56,6 +56,97 @@ data_engines:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DataEngineName: null
+      EngineType: null
+      ClusterType: null
+      QuotaId: null
+      State: null
+      CreateTime: null
+      UpdateTime: null
+      Size: null
+      Mode: null
+      MinClusters: null
+      MaxClusters: null
+      AutoResume: null
+      SpendAfter: null
+      CidrBlock: null
+      DefaultDataEngine: null
+      Message: null
+      DataEngineId: null
+      SubAccountUin: null
+      ExpireTime: null
+      IsolatedTime: null
+      ReversalTime: null
+      UserAlias: null
+      TagList:
+        - TagKey: null
+          TagValue: null
+      Permissions: null
+      AutoSuspend: null
+      CrontabResumeSuspend: null
+      CrontabResumeSuspendStrategy: null
+      EngineExecType: null
+      RenewFlag: null
+      AutoSuspendTime: null
+      NetworkConnectionSet:
+        - Id: null
+          AssociateId: null
+          HouseId: null
+          DatasourceConnectionId: null
+          State: null
+          CreateTime: null
+          UpdateTime: null
+          Appid: null
+          HouseName: null
+          DatasourceConnectionName: null
+          NetworkConnectionType: null
+          Uin: null
+          SubAccountUin: null
+          NetworkConnectionDesc: null
+          DatasourceConnectionVpcId: null
+          DatasourceConnectionSubnetId: null
+          DatasourceConnectionCidrBlock: null
+          DatasourceConnectionSubnetCidrBlock: null
+          EGSupport: null
+      UiURL: null
+      ResourceType: null
+      ImageVersionId: null
+      ChildImageVersionId: null
+      ImageVersionName: null
+      StartStandbyCluster: null
+      ElasticSwitch: null
+      ElasticLimit: null
+      DefaultHouse: null
+      MaxConcurrency: null
+      TolerableQueueTime: null
+      UserAppId: null
+      UserUin: null
+      SessionResourceTemplate: null
+      AutoAuthorization: null
+      EngineGeneration: null
+      EngineTypeDetail: null
+      EngineNetworkId: null
+      EngineResourceGroupCount: null
+      EngineResourceUsedCU: null
+      AccessInfos:
+        - AccessType: null
+          AccessConnectionInfos: null
+      EngineNetworkName: null
+      IsPoolMode: null
+      IsSupportAI: null
+      GatewayId: null
+      GatewayState: null
+      IsAIGateway: null
+      IsAIEngine: null
+      ScheduleElasticityConf: null
+      GPUInfo: null
+      EngineResourceUsedGPU: null
+      GPUTotalSize: null
+      InstanceModel: null
+      NodeNum: null
+      SizeWithElastic: null
+      MaxElasticSize: null
 total_count:
   description: Number of data engines reported by the API.
   returned: always

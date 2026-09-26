@@ -58,6 +58,17 @@ person_samples:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PersonId: null
+      Name: null
+      Description: null
+      FaceInfoSet:
+        - FaceId: null
+          Url: null
+      TagSet: null
+      UsageSet: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of person samples reported by the API.
   returned: always

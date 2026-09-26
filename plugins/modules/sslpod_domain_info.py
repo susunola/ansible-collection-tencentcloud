@@ -49,6 +49,20 @@ domains:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Domain: null
+      Ip: null
+      AutoIP: null
+      Grade: null
+      Brand: null
+      ServerType: null
+      GradeCode: null
+      Notice: null
+      AccountDomainId: null
+      Tags: null
+      Status: null
+      Port: null
 total_count:
   description: Number of domains reported by the API.
   returned: always

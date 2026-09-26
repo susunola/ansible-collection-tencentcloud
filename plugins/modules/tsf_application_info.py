@@ -61,6 +61,35 @@ applications:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ApplicationId: null
+      ApplicationName: null
+      ApplicationDesc: null
+      ApplicationType: null
+      MicroserviceType: null
+      ProgLang: null
+      CreateTime: null
+      UpdateTime: null
+      ApplicationResourceType: null
+      ApplicationRuntimeType: null
+      ApigatewayServiceId: null
+      ApplicationRemarkName: null
+      ServiceConfigList:
+        - Name: null
+          Ports:
+            - TargetPort: null
+              Protocol: null
+          HealthCheck: null
+      IgnoreCreateImageRepository: null
+      ApmInstanceId: null
+      ApmInstanceName: null
+      SyncDeleteImageRepository: null
+      MicroserviceSubType: null
+      ProgramLanguage: null
+      FrameworkType: null
+      ServiceGovernanceConfig: null
+      MicroserviceTypeList: null
+      CreateSameNameImageRepository: null
 total_count:
   description: Number of applications reported by the API.
   returned: always

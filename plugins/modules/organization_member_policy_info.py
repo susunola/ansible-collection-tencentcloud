@@ -58,6 +58,15 @@ member_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PolicyId: null
+      PolicyName: null
+      IdentityId: null
+      IdentityRoleName: null
+      IdentityRoleAliasName: null
+      Description: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of member policies reported by the API.
   returned: always

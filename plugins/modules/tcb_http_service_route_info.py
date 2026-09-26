@@ -59,6 +59,34 @@ http_service_routes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Domain: null
+      DomainType: null
+      AccessType: null
+      CertId: null
+      Protocol: null
+      Cname: null
+      IsDefault: null
+      Enable: null
+      Status: null
+      DNSStatus: null
+      PlatformCnameDNSStatus: null
+      Routes:
+        - Path: null
+          PathRewrite: null
+          UpstreamResourceType: null
+          UpstreamResourceName: null
+          EnableSafeDomain: null
+          EnableAuth: null
+          EnablePathTransmission: null
+          QPSPolicy: null
+          Enable: null
+          Extension: null
+          CreateTime: null
+          UpdateTime: null
+      Extension: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of http service routes reported by the API.
   returned: always

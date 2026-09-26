@@ -51,6 +51,12 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccountName: null
+      ClusterId: null
+      AccountDescription: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of accounts reported by the API.
   returned: always

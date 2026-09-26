@@ -52,6 +52,24 @@ lane_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleId: null
+      RuleName: null
+      Priority: null
+      Remark: null
+      RuleTagList:
+        - TagId: null
+          TagName: null
+          TagOperator: null
+          TagValue: null
+          LaneRuleId: null
+          CreateTime: null
+          UpdateTime: null
+      RuleTagRelationship: null
+      LaneId: null
+      Enable: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of lane rules reported by the API.
   returned: always

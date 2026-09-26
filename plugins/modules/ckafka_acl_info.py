@@ -61,6 +61,13 @@ acls:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceType: null
+      ResourceName: null
+      Principal: null
+      Host: null
+      Operation: null
+      PermissionType: null
 total_count:
   description: Number of acls reported by the API.
   returned: always

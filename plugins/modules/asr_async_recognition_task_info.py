@@ -45,6 +45,9 @@ async_recognition_tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TaskId: null
+      Url: null
 total_count:
   description: Number of async recognition tasks returned (the API reports no total count).
   returned: always

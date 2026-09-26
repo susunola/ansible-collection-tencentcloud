@@ -52,6 +52,25 @@ governance_namespaces:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Comment: null
+      CreateTime: null
+      ModifyTime: null
+      TotalServiceCount: null
+      TotalHealthInstanceCount: null
+      TotalInstanceCount: null
+      Id: null
+      Editable: null
+      UserIds: null
+      GroupIds: null
+      RemoveUserIds: null
+      RemoveGroupIds: null
+      ServiceExportTo: null
+      SyncToGlobalRegistry: null
+      Metadatas:
+        - Key: null
+          Value: null
 total_count:
   description: Number of governance namespaces reported by the API.
   returned: always

@@ -59,6 +59,10 @@ black_email_addresses:
   returned: always
   type: list
   elements: dict
+  sample:
+    - BounceTime: null
+      EmailAddress: null
+      IspDesc: null
 total_count:
   description: Number of black email addresses reported by the API.
   returned: always

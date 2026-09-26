@@ -54,6 +54,33 @@ auto_scale_strategies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StrategyId: null
+      StrategyName: null
+      CalmDownTime: null
+      ScaleAction: null
+      ScaleNum: null
+      ProcessMethod: null
+      Priority: null
+      StrategyStatus: null
+      YarnNodeLabel: null
+      PeriodValid: null
+      GraceDownFlag: null
+      GraceDownTime: null
+      GraceDownProtectFlag: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      ConfigGroupAssigned: null
+      MeasureMethod: null
+      SoftDeployDesc: null
+      ServiceNodeDesc: null
+      ServiceNodeInfo: null
+      SoftDeployInfo: null
+      LoadMetricsConditions: null
+      GroupId: null
+      Soft: null
+      GraceDownProtectTime: null
 total_count:
   description: Number of auto scale strategies returned (the API reports no total count).
   returned: always

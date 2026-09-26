@@ -49,6 +49,8 @@ products:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
 total_count:
   description: Number of products reported by the API.
   returned: always

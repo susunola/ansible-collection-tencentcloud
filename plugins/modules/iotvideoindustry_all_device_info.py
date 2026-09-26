@@ -58,6 +58,20 @@ all_devices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DeviceId: null
+      DeviceType: null
+      Status: null
+      CreateTime: null
+      ExtraInformation: null
+      NickName: null
+      GroupPath: null
+      DeviceCode: null
+      IsRecord: null
+      Recordable: null
+      Protocol: null
+      GroupId: null
+      GroupName: null
 total_count:
   description: Number of all devices reported by the API.
   returned: always

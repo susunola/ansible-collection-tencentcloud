@@ -49,6 +49,16 @@ smses:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Iccid: null
+      Msisdn: null
+      SdkAppid: null
+      Content: null
+      SmsType: null
+      SendTime: null
+      ReportTime: null
+      Remark: null
+      Status: null
 total_count:
   description: Number of smses reported by the API.
   returned: always

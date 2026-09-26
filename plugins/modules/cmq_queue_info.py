@@ -56,6 +56,37 @@ queues:
   returned: always
   type: list
   elements: dict
+  sample:
+    - QueueId: null
+      RewindSeconds: null
+      CreateUin: null
+      LastModifyTime: null
+      VisibilityTimeout: null
+      QueueName: null
+      Trace: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      RewindMsgNum: null
+      MaxDelaySeconds: null
+      TransactionPolicy: null
+      MsgRetentionSeconds: null
+      DelayMsgNum: null
+      MaxMsgHeapNum: null
+      PollingWaitSeconds: null
+      Bps: null
+      InactiveMsgNum: null
+      DeadLetterPolicy: null
+      ActiveMsgNum: null
+      MaxMsgSize: null
+      MinMsgTime: null
+      DeadLetterSource:
+        - QueueId: null
+          QueueName: null
+      Transaction: null
+      Qps: null
+      CreateTime: null
+      Migrate: null
 total_count:
   description: Number of queues reported by the API.
   returned: always

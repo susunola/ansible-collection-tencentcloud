@@ -50,6 +50,10 @@ maintenance_window:
   description: Matching TDMYSQL maintenance window.
   returned: always
   type: dict
+  sample:
+    InstanceId: null
+    MaintenanceWindow: null
+    WeekDays: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

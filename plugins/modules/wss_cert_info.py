@@ -49,6 +49,33 @@ certs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - OwnerUin: null
+      ProjectId: null
+      From: null
+      Type: null
+      CertType: null
+      ProductZhName: null
+      Domain: null
+      Alias: null
+      Status: null
+      VulnerabilityStatus: null
+      StatusMsg: null
+      VerifyType: null
+      CertBeginTime: null
+      CertEndTime: null
+      ValidityPeriod: null
+      InsertTime: null
+      ProjectInfo: null
+      Id: null
+      SubjectAltName: null
+      TypeName: null
+      StatusName: null
+      IsVip: null
+      IsDv: null
+      IsWildcard: null
+      IsVulnerability: null
+      Cert: null
 total_count:
   description: Number of certs reported by the API.
   returned: always

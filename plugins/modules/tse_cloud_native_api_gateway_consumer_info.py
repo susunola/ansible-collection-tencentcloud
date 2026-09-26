@@ -49,6 +49,27 @@ cloud_native_api_gateway_consumers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConsumerId: null
+      Name: null
+      CreateTime: null
+      ModifyTime: null
+      Priority: null
+      Description: null
+      ConsumerGroups:
+        - ConsumerGroupId: null
+          Name: null
+          Status: null
+          Description: null
+          CreateTime: null
+          ModifyTime: null
+          BindCount: null
+          SyncStatus: null
+          SourceType: null
+          SyncedVersion: null
+      SyncStatus: null
+      SourceType: null
+      SyncedVersion: null
 total_count:
   description: Number of cloud native api gateway consumers reported by the API.
   returned: always

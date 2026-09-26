@@ -34,10 +34,14 @@ scaffolding is write-once and never touches an existing module file.
 from __future__ import annotations
 
 import argparse
+import importlib
 import importlib.util
+import inspect
 import re
 import sys
 from pathlib import Path
+
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODULES_DIR = REPO_ROOT / "plugins" / "modules"
@@ -8401,13 +8405,152 @@ def _documentation(spec):
     return "\n".join(lines)
 
 
+# --------------------------------------------------------------------------
+# structural samples
+# --------------------------------------------------------------------------
+#
+# A generated module documents one aggregated return key and says nothing
+# about the fields inside it, which is the one thing a caller of a ``_info``
+# module needs: the payload is the API's own object, so its fields are the
+# API's own field names and nothing in this repository may invent values for
+# them. These helpers read the field list out of the SDK response model (the
+# same introspection the resource scaffolds already rely on) and render the
+# structure with ``None``/``[]`` where a value would go. The keys are the
+# API's; the values are deliberately empty. ``generate_info_modules.py
+# --check`` re-derives the whole block from the installed SDK, so a sample
+# cannot drift from the model it documents.
+
+_MODEL_LIST_RE = re.compile(r'for item in params\.get\("(\w+)"\):\s*\n\s*obj = (\w+)\(')
+_MODEL_FIELD_RE = re.compile(r'params\.get\("(\w+)"\)')
+
+#: How deep a nested model is followed before the structure stops. Two levels
+#: covers the shapes these APIs return (an item, its sub-objects, their own
+#: scalars) without turning a docstring into a schema dump.
+_SAMPLE_DEPTH = 2
+
+
+class _IndentedDumper(yaml.SafeDumper):
+    """Dump block sequences indented under their key, as the repository does."""
+
+    def increase_indent(self, flow=False, indentless=False):
+        return super(_IndentedDumper, self).increase_indent(flow, False)
+
+
+def _model_fields(models, class_name, depth=0):
+    """Return ``[(field, element_model)]`` for a response model, in API order.
+
+    *element_model* is the model class name for a field that holds a list of
+    models, else ``None``.
+    """
+    model = getattr(models, class_name, None)
+    if model is None or depth > _SAMPLE_DEPTH:
+        return []
+    try:
+        source = inspect.getsource(model._deserialize)
+    except (OSError, TypeError):
+        return []
+    lists = dict(_MODEL_LIST_RE.findall(source))
+    fields = []
+    seen = set()
+    for match in _MODEL_FIELD_RE.finditer(source):
+        field = match.group(1)
+        if field == "RequestId" or field in seen:
+            continue
+        seen.add(field)
+        fields.append((field, lists.get(field)))
+    return fields
+
+
+def _sample_value(models, class_name, depth=0):
+    """Return the structural sample of one model, or ``None``."""
+    fields = _model_fields(models, class_name, depth)
+    if not fields:
+        return None
+    value = {}
+    for field, element in fields:
+        if element and depth < _SAMPLE_DEPTH:
+            nested = _sample_value(models, element, depth + 1)
+            value[field] = [nested] if nested is not None else []
+        else:
+            value[field] = None
+    return value
+
+
+def _element_model(models, response_name, field_path):
+    """Return the model class of an items field, which may be ``A.B.C``."""
+    current = response_name
+    for segment in str(field_path).split("."):
+        fields = _model_fields(models, current)
+        match = [element for field, element in fields if field == segment]
+        if not match or match[0] is None:
+            # A single nested object: follow it when the model has one.
+            children = dict(_model_object_children(models, current))
+            current = children.get(segment)
+            if current is None:
+                return None
+        else:
+            current = match[0]
+    return current
+
+
+def _model_object_children(models, class_name):
+    """Return ``[(field, model)]`` for fields holding a single nested model."""
+    model = getattr(models, class_name, None)
+    if model is None:
+        return []
+    try:
+        source = inspect.getsource(model._deserialize)
+    except (OSError, TypeError):
+        return []
+    pattern = re.compile(
+        r'self\._\w+ = (\w+)\(\)\s*\n\s*self\._\w+\._deserialize\(params\.get\("(\w+)"\)\)')
+    return [(field, child) for child, field in pattern.findall(source)]
+
+
+def _sample_block(spec):
+    """Return the indented ``sample:`` block for *spec*, or ``""``.
+
+    An empty string means the SDK did not give a field list (the module has no
+    ``response_items`` and its response model could not be read), in which case
+    the entry keeps its description and no sample.
+    """
+    package = spec.get("service_package")
+    request_class = spec.get("request_class")
+    if not package or not request_class:
+        return ""
+    try:
+        models = importlib.import_module(package + ".models")
+    except Exception:
+        return ""
+    response_name = request_class.replace("Request", "Response")
+    if getattr(models, response_name, None) is None:
+        return ""
+    items_field = spec.get("response_items")
+    if items_field:
+        element = _element_model(models, response_name, items_field)
+        structure = [_sample_value(models, element)] if element else None
+    else:
+        structure = _sample_value(models, response_name)
+    if not structure:
+        return ""
+    dumped = yaml.dump(structure, Dumper=_IndentedDumper,
+                       default_flow_style=False, sort_keys=False,
+                       allow_unicode=True, width=100)
+    lines = ["  sample:"]
+    for line in dumped.rstrip("\n").split("\n"):
+        lines.append("    %s" % line if line else "")
+    return "\n".join(lines)
+
+
 def _return_block(spec):
+    sample = _sample_block(spec)
+    sample_lines = "\n%s" % sample if sample else ""
     if spec.get("pagination_type") == "none":
         return f"""\
 {spec['result_key']}:
   description: {spec['return_items_doc']}
   returned: always
-  type: dict
+  type: dict{sample_lines}
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always
@@ -8417,7 +8560,7 @@ request_id:
   description: {spec['return_items_doc']}
   returned: always
   type: list
-  elements: dict
+  elements: dict{sample_lines}
 total_count:
   description: {spec['return_total_doc']}
   returned: always

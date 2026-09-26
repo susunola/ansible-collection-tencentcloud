@@ -65,6 +65,28 @@ peering_connections:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SourceVpcId: null
+      PeerVpcId: null
+      PeeringConnectionId: null
+      PeeringConnectionName: null
+      State: null
+      IsNgw: null
+      Bandwidth: null
+      SourceRegion: null
+      DestinationRegion: null
+      CreateTime: null
+      AppId: null
+      PeerAppId: null
+      ChargeType: null
+      SourceUin: null
+      DestinationUin: null
+      TagSet:
+        - Key: null
+          Value: null
+      QosLevel: null
+      Type: null
+      DestinationVpcId: null
 total_count:
   description: Number of peering connections reported by the API.
   returned: always

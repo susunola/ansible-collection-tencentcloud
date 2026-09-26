@@ -48,6 +48,10 @@ cluster_route_tables:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RouteTableName: null
+      RouteTableCidrBlock: null
+      VpcId: null
 total_count:
   description: Number of cluster route tables reported by the API.
   returned: always

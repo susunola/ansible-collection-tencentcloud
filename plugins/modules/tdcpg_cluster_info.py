@@ -56,6 +56,38 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ClusterId: null
+      ClusterName: null
+      Region: null
+      Zone: null
+      DBVersion: null
+      ProjectId: null
+      Status: null
+      StatusDesc: null
+      CreateTime: null
+      StorageUsed: null
+      StorageLimit: null
+      PayMode: null
+      PayPeriodEndTime: null
+      AutoRenewFlag: null
+      DBCharset: null
+      InstanceCount: null
+      EndpointSet:
+        - EndpointId: null
+          ClusterId: null
+          EndpointName: null
+          EndpointType: null
+          VpcId: null
+          SubnetId: null
+          PrivateIp: null
+          PrivatePort: null
+          WanIp: null
+          WanPort: null
+          WanDomain: null
+      DBMajorVersion: null
+      DBKernelVersion: null
+      StoragePayMode: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

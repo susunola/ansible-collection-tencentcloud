@@ -57,6 +57,25 @@ owasp_white_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RuleId: null
+      Name: null
+      Ids: null
+      Status: null
+      Type: null
+      Strategies:
+        - Field: null
+          CompareFunc: null
+          Content: null
+          Arg: null
+          CaseNotSensitive: null
+      CreateTime: null
+      UpdateTime: null
+      JobType: null
+      JobDateTime: null
+      CronType: null
+      ValidStatus: null
+      LogicalOp: null
 total_count:
   description: Number of OWASP-whitelist rules reported by the API.
   returned: always

@@ -57,6 +57,11 @@ prometheus_scrape_jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      AgentId: null
+      JobId: null
+      Config: null
 total_count:
   description: Number of Prometheus scrape jobs reported by the API.
   returned: always

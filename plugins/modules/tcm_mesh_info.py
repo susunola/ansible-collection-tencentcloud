@@ -56,6 +56,34 @@ meshes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - MeshId: null
+      DisplayName: null
+      Type: null
+      Region: null
+      Version: null
+      State: null
+      CreatedTime: null
+      UpdatedTime: null
+      ClusterList:
+        - ClusterId: null
+          Region: null
+          Role: null
+          VpcId: null
+          SubnetId: null
+          DisplayName: null
+          State: null
+          LinkedTime: null
+          Config: null
+          Status: null
+          Type: null
+          HostedNamespaces: null
+      Config: null
+      Status: null
+      TagList:
+        - Key: null
+          Value: null
+          Passthrough: null
 total_count:
   description: Number of meshes reported by the API.
   returned: always

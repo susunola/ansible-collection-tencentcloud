@@ -48,6 +48,20 @@ file_systems:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AppId: null
+      FileSystemName: null
+      Description: null
+      Region: null
+      FileSystemId: null
+      CreateTime: null
+      BlockSize: null
+      CapacityQuota: null
+      Status: null
+      SuperUsers: null
+      PosixAcl: null
+      EnableRanger: null
+      RangerServiceAddresses: null
 total_count:
   description: Number of file systems returned (the API reports no total count).
   returned: always

@@ -47,6 +47,8 @@ store_location:
   description: Matching DLC store location.
   returned: always
   type: dict
+  sample:
+    StoreLocation: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

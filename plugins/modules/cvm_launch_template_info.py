@@ -66,6 +66,14 @@ launch_templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LatestVersionNumber: null
+      LaunchTemplateId: null
+      LaunchTemplateName: null
+      DefaultVersionNumber: null
+      LaunchTemplateVersionCount: null
+      CreatedBy: null
+      CreationTime: null
 total_count:
   description: Number of launch templates reported by the API.
   returned: always

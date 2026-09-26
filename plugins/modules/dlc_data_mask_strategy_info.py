@@ -56,6 +56,21 @@ data_mask_strategies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - StrategyId: null
+      UserAppId: null
+      Uin: null
+      SubAccountUin: null
+      StrategyName: null
+      StrategyType: null
+      StrategyDesc: null
+      Groups:
+        - WorkGroupId: null
+          StrategyType: null
+      Users: null
+      State: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of data mask strategies reported by the API.
   returned: always

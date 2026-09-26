@@ -65,6 +65,47 @@ network_interfaces:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NetworkInterfaceId: null
+      NetworkInterfaceName: null
+      NetworkInterfaceDescription: null
+      SubnetId: null
+      VpcId: null
+      GroupSet: null
+      Primary: null
+      MacAddress: null
+      State: null
+      NetworkInterfaceState: null
+      PrivateIpAddressSet:
+        - PrivateIpAddress: null
+          Primary: null
+          PublicIpAddress: null
+          AddressId: null
+          Description: null
+          IsWanIpBlocked: null
+          State: null
+          QosLevel: null
+      Attachment: null
+      Zone: null
+      CreatedTime: null
+      Ipv6AddressSet:
+        - Address: null
+          Primary: null
+          AddressId: null
+          Description: null
+          IsWanIpBlocked: null
+          State: null
+          PublicIpAddress: null
+          AddressType: null
+      TagSet:
+        - Key: null
+          Value: null
+      EniType: null
+      Business: null
+      CdcId: null
+      AttachType: null
+      ResourceId: null
+      QosLevel: null
 total_count:
   description: Number of network interfaces reported by the API.
   returned: always

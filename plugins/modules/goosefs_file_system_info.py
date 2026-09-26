@@ -52,6 +52,22 @@ file_systems:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Type: null
+      FileSystemId: null
+      CreateTime: null
+      GooseFSxAttribute: null
+      Status: null
+      Name: null
+      Description: null
+      VpcId: null
+      SubnetId: null
+      Zone: null
+      Tag:
+        - Key: null
+          Value: null
+      ModifyTime: null
+      ChargeAttribute: null
 total_count:
   description: Number of file systems reported by the API.
   returned: always

@@ -61,6 +61,121 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - WanStatus: null
+      Zone: null
+      InitFlag: null
+      RoVipInfo: null
+      Memory: null
+      Status: null
+      VpcId: null
+      SlaveInfo: null
+      InstanceId: null
+      Volume: null
+      AutoRenew: null
+      ProtectMode: null
+      RoGroups:
+        - RoGroupMode: null
+          RoGroupId: null
+          RoGroupName: null
+          RoOfflineDelay: null
+          RoMaxDelayTime: null
+          MinRoInGroup: null
+          WeightMode: null
+          Weight: null
+          RoInstances:
+            - MasterInstanceId: null
+              RoStatus: null
+              OfflineTime: null
+              Weight: null
+              Region: null
+              Zone: null
+              InstanceId: null
+              Status: null
+              InstanceType: null
+              InstanceName: null
+              HourFeeStatus: null
+              TaskStatus: null
+              Memory: null
+              Volume: null
+              Qps: null
+              Vip: null
+              Vport: null
+              VpcId: null
+              SubnetId: null
+              DeviceType: null
+              EngineVersion: null
+              DeadlineTime: null
+              PayType: null
+              ReplicationStatus: null
+          Vip: null
+          Vport: null
+          UniqVpcId: null
+          UniqSubnetId: null
+          RoGroupRegion: null
+          RoGroupZone: null
+          DelayReplicationTime: null
+          RoGroupType: null
+      SubnetId: null
+      InstanceType: null
+      ProjectId: null
+      Region: null
+      DeadlineTime: null
+      DeployMode: null
+      TaskStatus: null
+      MasterInfo: null
+      DeviceType: null
+      EngineVersion: null
+      InstanceName: null
+      DrInfo:
+        - Status: null
+          Zone: null
+          InstanceId: null
+          Region: null
+          SyncStatus: null
+          InstanceName: null
+          InstanceType: null
+      WanDomain: null
+      WanPort: null
+      PayType: null
+      CreateTime: null
+      Vip: null
+      Vport: null
+      CdbError: null
+      UniqVpcId: null
+      UniqSubnetId: null
+      PhysicalId: null
+      Cpu: null
+      Qps: null
+      ZoneName: null
+      DeviceClass: null
+      DeployGroupId: null
+      ZoneId: null
+      InstanceNodes: null
+      TagList:
+        - TagKey: null
+          TagValue: null
+      EngineType: null
+      MaxDelayTime: null
+      DiskType: null
+      ExpandCpu: null
+      ClusterInfo:
+        - NodeId: null
+          Role: null
+          Zone: null
+      AnalysisNodeInfos:
+        - NodeId: null
+          Status: null
+          DataStatus: null
+          Cpu: null
+          Memory: null
+          Storage: null
+          Zone: null
+          Message: null
+      DeviceBandwidth: null
+      DestroyProtect: null
+      CpuModel: null
+      AnalysisUpgradeVersionInfo: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

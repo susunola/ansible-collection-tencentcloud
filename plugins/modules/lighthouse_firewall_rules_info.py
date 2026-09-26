@@ -57,6 +57,14 @@ firewall_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AppType: null
+      Protocol: null
+      Port: null
+      CidrBlock: null
+      Ipv6CidrBlock: null
+      Action: null
+      FirewallRuleDescription: null
 total_count:
   description: Number of firewall rules reported by the API.
   returned: always

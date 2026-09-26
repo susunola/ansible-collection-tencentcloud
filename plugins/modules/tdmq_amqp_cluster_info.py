@@ -62,6 +62,13 @@ amqp_clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Info: null
+      Config: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Status: null
 total_count:
   description: Number of amqp clusters reported by the API.
   returned: always

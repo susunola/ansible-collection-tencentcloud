@@ -66,6 +66,24 @@ end_points:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EndPointId: null
+      VpcId: null
+      SubnetId: null
+      EndPointOwner: null
+      EndPointName: null
+      ServiceVpcId: null
+      ServiceVip: null
+      EndPointServiceId: null
+      EndPointVip: null
+      State: null
+      CreateTime: null
+      GroupSet: null
+      ServiceName: null
+      CdcId: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of end points reported by the API.
   returned: always

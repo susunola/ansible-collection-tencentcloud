@@ -49,6 +49,15 @@ auth_api_keys:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      CorpId: null
+      ApiKey: null
+      DefaultUser: null
+      CreatedUser: null
+      CreatedAt: null
+      UpdatedUser: null
+      UpdatedAt: null
 total_count:
   description: Number of auth api keys reported by the API.
   returned: always

@@ -65,6 +65,28 @@ scaling_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AutoScalingGroupId: null
+      AutoScalingPolicyId: null
+      ScalingPolicyType: null
+      ScalingPolicyName: null
+      AdjustmentType: null
+      AdjustmentValue: null
+      Cooldown: null
+      MetricAlarm: null
+      PredefinedMetricType: null
+      TargetValue: null
+      EstimatedInstanceWarmup: null
+      DisableScaleIn: null
+      MetricAlarms:
+        - ComparisonOperator: null
+          MetricName: null
+          Threshold: null
+          Period: null
+          ContinuousTime: null
+          Statistic: null
+          PreciseThreshold: null
+      NotificationUserGroupIds: null
 total_count:
   description: Number of scaling policies reported by the API.
   returned: always

@@ -61,6 +61,8 @@ kms_keys:
   returned: always
   type: list
   elements: dict
+  sample:
+    - KeyId: null
 total_count:
   description: Number of keys reported by the API, or the number of requested keys.
   returned: always

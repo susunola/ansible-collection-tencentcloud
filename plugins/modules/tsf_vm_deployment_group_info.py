@@ -52,6 +52,25 @@ vm_deployment_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      ApplicationType: null
+      GroupDesc: null
+      UpdateTime: null
+      ClusterId: null
+      StartupParameters: null
+      NamespaceId: null
+      CreateTime: null
+      ClusterName: null
+      ApplicationId: null
+      ApplicationName: null
+      NamespaceName: null
+      MicroserviceType: null
+      GroupResourceType: null
+      UpdatedTime: null
+      DeployDesc: null
+      Alias: null
 total_count:
   description: Number of VM deployment groups reported by the API.
   returned: always

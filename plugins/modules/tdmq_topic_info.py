@@ -56,6 +56,52 @@ topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AverageMsgSize: null
+      ConsumerCount: null
+      LastConfirmedEntry: null
+      LastLedgerCreatedTimestamp: null
+      MsgRateIn: null
+      MsgRateOut: null
+      MsgThroughputIn: null
+      MsgThroughputOut: null
+      NumberOfEntries: null
+      Partitions: null
+      ProducerCount: null
+      TotalSize: null
+      SubTopicSets:
+        - AverageMsgSize: null
+          ConsumerCount: null
+          LastConfirmedEntry: null
+          LastLedgerCreatedTimestamp: null
+          MsgRateIn: null
+          MsgRateOut: null
+          MsgThroughputIn: null
+          MsgThroughputOut: null
+          NumberOfEntries: null
+          Partitions: null
+          ProducerCount: null
+          TotalSize: null
+          TopicType: null
+      TopicType: null
+      EnvironmentId: null
+      TopicName: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      ProducerLimit: null
+      ConsumerLimit: null
+      PulsarTopicType: null
+      MsgTTL: null
+      ClusterId: null
+      Tenant: null
+      IsolateConsumerEnable: null
+      AckTimeOut: null
+      PulsarTopicMessageType: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      DelayMessagePolicy: null
 total_count:
   description: Number of topics reported by the API.
   returned: always

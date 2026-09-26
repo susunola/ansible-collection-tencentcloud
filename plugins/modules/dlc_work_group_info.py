@@ -56,6 +56,42 @@ work_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - WorkGroupId: null
+      WorkGroupName: null
+      WorkGroupDescription: null
+      UserNum: null
+      UserSet:
+        - UserId: null
+          UserDescription: null
+          Creator: null
+          CreateTime: null
+          UserAlias: null
+          AccountType: null
+      PolicySet:
+        - Database: null
+          Catalog: null
+          Table: null
+          Operation: null
+          PolicyType: null
+          Function: null
+          View: null
+          Column: null
+          DataEngine: null
+          ReAuth: null
+          Source: null
+          Mode: null
+          Operator: null
+          CreateTime: null
+          SourceId: null
+          SourceName: null
+          Id: null
+          EngineGeneration: null
+          Model: null
+          IsAdminPolicy: null
+          PolicyId: null
+      Creator: null
+      CreateTime: null
 total_count:
   description: Number of work groups reported by the API.
   returned: always

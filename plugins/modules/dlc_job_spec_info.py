@@ -56,6 +56,44 @@ job_specs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Description: null
+      Entrypoint: null
+      Image: null
+      ImagePullType: null
+      ImagePullPolicy: null
+      ResourceConfig: null
+      RuntimeEnv: null
+      Catalog: null
+      AutoscalerOptions: null
+      ResourceConfigId: null
+      ResourceConfigChanged: null
+      ResourcePartitionId: null
+      ResourcePartitionName: null
+      Queue: null
+      GroupId: null
+      ClusterId: null
+      ClusterGroup: null
+      JobPackage: null
+      JobPackageName: null
+      Priority: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
+      CreateTime: null
+      UpdateTime: null
+      JobInstanceCount: null
+      HasRunningJobs: null
+      AdvancedOptions: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      DispatchStrategy: null
+      SubmissionTarget: null
+      GroupName: null
+      ClusterName: null
 total_count:
   description: Number of job specs reported by the API.
   returned: always

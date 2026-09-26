@@ -52,6 +52,16 @@ nodes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NodeId: null
+      Name: null
+      ParentNodeId: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of nodes reported by the API.
   returned: always

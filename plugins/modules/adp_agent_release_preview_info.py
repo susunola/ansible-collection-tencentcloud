@@ -54,6 +54,18 @@ agent_release_previews:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AgentId: null
+      Name: null
+      UpdateTime: null
+      Action: null
+      ActionDescription: null
+      Message: null
+      ReleaseList:
+        - ItemName: null
+          UpdateTime: null
+          ActionDescription: null
+          ReleaseMessage: null
 total_count:
   description: Number of agent release previews reported by the API.
   returned: always

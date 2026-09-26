@@ -74,6 +74,91 @@ templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TemplateId: null
+      TemplateName: null
+      Description: null
+      Components:
+        - ComponentId: null
+          ComponentType: null
+          ComponentName: null
+          ComponentRequired: null
+          ComponentRecipientId: null
+          FileIndex: null
+          GenerateMode: null
+          ComponentWidth: null
+          ComponentHeight: null
+          ComponentPage: null
+          ComponentPosX: null
+          ComponentPosY: null
+          ComponentExtra: null
+          ComponentValue: null
+          ComponentDateFontSize: null
+          DocumentId: null
+          ComponentDescription: null
+          OffsetX: null
+          OffsetY: null
+          ChannelComponentId: null
+          KeywordOrder: null
+          KeywordPage: null
+          RelativeLocation: null
+          KeywordIndexes: null
+          Placeholder: null
+          LockComponentValue: null
+          ForbidMoveAndDelete: null
+      Recipients:
+        - RecipientId: null
+          RecipientType: null
+          Description: null
+          RoleName: null
+          RequireValidation: null
+          RequireSign: null
+          SignType: null
+          RoutingOrder: null
+          IsPromoter: null
+          ApproverVerifyTypes: null
+          ApproverSignTypes: null
+          NoTransfer: null
+      SignComponents:
+        - ComponentId: null
+          ComponentType: null
+          ComponentName: null
+          ComponentRequired: null
+          ComponentRecipientId: null
+          FileIndex: null
+          GenerateMode: null
+          ComponentWidth: null
+          ComponentHeight: null
+          ComponentPage: null
+          ComponentPosX: null
+          ComponentPosY: null
+          ComponentExtra: null
+          ComponentValue: null
+          ComponentDateFontSize: null
+          DocumentId: null
+          ComponentDescription: null
+          OffsetX: null
+          OffsetY: null
+          ChannelComponentId: null
+          KeywordOrder: null
+          KeywordPage: null
+          RelativeLocation: null
+          KeywordIndexes: null
+          Placeholder: null
+          LockComponentValue: null
+          ForbidMoveAndDelete: null
+      TemplateType: null
+      IsPromoter: null
+      Creator: null
+      CreatedOn: null
+      PreviewUrl: null
+      PdfUrl: null
+      ChannelTemplateId: null
+      ChannelTemplateName: null
+      ChannelAutoSave: null
+      TemplateVersion: null
+      Available: null
+      UserFlowType: null
 total_count:
   description: Number of templates reported by the API.
   returned: always

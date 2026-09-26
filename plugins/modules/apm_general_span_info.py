@@ -64,6 +64,30 @@ general_spans:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TraceID: null
+      Logs:
+        - Timestamp: null
+          Fields:
+            - Type: null
+              Key: null
+              Value: null
+      Tags:
+        - Type: null
+          Key: null
+          Value: null
+      Process: null
+      Timestamp: null
+      OperationName: null
+      References:
+        - RefType: null
+          SpanID: null
+          TraceID: null
+      StartTime: null
+      Duration: null
+      SpanID: null
+      StartTimeMillis: null
+      ParentSpanID: null
 total_count:
   description: Number of general spans reported by the API.
   returned: always

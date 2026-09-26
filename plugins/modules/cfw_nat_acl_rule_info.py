@@ -71,6 +71,49 @@ nat_ac_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SourceContent: null
+      TargetContent: null
+      Protocol: null
+      Port: null
+      RuleAction: null
+      Description: null
+      Count: null
+      OrderIndex: null
+      SourceType: null
+      TargetType: null
+      Uuid: null
+      Invalid: null
+      IsRegion: null
+      CountryCode: null
+      CityCode: null
+      CountryName: null
+      CityName: null
+      CloudCode: null
+      IsCloud: null
+      Enable: null
+      Direction: null
+      InstanceName: null
+      InternalUuid: null
+      Status: null
+      BetaList:
+        - LastTime: null
+          TaskId: null
+          TaskName: null
+      Scope: null
+      ScopeDesc: null
+      InternetBorderUuid: null
+      ParamTemplateName: null
+      ParamTemplateId: null
+      SourceName: null
+      TargetName: null
+      LastHitTime: null
+      CountryKey: null
+      CityKey: null
+      CreateTime: null
+      UpdateTime: null
+      DestValueType: null
+      RulePartition: null
 total_count:
   description: Number of nat ac rules reported by the API.
   returned: always

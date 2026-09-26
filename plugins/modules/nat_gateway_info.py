@@ -65,6 +65,57 @@ nat_gateways:
   returned: always
   type: list
   elements: dict
+  sample:
+    - NatGatewayId: null
+      NatGatewayName: null
+      CreatedTime: null
+      State: null
+      InternetMaxBandwidthOut: null
+      MaxConcurrentConnection: null
+      PublicIpAddressSet:
+        - AddressId: null
+          PublicIpAddress: null
+          IsBlocked: null
+          BlockType: null
+      NetworkState: null
+      DestinationIpPortTranslationNatRuleSet:
+        - IpProtocol: null
+          PublicIpAddress: null
+          PublicPort: null
+          PrivateIpAddress: null
+          PrivatePort: null
+          Description: null
+      VpcId: null
+      Zone: null
+      DirectConnectGatewayIds: null
+      SubnetId: null
+      TagSet:
+        - Key: null
+          Value: null
+      SecurityGroupSet: null
+      SourceIpTranslationNatRuleSet:
+        - ResourceId: null
+          ResourceType: null
+          PrivateIpAddress: null
+          PublicIpAddresses: null
+          Description: null
+          NatGatewaySnatId: null
+          NatGatewayId: null
+          VpcId: null
+          CreatedTime: null
+      IsExclusive: null
+      ExclusiveGatewayBandwidth: null
+      RestrictState: null
+      NatProductVersion: null
+      StrictSnatMode: null
+      SmartScheduleMode: null
+      DedicatedClusterId: null
+      DeletionProtectionEnabled: null
+      ConnectionStateTimeouts: null
+      ExclusiveType: null
+      AutoScaling: null
+      ICMPProxy: null
+      PublicAddressAffinity: null
 total_count:
   description: Number of NAT gateways reported by the API.
   returned: always

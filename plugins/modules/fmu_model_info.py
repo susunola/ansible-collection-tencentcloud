@@ -49,6 +49,10 @@ models:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ModelId: null
+      LUTFileUrl: null
+      Description: null
 total_count:
   description: Number of models returned (the API reports no total count).
   returned: always

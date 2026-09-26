@@ -55,6 +55,14 @@ immutable_tag_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RepositoryPattern: null
+      TagPattern: null
+      RepositoryDecoration: null
+      TagDecoration: null
+      Disabled: null
+      RuleId: null
+      NsName: null
 total_count:
   description: Number of immutable tag rules reported by the API.
   returned: always

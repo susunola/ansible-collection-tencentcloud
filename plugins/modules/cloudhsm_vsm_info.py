@@ -49,6 +49,39 @@ vsms:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      ResourceName: null
+      Status: null
+      Vip: null
+      VpcId: null
+      SubnetId: null
+      Model: null
+      VsmType: null
+      RegionId: null
+      ZoneId: null
+      ExpireTime: null
+      RegionName: null
+      ZoneName: null
+      SgList:
+        - SgId: null
+          SgName: null
+          SgRemark: null
+          CreateTime: null
+      SubnetName: null
+      Expired: null
+      RemainSeconds: null
+      VpcName: null
+      CreateUin: null
+      RenewFlag: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Manufacturer: null
+      AlarmStatus: null
+      PqcStatus: null
+      PqcFlag: null
+      DeployEnv: null
 total_count:
   description: Number of vsms reported by the API.
   returned: always

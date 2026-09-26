@@ -57,6 +57,29 @@ deployments:
   returned: always
   type: list
   elements: dict
+  sample:
+    - OldPodList: null
+      NewPodList: null
+      BatchStatus: null
+      PodNum: null
+      BatchIndex: null
+      OldPods:
+        - PodId: null
+          PodStatus: null
+          PodVersion: null
+          CreateTime: null
+          Zone: null
+          Webshell: null
+          Status: null
+      NewPods:
+        - PodId: null
+          PodStatus: null
+          PodVersion: null
+          CreateTime: null
+          Zone: null
+          Webshell: null
+          Status: null
+      NextBatchStartTime: null
 total_count:
   description: Number of deployments returned (the API reports no total count).
   returned: always

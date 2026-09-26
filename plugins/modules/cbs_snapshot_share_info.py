@@ -51,6 +51,9 @@ snapshot_share_permissions:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CreatedTime: null
+      AccountId: null
 total_count:
   description: Number of snapshot share permissions returned (the API reports no total count).
   returned: always

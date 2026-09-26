@@ -65,6 +65,30 @@ disks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DiskId: null
+      InstanceId: null
+      Zone: null
+      DiskName: null
+      DiskUsage: null
+      DiskType: null
+      DiskChargeType: null
+      DiskSize: null
+      RenewFlag: null
+      DiskState: null
+      Attached: null
+      DeleteWithInstance: null
+      LatestOperation: null
+      LatestOperationState: null
+      LatestOperationRequestId: null
+      CreatedTime: null
+      ExpiredTime: null
+      IsolatedTime: null
+      DiskBackupCount: null
+      DiskBackupQuota: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of disks reported by the API.
   returned: always

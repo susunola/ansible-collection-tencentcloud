@@ -62,6 +62,28 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceName: null
+      InstanceId: null
+      Region: null
+      VpcId: null
+      SubnetIds: null
+      InternetUrl: null
+      InternalUrl: null
+      CreatedAt: null
+      InstanceStatus: null
+      TagSpecification:
+        - Key: null
+          Value: null
+      Zone: null
+      InstanceChargeType: null
+      VpcName: null
+      SubnetName: null
+      RegionId: null
+      RootUrl: null
+      EnableSSO: null
+      Version: null
+      EnableSSOCamCheck: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

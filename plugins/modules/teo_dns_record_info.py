@@ -57,6 +57,19 @@ dns_records:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ZoneId: null
+      RecordId: null
+      Name: null
+      Type: null
+      Location: null
+      Content: null
+      TTL: null
+      Weight: null
+      Priority: null
+      Status: null
+      CreatedOn: null
+      ModifiedOn: null
 total_count:
   description: Number of DNS records reported by the API.
   returned: always

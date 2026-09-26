@@ -52,6 +52,17 @@ alarm_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AlarmPolicyId: null
+      Name: null
+      Type: null
+      EventScope: null
+      RiskLevel: null
+      NoticePeriod: null
+      NoticeTime: null
+      NotificationMechanism: null
+      Status: null
+      Description: null
 total_count:
   description: Number of alarm policies reported by the API.
   returned: always

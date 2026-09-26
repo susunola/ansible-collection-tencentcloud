@@ -56,6 +56,53 @@ applications:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ApplicationId: null
+      ApplicationName: null
+      Description: null
+      EnvironmentId: null
+      CreateDate: null
+      ModifyDate: null
+      Modifier: null
+      Creator: null
+      RepoType: null
+      InstanceId: null
+      RepoName: null
+      CodingLanguage: null
+      DeployMode: null
+      EnvironmentName: null
+      ActiveVersions:
+        - VersionName: null
+          Status: null
+          EnableEs: null
+          CurrentInstances: null
+          VersionId: null
+          LogOutputConf: null
+          ExpectedInstances: null
+          DeployMode: null
+          BuildTaskId: null
+          EnvironmentId: null
+          EnvironmentName: null
+          ApplicationId: null
+          ApplicationName: null
+          UnderDeploying: null
+          BatchDeployStatus: null
+          Zones: null
+          NodeInfos:
+            - Name: null
+              Zone: null
+              SubnetId: null
+              AvailableIpCount: null
+              Cidr: null
+          PodList: null
+          WorkloadInfo: null
+          CreateDate: null
+          RegionId: null
+      EnableTracing: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      HasAuthority: null
 total_count:
   description: Number of applications reported by the API.
   returned: always

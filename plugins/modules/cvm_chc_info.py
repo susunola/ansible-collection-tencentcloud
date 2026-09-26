@@ -65,6 +65,49 @@ chc_hosts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ChcId: null
+      InstanceName: null
+      SerialNumber: null
+      InstanceState: null
+      DeviceType: null
+      Placement: null
+      BmcVirtualPrivateCloud: null
+      BmcIp: null
+      BmcSecurityGroupIds: null
+      DeployVirtualPrivateCloud: null
+      DeployIp: null
+      DeploySecurityGroupIds: null
+      CvmInstanceId: null
+      CreatedTime: null
+      HardwareDescription: null
+      CPU: null
+      Memory: null
+      Disk: null
+      BmcMAC: null
+      DeployMAC: null
+      TenantType: null
+      DeployExtraConfig: null
+      Gpu: null
+      NetworkCard: null
+      IsPredefinedType: null
+      ChcInstanceType: null
+      ChcInstanceFamily: null
+      ChcInstanceFamilyName: null
+      ResaleAppId: null
+      ResaleAccountId: null
+      SaleStatus: null
+      Tags:
+        - Key: null
+          Value: null
+      LatestOperation: null
+      LatestOperationErrorCode: null
+      LatestOperationErrorMsg: null
+      LatestOperationName: null
+      LatestOperationState: null
+      ChcGatewayId: null
+      DedicatedClusterId: null
+      NetworkMode: null
 total_count:
   description: Number of CHC hosts reported by the API.
   returned: always

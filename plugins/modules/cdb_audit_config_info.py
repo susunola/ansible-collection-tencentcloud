@@ -53,6 +53,12 @@ audit_config:
   description: The audit configuration of the instance.
   returned: always
   type: dict
+  sample:
+    LogExpireDay: null
+    LogType: null
+    IsClosing: null
+    IsOpening: null
+    CreateTime: null
 request_id:
   description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always

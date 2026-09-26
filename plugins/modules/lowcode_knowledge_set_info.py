@@ -54,6 +54,15 @@ knowledge_sets:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Title: null
+      Desc: null
+      Active: null
+      CreateTime: null
+      UpdateTime: null
+      Meta: null
+      TotalSize: null
 total_count:
   description: Number of knowledge sets reported by the API.
   returned: always

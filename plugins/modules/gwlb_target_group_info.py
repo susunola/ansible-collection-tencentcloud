@@ -65,6 +65,32 @@ target_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TargetGroupId: null
+      VpcId: null
+      TargetGroupName: null
+      Port: null
+      CreatedTime: null
+      UpdatedTime: null
+      AssociatedRule:
+        - LoadBalancerId: null
+          LoadBalancerName: null
+      Protocol: null
+      ScheduleAlgorithm: null
+      HealthCheck: null
+      AllDeadToAlive: null
+      AssociatedRuleCount: null
+      RegisteredInstancesCount: null
+      Tag:
+        - TagKey: null
+          TagValue: null
+      ForwardingMode: null
+      TcpIdleConnectTimeout: null
+      OthersIdleConnectTimeout: null
+      RescheduleUnbindRs: null
+      RescheduleUnbindRsStartTime: null
+      RescheduleUnhealthy: null
+      RescheduleUnhealthyStartTime: null
 total_count:
   description: Number of target groups reported by the API.
   returned: always

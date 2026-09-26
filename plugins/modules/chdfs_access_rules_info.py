@@ -51,6 +51,12 @@ access_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccessRuleId: null
+      Address: null
+      AccessMode: null
+      Priority: null
+      CreateTime: null
 total_count:
   description: Number of access rules returned (the API reports no total count).
   returned: always

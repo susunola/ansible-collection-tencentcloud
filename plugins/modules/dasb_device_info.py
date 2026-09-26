@@ -62,6 +62,31 @@ devices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      InstanceId: null
+      Name: null
+      PublicIp: null
+      PrivateIp: null
+      ApCode: null
+      OsName: null
+      Kind: null
+      Port: null
+      GroupSet:
+        - Id: null
+          Name: null
+          Department: null
+          Count: null
+      AccountCount: null
+      VpcId: null
+      SubnetId: null
+      Resource: null
+      Department: null
+      IpPortSet: null
+      DomainId: null
+      DomainName: null
+      EnableSSL: null
+      SSLCertName: null
 total_count:
   description: Number of devices reported by the API.
   returned: always

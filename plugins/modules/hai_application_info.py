@@ -62,6 +62,16 @@ applications:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ApplicationId: null
+      ApplicationName: null
+      Description: null
+      ConfigEnvironment: null
+      MinSystemDiskSize: null
+      ApplicationType: null
+      ApplicationState: null
+      CreateTime: null
+      ApplicationSize: null
 total_count:
   description: Number of applications reported by the API.
   returned: always

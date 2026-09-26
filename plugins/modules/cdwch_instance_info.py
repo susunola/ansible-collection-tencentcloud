@@ -65,6 +65,37 @@ cn_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      InstanceType: null
+      InstanceName: null
+      Status: null
+      StatusDesc: null
+      InstanceStateInfo: null
+      InstanceID: null
+      Resources:
+        - ID: null
+          InstanceID: null
+          AppID: null
+          Uin: null
+          Component: null
+          DeployMode: null
+          SpecName: null
+          ResourceID: null
+          Status: null
+          IP: null
+          CPU: null
+          Memory: null
+          Storage: null
+          UUID: null
+          Region: null
+          Zone: null
+          Details: null
+          CreateTime: null
+          ModifyTime: null
+          ExpireTime: null
+      IsSecondaryZone: null
+      SecondaryZoneInfo: null
 total_count:
   description: Number of cn instances reported by the API.
   returned: always

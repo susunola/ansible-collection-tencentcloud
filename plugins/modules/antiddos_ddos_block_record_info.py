@@ -53,6 +53,10 @@ ddos_block_records:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Resource: null
+      BlockTime: null
+      Status: null
 total_count:
   description: Number of DDoS block records reported by the API.
   returned: always

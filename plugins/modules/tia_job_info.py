@@ -49,6 +49,30 @@ jobs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      CreateTime: null
+      StartTime: null
+      EndTime: null
+      State: null
+      Message: null
+      ScaleTier: null
+      MasterType: null
+      WorkerType: null
+      ParameterServerType: null
+      WorkerCount: null
+      ParameterServerCount: null
+      PackageDir: null
+      Command: null
+      Args: null
+      Cluster: null
+      RuntimeVersion: null
+      DelTime: null
+      AppId: null
+      Uin: null
+      Debug: null
+      RuntimeConf: null
+      Id: null
 total_count:
   description: Number of jobs returned (the API reports no total count).
   returned: always

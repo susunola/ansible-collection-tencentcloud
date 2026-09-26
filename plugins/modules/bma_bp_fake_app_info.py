@@ -49,6 +49,23 @@ bp_fake_apps:
   returned: always
   type: list
   elements: dict
+  sample:
+    - FakeAPPId: null
+      BrandName: null
+      Origin: null
+      FakeAPPName: null
+      FakeAPPPackageName: null
+      FakeAPPCert: null
+      FakeAPPSize: null
+      Heat: null
+      BlockStatus: null
+      BlockNote: null
+      OfflineStatus: null
+      OfflineNote: null
+      DownloadWay: null
+      InsertTime: null
+      DownloadCosURL: null
+      CertificationStatus: null
 total_count:
   description: Number of bp fake apps reported by the API.
   returned: always

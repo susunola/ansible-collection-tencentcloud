@@ -56,6 +56,39 @@ resource_configs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Name: null
+      Description: null
+      Type: null
+      Head: null
+      Worker:
+        - Name: null
+          PodCpu: null
+          PodMem: null
+          GpuType: null
+          GpuNum: null
+          Envs:
+            - Name: null
+              Value: null
+          Labels:
+            - Name: null
+              Value: null
+          ResourcesLabels:
+            - Name: null
+              Value: null
+          MinPodNum: null
+          MaxPodNum: null
+          EnableAutoScaling: null
+          ResourceType: null
+          InstanceType: null
+          Spec: null
+          BillingItem: null
+      AppId: null
+      Uin: null
+      SubAccountUin: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of resource configs reported by the API.
   returned: always

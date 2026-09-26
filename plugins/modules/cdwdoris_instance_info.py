@@ -61,6 +61,72 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      Status: null
+      Version: null
+      Region: null
+      Zone: null
+      VpcId: null
+      SubnetId: null
+      PayMode: null
+      CreateTime: null
+      ExpireTime: null
+      MasterSummary: null
+      CoreSummary: null
+      HA: null
+      HaType: null
+      AccessInfo: null
+      Id: null
+      RegionId: null
+      ZoneDesc: null
+      FlowMsg: null
+      StatusDesc: null
+      RenewFlag: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      Monitor: null
+      HasClsTopic: null
+      ClsTopicId: null
+      ClsLogSetId: null
+      EnableXMLConfig: null
+      RegionDesc: null
+      Eip: null
+      CosMoveFactor: null
+      Kind: null
+      CosBucketName: null
+      CanAttachCbs: null
+      BuildVersion: null
+      Components: null
+      IfExistCatalog: null
+      Characteristic: null
+      RestartTimeout: null
+      GraceShutdownWaitSeconds: null
+      CaseSensitive: null
+      IsWhiteSGs: null
+      BindSGs: null
+      EnableMultiZones: null
+      UserNetworkInfos: null
+      EnableCoolDown: null
+      CoolDownBucket: null
+      Details: null
+      EnableDlc: null
+      AccountType: null
+      MonitorMode: null
+      CNSummary: null
+      ComputeGroupCount: null
+      CosStorageSize: null
+      IsMasterNonVM: null
+      CosPkgCapacity: null
+      UseManagedBucket: null
+      InstanceType: null
+      MasterInstance: null
+      SlaveInstances: null
+      SyncerIp: null
+      EnableSqlConv: null
+      TimeZone: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

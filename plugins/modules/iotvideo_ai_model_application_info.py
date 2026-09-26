@@ -54,6 +54,10 @@ ai_model_applications:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProductId: null
+      ProductName: null
+      Status: null
 total_count:
   description: Number of ai model applications reported by the API.
   returned: always

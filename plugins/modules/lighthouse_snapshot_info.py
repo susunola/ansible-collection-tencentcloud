@@ -65,6 +65,21 @@ snapshots:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SnapshotId: null
+      DiskUsage: null
+      DiskId: null
+      DiskSize: null
+      SnapshotName: null
+      SnapshotState: null
+      Percent: null
+      LatestOperation: null
+      LatestOperationState: null
+      LatestOperationRequestId: null
+      CreatedTime: null
+      Tags:
+        - Key: null
+          Value: null
 total_count:
   description: Number of snapshots reported by the API.
   returned: always

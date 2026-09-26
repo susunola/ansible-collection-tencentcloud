@@ -58,6 +58,16 @@ dnat_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - IpProtocol: null
+      PublicIpAddress: null
+      PublicPort: null
+      PrivateIpAddress: null
+      PrivatePort: null
+      Description: null
+      NatGatewayId: null
+      VpcId: null
+      CreatedTime: null
 total_count:
   description: Number of DNAT rules reported by the API.
   returned: always

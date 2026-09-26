@@ -57,6 +57,34 @@ resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ResourceId: null
+      Name: null
+      ResourceType: null
+      ResourceLoc: null
+      Region: null
+      AppId: null
+      OwnerUin: null
+      CreatorUin: null
+      CreateTime: null
+      UpdateTime: null
+      LatestResourceConfigVersion: null
+      Remark: null
+      VersionCount: null
+      RefJobCount: null
+      IsJobRun: null
+      FileName: null
+      WorkSpaceId: null
+      RefJobStatusCountSet:
+        - JobStatus: null
+          Count: null
+      Connector: null
+      ConnectorVersion: null
+      ConnectionMethod: null
+      RelatedResourceId: null
+      Icon: null
+      ConnectorName: null
+      ConnectorUrl: null
 total_count:
   description: Number of resources reported by the API.
   returned: always

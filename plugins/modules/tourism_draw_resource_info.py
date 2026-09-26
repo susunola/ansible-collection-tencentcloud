@@ -49,6 +49,19 @@ draw_resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      FlowId: null
+      ResourceId: null
+      IndexId: null
+      Uin: null
+      BigDealId: null
+      SmallOrderId: null
+      ResourceNewStartTime: null
+      ResourceNewEndTime: null
+      ResourceStatus: null
+      Status: null
+      ResourceType: null
 total_count:
   description: Number of draw resources reported by the API.
   returned: always

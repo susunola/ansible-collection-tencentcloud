@@ -52,6 +52,51 @@ config_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Identifier: null
+      RuleName: null
+      InputParameter:
+        - ParameterKey: null
+          Type: null
+          Value: null
+      SourceCondition:
+        - EmptyAs: null
+          SelectPath: null
+          Operator: null
+          Required: null
+          DesiredValue: null
+      ResourceType: null
+      Labels: null
+      RiskLevel: null
+      ServiceFunction: null
+      CreateTime: null
+      Description: null
+      Status: null
+      ComplianceResult: null
+      Annotation: null
+      ConfigRuleInvokedTime: null
+      ConfigRuleId: null
+      IdentifierType: null
+      CompliancePackId: null
+      TriggerType:
+        - MessageType: null
+          MaximumExecutionFrequency: null
+      ManageInputParameter:
+        - ValueType: null
+          ParameterKey: null
+          Type: null
+          DefaultValue: null
+          Description: null
+      CompliancePackName: null
+      RegionsScope: null
+      TagsScope:
+        - TagKey: null
+          TagValue: null
+      ExcludeResourceIdsScope: null
+      AccountGroupId: null
+      AccountGroupName: null
+      RuleOwnerId: null
+      ManageTriggerType: null
 total_count:
   description: Number of Config rules reported by the API.
   returned: always

@@ -65,6 +65,24 @@ listeners:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CaEnable: null
+      CreateTime: null
+      GzipEnabled: null
+      Http2Enable: null
+      IdleTimeout: null
+      ListenerId: null
+      ListenerName: null
+      ListenerPort: null
+      ListenerProtocol: null
+      ListenerStatus: null
+      ModifyTime: null
+      RequestTimeout: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      TlsSecurityPolicyId: null
+      XForwardedForConfig: null
 total_count:
   description: Number of listeners reported by the API.
   returned: always

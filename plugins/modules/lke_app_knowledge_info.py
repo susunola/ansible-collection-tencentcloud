@@ -58,6 +58,13 @@ app_knowledges:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AppName: null
+      UsedCharSize: null
+      Proportion: null
+      ExceedCharSize: null
+      IsSharedKnowledge: null
+      KnowledgeType: null
 total_count:
   description: Number of app knowledges reported by the API.
   returned: always

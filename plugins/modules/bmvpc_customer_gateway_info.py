@@ -62,6 +62,12 @@ customer_gateways:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CustomerGatewayId: null
+      CustomerGatewayName: null
+      IpAddress: null
+      CreateTime: null
+      VpnConnNum: null
 total_count:
   description: Number of customer gateways reported by the API.
   returned: always

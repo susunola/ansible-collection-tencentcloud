@@ -57,6 +57,36 @@ cc_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Status: null
+      Advance: null
+      Limit: null
+      Interval: null
+      Url: null
+      MatchFunc: null
+      ActionType: null
+      Priority: null
+      ValidTime: null
+      TsVersion: null
+      Options: null
+      RuleId: null
+      EventId: null
+      SessionApplied: null
+      CreateTime: null
+      LimitMethod: null
+      CelRule: null
+      LogicalOp: null
+      PageId: null
+      ActionRatio: null
+      Domains: null
+      GroupIds: null
+      JobType: null
+      JobDateTime: null
+      CronType: null
+      ExpireTime: null
+      ValidStatus: null
+      Source: null
 total_count:
   description: Number of CC rules reported by the API.
   returned: always

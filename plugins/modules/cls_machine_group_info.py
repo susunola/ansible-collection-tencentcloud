@@ -57,6 +57,23 @@ machine_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      GroupName: null
+      MachineGroupType: null
+      CreateTime: null
+      Tags:
+        - Key: null
+          Value: null
+      AutoUpdate: null
+      UpdateStartTime: null
+      UpdateEndTime: null
+      ServiceLogging: null
+      DelayCleanupTime: null
+      MetaTags:
+        - Key: null
+          Value: null
+      OSType: null
 total_count:
   description: Number of machine groups reported by the API.
   returned: always

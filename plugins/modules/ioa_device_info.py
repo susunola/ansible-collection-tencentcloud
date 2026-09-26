@@ -49,6 +49,59 @@ devices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Mid: null
+      Name: null
+      GroupId: null
+      OsType: null
+      Ip: null
+      OnlineStatus: null
+      Version: null
+      StrVersion: null
+      Itime: null
+      ConnActiveTime: null
+      Locked: null
+      LocalIpList: null
+      HostId: null
+      GroupName: null
+      GroupNamePath: null
+      CriticalVulListCount: null
+      Os: null
+      OsBits: null
+      OsVersion: null
+      OsLanguage: null
+      OsInstallDate: null
+      ComputerName: null
+      DomainName: null
+      MacAddr: null
+      VulCount: null
+      RiskCount: null
+      VirusVer: null
+      VulVersion: null
+      SysRepVersion: null
+      VulCriticalList: null
+      Tags: null
+      UserName: null
+      FirewallStatus: null
+      SerialNum: null
+      DeviceStrategyVer: null
+      NGNStrategyVer: null
+      IOAUserName: null
+      DeviceNewStrategyVer: null
+      NGNNewStrategyVer: null
+      HostName: null
+      BaseBoardSn: null
+      AccountUsers: null
+      IdentityStrategyVer: null
+      IdentityNewStrategyVer: null
+      AccountGroupName: null
+      AccountName: null
+      AccountGroupId: null
+      ScreenRecordingPermission: null
+      DiskAccessPermission: null
+      RemarkName: null
+      BiosUuid: null
 total_count:
   description: Number of devices returned (the API reports no total count).
   returned: always

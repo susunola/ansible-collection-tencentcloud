@@ -49,6 +49,16 @@ signs:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SignId: null
+      International: null
+      StatusCode: null
+      ReviewReply: null
+      SignName: null
+      CreateTime: null
+      QualificationId: null
+      QualificationName: null
+      QualificationStatusCode: null
 total_count:
   description: Number of signs reported by the API.
   returned: always

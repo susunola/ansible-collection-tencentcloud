@@ -51,6 +51,18 @@ cluster_endpoints:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EndpointId: null
+      ClusterId: null
+      EndpointName: null
+      EndpointType: null
+      VpcId: null
+      SubnetId: null
+      PrivateIp: null
+      PrivatePort: null
+      WanIp: null
+      WanPort: null
+      WanDomain: null
 total_count:
   description: Number of cluster endpoints reported by the API.
   returned: always

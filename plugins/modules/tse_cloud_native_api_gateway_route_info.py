@@ -49,6 +49,31 @@ cloud_native_api_gateway_routes:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      Name: null
+      Methods: null
+      Paths: null
+      Hosts: null
+      Protocols: null
+      PreserveHost: null
+      HttpsRedirectStatusCode: null
+      StripPath: null
+      CreatedTime: null
+      ForceHttps: null
+      ServiceName: null
+      ServiceID: null
+      DestinationPorts: null
+      Headers:
+        - Key: null
+          Value: null
+      RequestBuffering: null
+      ResponseBuffering: null
+      RegexPriority: null
+      QueryStringParameters:
+        - Key: null
+          Value: null
+      RouteSource: null
 total_count:
   description: Number of cloud native api gateway routes reported by the API.
   returned: always

@@ -57,6 +57,15 @@ prometheus_record_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      UpdateTime: null
+      TemplateId: null
+      Content: null
+      ClusterId: null
+      Status: null
+      Id: null
+      Count: null
 total_count:
   description: Number of Prometheus recording rules reported by the API.
   returned: always

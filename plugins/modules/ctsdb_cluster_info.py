@@ -53,6 +53,28 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AppID: null
+      ClusterID: null
+      AccountID: null
+      Name: null
+      Region: null
+      Zones: null
+      Networks:
+        - VpcId: null
+          SubnetId: null
+          VIP: null
+          Port: null
+      Spec: null
+      Status: null
+      Period: null
+      CreatedAt: null
+      UpdatedAt: null
+      Tenant: null
+      Tags:
+        - Key: null
+          Value: null
+      Security: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

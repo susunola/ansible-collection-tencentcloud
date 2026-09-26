@@ -57,6 +57,34 @@ custom_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ActionType: null
+      Bypass: null
+      CreateTime: null
+      ExpireTime: null
+      Name: null
+      Redirect: null
+      RuleId: null
+      SortId: null
+      Status: null
+      Strategies:
+        - Field: null
+          CompareFunc: null
+          Content: null
+          Arg: null
+          CaseNotSensitive: null
+      EventId: null
+      ModifyTime: null
+      ValidStatus: null
+      Source: null
+      JobType: null
+      JobDateTime: null
+      CronType: null
+      Label: null
+      PageId: null
+      Domain: null
+      LogicalOp: null
+      ActionRatio: null
 total_count:
   description: Number of custom rules reported by the API.
   returned: always

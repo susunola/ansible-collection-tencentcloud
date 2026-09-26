@@ -56,6 +56,113 @@ alarm_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PolicyId: null
+      PolicyName: null
+      Remark: null
+      MonitorType: null
+      Enable: null
+      UseSum: null
+      ProjectId: null
+      ProjectName: null
+      Namespace: null
+      ConditionTemplateId: null
+      Condition: null
+      EventCondition: null
+      NoticeIds: null
+      Notices:
+        - Id: null
+          Name: null
+          UpdatedAt: null
+          UpdatedBy: null
+          NoticeType: null
+          UserNotices:
+            - ReceiverType: null
+              StartTime: null
+              EndTime: null
+              NoticeWay: null
+              UserIds: null
+              GroupIds: null
+              PhoneOrder: null
+              PhoneCircleTimes: null
+              PhoneInnerInterval: null
+              PhoneCircleInterval: null
+              NeedPhoneArriveNotice: null
+              PhoneCallType: null
+              Weekday: null
+              OnCallFormIDs: null
+              VoiceConfirmKey: null
+          URLNotices:
+            - URL: null
+              IsValid: null
+              ValidationCode: null
+              StartTime: null
+              EndTime: null
+              Weekday: null
+              GroupMembers: null
+          IsPreset: null
+          NoticeLanguage: null
+          PolicyIds: null
+          AMPConsumerId: null
+          CLSNotices:
+            - Region: null
+              LogSetId: null
+              TopicId: null
+              Enable: null
+          Tags:
+            - Key: null
+              Value: null
+          IsLoginFree: null
+          TimeZoneName: null
+      TriggerTasks:
+        - Type: null
+          TaskConfig: null
+      ConditionsTemp: null
+      LastEditUin: null
+      UpdateTime: null
+      InsertTime: null
+      Region: null
+      NamespaceShowName: null
+      IsDefault: null
+      CanSetDefault: null
+      InstanceGroupId: null
+      InstanceSum: null
+      InstanceGroupName: null
+      RuleType: null
+      OriginId: null
+      TagInstances:
+        - Key: null
+          Value: null
+          InstanceSum: null
+          ServiceType: null
+          RegionId: null
+          BindingStatus: null
+          TagStatus: null
+      Filter: null
+      GroupBy:
+        - Id: null
+          Name: null
+      FilterDimensionsParam: null
+      IsOneClick: null
+      OneClickStatus: null
+      AdvancedMetricNumber: null
+      IsBindAll: null
+      Tags:
+        - Key: null
+          Value: null
+      IsSupportAlarmTag: null
+      TagOperation: null
+      NoticeTmplBindInfos:
+        - ContentTmplID: null
+          NoticeID: null
+      HierarchicalNotices:
+        - NoticeId: null
+          Classification: null
+          PolicyId: null
+      NoticeContentTmplBindInfos:
+        - ContentTmplID: null
+          NoticeID: null
+      PredefinedConfigID: null
 total_count:
   description: Number of alarm policies reported by the API.
   returned: always

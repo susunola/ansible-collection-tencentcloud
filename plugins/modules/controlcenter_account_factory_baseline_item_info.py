@@ -49,6 +49,19 @@ account_factory_baseline_items:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Identifier: null
+      Name: null
+      NameEn: null
+      Weight: null
+      Required: null
+      DependsOn:
+        - Type: null
+          Identifier: null
+      Description: null
+      DescriptionEn: null
+      Classify: null
+      ClassifyEn: null
 total_count:
   description: Number of account factory baseline items reported by the API.
   returned: always

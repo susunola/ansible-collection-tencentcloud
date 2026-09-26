@@ -49,6 +49,23 @@ rabbit_mq_virtual_hosts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      VirtualHost: null
+      Description: null
+      Tags: null
+      CreateTime: null
+      ModifyTime: null
+      VirtualHostStatistics: null
+      TraceFlag: null
+      Status: null
+      MessageHeapCount: null
+      MessageRateIn: null
+      MessageRateOut: null
+      MirrorQueuePolicyFlag: null
+      CreateTs: null
+      ModifyTs: null
+      Quota: null
 total_count:
   description: Number of rabbit mq virtual hosts reported by the API.
   returned: always

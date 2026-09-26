@@ -61,6 +61,68 @@ instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      Name: null
+      ProjectId: null
+      RegionId: null
+      ZoneId: null
+      VpcId: null
+      SubnetId: null
+      Status: null
+      Vip: null
+      Vport: null
+      CreateTime: null
+      UpdateTime: null
+      StartTime: null
+      EndTime: null
+      IsolateTime: null
+      Memory: null
+      UsedStorage: null
+      Storage: null
+      VersionName: null
+      RenewFlag: null
+      Model: null
+      Region: null
+      Zone: null
+      BackupTime: null
+      PayMode: null
+      Uid: null
+      Cpu: null
+      Version: null
+      Type: null
+      Pid: null
+      UniqVpcId: null
+      UniqSubnetId: null
+      IsolateOperator: null
+      SubFlag: null
+      ROFlag: null
+      HAFlag: null
+      ResourceTags:
+        - TagKey: null
+          TagValue: null
+      BackupModel: null
+      InstanceNote: null
+      BackupCycle: null
+      BackupCycleType: null
+      BackupSaveDays: null
+      InstanceType: null
+      CrossRegions: null
+      CrossBackupEnabled: null
+      CrossBackupSaveDays: null
+      DnsPodDomain: null
+      TgwWanVPort: null
+      Collation: null
+      TimeZone: null
+      IsDrZone: null
+      SlaveZones: null
+      Architecture: null
+      Style: null
+      MultiSlaveZones:
+        - SlaveZone: null
+          SlaveZoneName: null
+          DrInstanceId: null
+      ThroughputPerformance: null
 total_count:
   description: Number of instances reported by the API.
   returned: always

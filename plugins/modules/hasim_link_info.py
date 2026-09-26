@@ -49,6 +49,21 @@ links:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ID: null
+      Status: null
+      ActiveTime: null
+      ExpireTime: null
+      DataUse: null
+      AudioUse: null
+      SmsUse: null
+      LinkedState: null
+      TacticID: null
+      TacticStatus: null
+      TacticExpireTime: null
+      IsActiveLog: null
+      TeleOperator: null
+      Report: null
 total_count:
   description: Number of links reported by the API.
   returned: always

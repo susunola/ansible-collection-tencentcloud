@@ -49,6 +49,12 @@ glossaries:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GlossaryId: null
+      Name: null
+      Description: null
+      Source: null
+      Target: null
 total_count:
   description: Number of glossaries reported by the API.
   returned: always

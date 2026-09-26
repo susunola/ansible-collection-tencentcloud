@@ -54,6 +54,16 @@ kb_components:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PURL: null
+      Homepage: null
+      Summary: null
+      NicknameList: null
+      CodeLocationList: null
+      LicenseExpression: null
+      VersionInfo: null
+      LastUpdateTime: null
+      TagList: null
 total_count:
   description: Number of kb components reported by the API.
   returned: always

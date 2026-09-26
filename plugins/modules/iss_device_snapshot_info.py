@@ -49,6 +49,14 @@ device_snapshots:
   returned: always
   type: list
   elements: dict
+  sample:
+    - FileName: null
+      DownloadUrl: null
+      ImageSize: null
+      CreatedTime: null
+      ReceivedTime: null
+      PreviewUrl: null
+      SessionId: null
 total_count:
   description: Number of device snapshots reported by the API.
   returned: always

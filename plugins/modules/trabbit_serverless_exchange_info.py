@@ -78,6 +78,23 @@ serverless_exchanges:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ExchangeName: null
+      Remark: null
+      ExchangeType: null
+      VirtualHost: null
+      ExchangeCreator: null
+      CreateTimeStamp: null
+      ModTimeStamp: null
+      MessageRateIn: null
+      MessageRateOut: null
+      Durable: null
+      AutoDelete: null
+      Internal: null
+      InstanceId: null
+      Policy: null
+      Arguments: null
+      MessagesDelayed: null
 total_count:
   description: Number of serverless exchanges reported by the API.
   returned: always

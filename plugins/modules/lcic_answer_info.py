@@ -54,6 +54,12 @@ answers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Answer: null
+      CostTime: null
+      UserId: null
+      IsCorrect: null
 total_count:
   description: Number of answers reported by the API.
   returned: always

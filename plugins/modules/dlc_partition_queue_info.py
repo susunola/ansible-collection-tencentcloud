@@ -56,6 +56,16 @@ partition_queues:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      QueueName: null
+      ResourceUsage:
+        - ResourceSpec: null
+          Min: null
+          Max: null
+      Description: null
+      IsDefault: null
+      QueueType: null
 total_count:
   description: Number of partition queues reported by the API.
   returned: always

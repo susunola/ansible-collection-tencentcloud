@@ -52,6 +52,17 @@ microservices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - MicroserviceId: null
+      MicroserviceName: null
+      MicroserviceDesc: null
+      CreateTime: null
+      UpdateTime: null
+      NamespaceId: null
+      RunInstanceCount: null
+      CriticalInstanceCount: null
+      DeleteDisabled: null
+      DeleteDisabledReason: null
 total_count:
   description: Number of microservices reported by the API.
   returned: always

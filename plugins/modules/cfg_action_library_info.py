@@ -49,6 +49,28 @@ action_libraries:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ActionName: null
+      Desc: null
+      ActionType: null
+      CreateTime: null
+      Creator: null
+      UpdateTime: null
+      RiskDesc: null
+      ActionId: null
+      AttributeId: null
+      RelationActionId: null
+      ActionCommand: null
+      ActionCommandType: null
+      ActionContent: null
+      ResourceType: null
+      ActionDetail: null
+      IsAllowed: null
+      ActionBestCase: null
+      ObjectType: null
+      MetricIdList: null
+      IsNewAction: null
+      ObjectTypeId: null
 total_count:
   description: Number of action libraries reported by the API.
   returned: always

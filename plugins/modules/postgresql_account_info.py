@@ -58,6 +58,17 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DBInstanceId: null
+      UserName: null
+      Remark: null
+      Status: null
+      CreateTime: null
+      UpdateTime: null
+      PasswordUpdateTime: null
+      UserType: null
+      OpenCam: null
+      PGRoles: null
 total_count:
   description: Number of accounts reported by the API.
   returned: always

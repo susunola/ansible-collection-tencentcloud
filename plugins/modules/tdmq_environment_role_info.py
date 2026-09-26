@@ -53,6 +53,13 @@ environment_roles:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EnvironmentId: null
+      RoleName: null
+      Permissions: null
+      RoleDescribe: null
+      CreateTime: null
+      UpdateTime: null
 total_count:
   description: Number of environment roles reported by the API.
   returned: always

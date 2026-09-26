@@ -53,6 +53,27 @@ devices:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Sn: null
+      ModelVersion: null
+      AssetId: null
+      SvrIsSpecial: null
+      Ip: null
+      IdcName: null
+      IdcId: null
+      IdcUnitId: null
+      IdcUnitName: null
+      RackId: null
+      ServerTypeId: null
+      RackName: null
+      PositionCode: null
+      Status: null
+      PowerOnTime: null
+      OnshelfDate: null
+      DeviceType: null
+      Manufacturer: null
+      TypeName: null
+      HardwareMemo: null
 total_count:
   description: Number of devices reported by the API.
   returned: always

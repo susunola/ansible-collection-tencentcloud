@@ -49,6 +49,18 @@ custom_persons:
   returned: always
   type: list
   elements: dict
+  sample:
+    - PersonId: null
+      Name: null
+      BasicInfo: null
+      L1Category: null
+      L2Category: null
+      ImageInfoSet:
+        - ImageId: null
+          ImageURL: null
+          ErrorCode: null
+          ErrorMsg: null
+      CreateTime: null
 total_count:
   description: Number of custom persons reported by the API.
   returned: always

@@ -57,6 +57,11 @@ application_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Port: null
+      TargetPort: null
+      Protocol: null
+      ServiceName: null
 total_count:
   description: Number of application services returned (the API reports no total count).
   returned: always

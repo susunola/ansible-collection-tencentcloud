@@ -58,6 +58,53 @@ dedicated_cluster_orders:
   returned: always
   type: list
   elements: dict
+  sample:
+    - DedicatedClusterId: null
+      DedicatedClusterTypeId: null
+      SupportedStorageType: null
+      SupportedUplinkSpeed: null
+      SupportedInstanceFamily: null
+      Weight: null
+      PowerDraw: null
+      OrderStatus: null
+      CreateTime: null
+      DedicatedClusterOrderId: null
+      Action: null
+      DedicatedClusterOrderItems:
+        - DedicatedClusterTypeId: null
+          SupportedStorageType: null
+          SupportedUplinkSpeed: null
+          SupportedInstanceFamily: null
+          Weight: null
+          PowerDraw: null
+          SubOrderStatus: null
+          CreateTime: null
+          SubOrderId: null
+          Count: null
+          Name: null
+          Description: null
+          TotalCpu: null
+          TotalMem: null
+          TotalGpu: null
+          TypeName: null
+          ComputeFormat: null
+          TypeFamily: null
+          SubOrderPayStatus: null
+      Cpu: null
+      Mem: null
+      Gpu: null
+      PayStatus: null
+      PayType: null
+      TimeUnit: null
+      TimeSpan: null
+      OrderType: null
+      CheckStatus: null
+      DeliverExpectTime: null
+      DeliverFinishTime: null
+      CheckExpectTime: null
+      CheckFinishTime: null
+      OrderSLA: null
+      OrderPayPlan: null
 total_count:
   description: Number of dedicated cluster orders reported by the API.
   returned: always

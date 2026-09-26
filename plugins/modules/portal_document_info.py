@@ -49,6 +49,11 @@ documents:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Url: null
+      Title: null
+      ProductName: null
+      Snippet: null
 total_count:
   description: Number of documents reported by the API.
   returned: always

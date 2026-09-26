@@ -53,6 +53,45 @@ abnormal_process_events:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ProcessPath: null
+      EventType: null
+      MatchRuleName: null
+      FoundTime: null
+      ContainerName: null
+      ImageName: null
+      Behavior: null
+      Status: null
+      Id: null
+      ImageId: null
+      ContainerId: null
+      Solution: null
+      Description: null
+      MatchRuleId: null
+      MatchAction: null
+      MatchProcessPath: null
+      RuleExist: null
+      EventCount: null
+      LatestFoundTime: null
+      RuleId: null
+      MatchGroupName: null
+      MatchRuleLevel: null
+      ContainerNetStatus: null
+      ContainerNetSubStatus: null
+      ContainerIsolateOperationSrc: null
+      ContainerStatus: null
+      ClusterID: null
+      NodeType: null
+      PodName: null
+      PodIP: null
+      NodeUniqueID: null
+      PublicIP: null
+      NodeName: null
+      NodeID: null
+      HostID: null
+      HostIP: null
+      ClusterName: null
+      CmdLine: null
 total_count:
   description: Number of abnormal process events reported by the API.
   returned: always

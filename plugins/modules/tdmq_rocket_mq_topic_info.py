@@ -49,6 +49,43 @@ rocket_mq_topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Type: null
+      GroupNum: null
+      Remark: null
+      PartitionNum: null
+      CreateTime: null
+      UpdateTime: null
+      InstanceId: null
+      Namespace: null
+      LastUpdateTime: null
+      SubscriptionCount: null
+      SubscriptionData:
+        - Topic: null
+          Type: null
+          PartitionNum: null
+          ExpressionType: null
+          SubString: null
+          Status: null
+          ConsumerLag: null
+          ClusterId: null
+          ConsumerGroup: null
+          IsOnline: null
+          ConsumeType: null
+          Consistency: null
+          LastUpdateTime: null
+          MaxRetryTimes: null
+          ClientProtocol: null
+          ClientSubscriptionInfos:
+            - ClientId: null
+              ClientAddr: null
+              Topic: null
+              SubString: null
+              ExpressionType: null
+      TagList:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of rocket mq topics reported by the API.
   returned: always

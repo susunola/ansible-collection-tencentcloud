@@ -53,6 +53,16 @@ rocket_mq_roles:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RoleName: null
+      Token: null
+      Remark: null
+      CreateTime: null
+      UpdateTime: null
+      PermType: null
+      TokenType: null
+      SecretName: null
+      RotateFreq: null
 total_count:
   description: Number of rocket mq roles reported by the API.
   returned: always

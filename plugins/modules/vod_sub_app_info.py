@@ -55,6 +55,18 @@ sub_apps:
   returned: always
   type: list
   elements: dict
+  sample:
+    - SubAppId: null
+      SubAppIdName: null
+      Description: null
+      CreateTime: null
+      Status: null
+      Name: null
+      Mode: null
+      StorageRegions: null
+      Tags:
+        - TagKey: null
+          TagValue: null
 total_count:
   description: Number of subapplications reported by the API.
   returned: always

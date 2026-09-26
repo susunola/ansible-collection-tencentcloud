@@ -49,6 +49,21 @@ rabbit_mq_users:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      User: null
+      Password: null
+      Description: null
+      Tags: null
+      CreateTime: null
+      ModifyTime: null
+      Type: null
+      MaxConnections: null
+      MaxChannels: null
+      CreateTs: null
+      ModifyTs: null
+      CamAuthEnabled: null
+      CamCredentialName: null
 total_count:
   description: Number of rabbit mq users reported by the API.
   returned: always

@@ -49,6 +49,16 @@ materials:
   returned: always
   type: list
   elements: dict
+  sample:
+    - MaterialId: null
+      MaterialStatus: null
+      CreateTime: null
+      UpdateTime: null
+      MaterialFaceList:
+        - FaceId: null
+          FaceInfo: null
+      MaterialName: null
+      AuditResult: null
 total_count:
   description: Number of materials returned (the API reports no total count).
   returned: always

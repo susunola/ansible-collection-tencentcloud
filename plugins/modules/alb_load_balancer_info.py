@@ -56,6 +56,25 @@ load_balancers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccessLogConfig: null
+      AddressIpVersion: null
+      AddressType: null
+      CreateTime: null
+      DeletionProtection: null
+      Domain: null
+      LoadBalancerBillingConfig: null
+      LoadBalancerId: null
+      LoadBalancerName: null
+      LoadBalancerOperationLocks:
+        - LockReason: null
+          LockType: null
+      LoadBalancerStatus: null
+      ModificationProtection: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      VpcId: null
 total_count:
   description: Number of load balancers reported by the API.
   returned: always

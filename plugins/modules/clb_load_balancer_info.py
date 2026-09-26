@@ -65,6 +65,76 @@ load_balancers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LoadBalancerId: null
+      LoadBalancerName: null
+      LoadBalancerType: null
+      Forward: null
+      Domain: null
+      LoadBalancerVips: null
+      Status: null
+      CreateTime: null
+      StatusTime: null
+      ProjectId: null
+      VpcId: null
+      OpenBgp: null
+      Snat: null
+      Isolation: null
+      Log: null
+      SubnetId: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      SecureGroups: null
+      TargetRegionInfo: null
+      AnycastZone: null
+      AddressIPVersion: null
+      NumericalVpcId: null
+      VipIsp: null
+      MasterZone: null
+      BackupZoneSet:
+        - ZoneId: null
+          Zone: null
+          ZoneName: null
+          ZoneRegion: null
+          LocalZone: null
+          EdgeZone: null
+      IsolatedTime: null
+      ExpireTime: null
+      ChargeType: null
+      NetworkAttributes: null
+      PrepaidAttributes: null
+      LogSetId: null
+      LogTopicId: null
+      AddressIPv6: null
+      ExtraInfo: null
+      IsDDos: null
+      ConfigId: null
+      LoadBalancerPassToTarget: null
+      ExclusiveCluster: null
+      IPv6Mode: null
+      SnatPro: null
+      SnatIps:
+        - SubnetId: null
+          Ip: null
+      SlaType: null
+      IsBlock: null
+      IsBlockTime: null
+      LocalBgp: null
+      ClusterTag: null
+      MixIpTarget: null
+      Zones: null
+      NfvInfo: null
+      HealthLogSetId: null
+      HealthLogTopicId: null
+      ClusterIds: null
+      AttributeFlags: null
+      LoadBalancerDomain: null
+      Egress: null
+      Exclusive: null
+      TargetCount: null
+      AssociateEndpoint: null
+      AvailableZoneAffinityInfo: null
 total_count:
   description: Number of load balancers reported by the API.
   returned: always

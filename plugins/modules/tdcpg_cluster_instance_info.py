@@ -58,6 +58,24 @@ cluster_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      ClusterId: null
+      EndpointId: null
+      Region: null
+      Zone: null
+      DBVersion: null
+      Status: null
+      StatusDesc: null
+      CreateTime: null
+      PayMode: null
+      PayPeriodEndTime: null
+      CPU: null
+      Memory: null
+      InstanceType: null
+      DBMajorVersion: null
+      DBKernelVersion: null
 total_count:
   description: Number of cluster instances reported by the API.
   returned: always

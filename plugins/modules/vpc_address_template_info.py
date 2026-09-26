@@ -56,6 +56,19 @@ address_templates:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AddressTemplateName: null
+      AddressTemplateId: null
+      AddressSet: null
+      CreatedTime: null
+      UpdatedTime: null
+      AddressExtraSet:
+        - Address: null
+          Description: null
+          UpdatedTime: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of address templates reported by the API.
   returned: always

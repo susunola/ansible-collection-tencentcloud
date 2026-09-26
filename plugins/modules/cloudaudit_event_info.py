@@ -61,6 +61,24 @@ events:
   returned: always
   type: list
   elements: dict
+  sample:
+    - EventId: null
+      Username: null
+      EventTime: null
+      CloudAuditEvent: null
+      ResourceTypeCn: null
+      ErrorCode: null
+      EventName: null
+      SecretId: null
+      EventSource: null
+      RequestID: null
+      ResourceRegion: null
+      AccountID: null
+      SourceIPAddress: null
+      EventNameCn: null
+      Resources: null
+      EventRegion: null
+      Location: null
 total_count:
   description: Number of events reported by the API.
   returned: always

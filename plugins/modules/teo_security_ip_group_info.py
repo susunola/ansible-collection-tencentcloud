@@ -57,6 +57,15 @@ security_ip_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupId: null
+      Name: null
+      Content: null
+      IPTotalCount: null
+      IPExpireInfo:
+        - ExpireTime: null
+          IPList: null
+      RefCount: null
 total_count:
   description: Number of security IP groups reported by the API.
   returned: always

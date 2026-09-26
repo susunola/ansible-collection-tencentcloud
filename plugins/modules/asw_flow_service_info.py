@@ -53,6 +53,19 @@ flow_services:
   returned: always
   type: list
   elements: dict
+  sample:
+    - FlowServiceResource: null
+      Type: null
+      FlowServiceName: null
+      FlowServiceChineseName: null
+      CreateDate: null
+      ModifyDate: null
+      Status: null
+      Creator: null
+      Modifier: null
+      FlowServiceId: null
+      TemplateId: null
+      Description: null
 total_count:
   description: Number of flow services reported by the API.
   returned: always

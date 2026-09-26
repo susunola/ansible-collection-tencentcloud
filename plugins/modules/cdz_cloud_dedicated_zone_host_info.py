@@ -58,6 +58,9 @@ cloud_dedicated_zone_hosts:
   returned: always
   type: list
   elements: dict
+  sample:
+    - HostUuid: null
+      InstancesInfo: null
 total_count:
   description: Number of cloud dedicated zone hosts returned (the API reports no total count).
   returned: always

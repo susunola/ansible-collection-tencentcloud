@@ -49,6 +49,26 @@ backup_plans:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Region: null
+      BackupPlanId: null
+      BackupPlanName: null
+      Status: null
+      DatabaseType: null
+      AccessType: null
+      SourceInfo: null
+      CreateTime: null
+      ExpireTime: null
+      OfflineTime: null
+      InstanceClass: null
+      BackupMethod: null
+      Tags:
+        - TagKey: null
+          TagValue: null
+      AutoRenewFlag: null
+      EnableIncrement: null
+      PayType: null
+      SetSourceInfo: null
 total_count:
   description: Number of backup plans reported by the API.
   returned: always

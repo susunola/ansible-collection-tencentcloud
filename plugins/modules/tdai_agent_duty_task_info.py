@@ -54,6 +54,18 @@ agent_duty_tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - TaskId: null
+      CreateTime: null
+      StartTime: null
+      FinishTime: null
+      Status: null
+      ResultExtraKey: null
+      Extra:
+        - Key: null
+          Description: null
+          Value: null
+          ValueType: null
 total_count:
   description: Number of agent duty tasks reported by the API.
   returned: always

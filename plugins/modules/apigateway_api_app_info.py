@@ -56,6 +56,14 @@ api_apps:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ApiAppName: null
+      ApiAppId: null
+      ApiAppSecret: null
+      ApiAppDesc: null
+      CreatedTime: null
+      ModifiedTime: null
+      ApiAppKey: null
 total_count:
   description: Number of api apps reported by the API.
   returned: always

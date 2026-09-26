@@ -58,6 +58,26 @@ probe_tasks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      TaskId: null
+      TaskType: null
+      Nodes: null
+      NodeIpType: null
+      Interval: null
+      Parameters: null
+      Status: null
+      TargetAddress: null
+      PayMode: null
+      OrderState: null
+      TaskCategory: null
+      CreatedAt: null
+      Cron: null
+      CronState: null
+      TagInfoList:
+        - Key: null
+          Value: null
+      SubSyncFlag: null
 total_count:
   description: Number of probe tasks reported by the API.
   returned: always

@@ -49,6 +49,12 @@ chunks:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      Content: null
+      Size: null
+      Summary: null
+      ChunkSource: null
 total_count:
   description: Number of chunks reported by the API.
   returned: always

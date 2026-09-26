@@ -49,6 +49,11 @@ saml_providers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Name: null
+      Description: null
+      CreateTime: null
+      ModifyTime: null
 total_count:
   description: Number of providers returned (the API reports no pageable total).
   returned: always

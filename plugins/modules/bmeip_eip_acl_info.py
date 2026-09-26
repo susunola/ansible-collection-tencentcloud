@@ -58,6 +58,24 @@ eip_acls:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AclId: null
+      AclName: null
+      Status: null
+      CreatedAt: null
+      EipNum: null
+      OutRules:
+        - Ip: null
+          Port: null
+          Protocol: null
+          Action: null
+          Description: null
+      InRules:
+        - Ip: null
+          Port: null
+          Protocol: null
+          Action: null
+          Description: null
 total_count:
   description: Number of eip acls reported by the API.
   returned: always

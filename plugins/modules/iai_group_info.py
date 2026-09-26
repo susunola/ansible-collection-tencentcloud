@@ -49,6 +49,14 @@ groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - GroupName: null
+      GroupId: null
+      GroupExDescriptions: null
+      Tag: null
+      FaceModelVersion: null
+      CreationTimestamp: null
+      UpdateTimestamp: null
 total_count:
   description: Number of groups returned (the API reports no total count).
   returned: always

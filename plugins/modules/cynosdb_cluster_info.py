@@ -62,6 +62,74 @@ clusters:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Status: null
+      UpdateTime: null
+      Zone: null
+      ClusterName: null
+      Region: null
+      DbVersion: null
+      ClusterId: null
+      InstanceNum: null
+      Uin: null
+      DbType: null
+      AppId: null
+      StatusDesc: null
+      CreateTime: null
+      PayMode: null
+      PeriodEndTime: null
+      Vip: null
+      Vport: null
+      ProjectID: null
+      VpcId: null
+      SubnetId: null
+      CynosVersion: null
+      CynosVersionTag: null
+      StorageLimit: null
+      RenewFlag: null
+      ProcessingTask: null
+      Tasks:
+        - TaskId: null
+          TaskType: null
+          TaskStatus: null
+          ObjectId: null
+          ObjectType: null
+      ResourceTags:
+        - TagKey: null
+          TagValue: null
+      DbMode: null
+      ServerlessStatus: null
+      Storage: null
+      StorageId: null
+      StoragePayMode: null
+      MinStorageSize: null
+      MaxStorageSize: null
+      NetAddrs:
+        - Vip: null
+          Vport: null
+          WanDomain: null
+          WanPort: null
+          NetType: null
+          UniqSubnetId: null
+          UniqVpcId: null
+          Description: null
+          WanIP: null
+          WanStatus: null
+          InstanceGroupId: null
+      PhysicalZone: null
+      MasterZone: null
+      HasSlaveZone: null
+      SlaveZones: null
+      BusinessType: null
+      IsFreeze: null
+      OrderSource: null
+      Ability: null
+      ResourcePackages:
+        - PackageId: null
+          PackageType: null
+          DeductionPriority: null
+      GdnId: null
+      GdnRole: null
 total_count:
   description: Number of clusters reported by the API.
   returned: always

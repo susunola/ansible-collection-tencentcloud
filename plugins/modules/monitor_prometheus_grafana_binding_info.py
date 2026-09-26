@@ -56,6 +56,42 @@ prometheus_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    - InstanceId: null
+      InstanceName: null
+      InstanceChargeType: null
+      RegionId: null
+      Zone: null
+      VpcId: null
+      SubnetId: null
+      DataRetentionTime: null
+      InstanceStatus: null
+      GrafanaURL: null
+      CreatedAt: null
+      EnableGrafana: null
+      IPv4Address: null
+      TagSpecification:
+        - Key: null
+          Value: null
+      ExpireTime: null
+      ChargeStatus: null
+      SpecName: null
+      AutoRenewFlag: null
+      IsNearExpire: null
+      AuthToken: null
+      RemoteWrite: null
+      ApiRootPath: null
+      ProxyAddress: null
+      GrafanaStatus: null
+      GrafanaIpWhiteList: null
+      Grant: null
+      GrafanaInstanceId: null
+      AlertRuleLimit: null
+      RecordingRuleLimit: null
+      MigrationType: null
+      InstanceAttributes:
+        - Key: null
+          Value: null
 total_count:
   description: Number of Prometheus instances with their managed-Grafana binding state reported by the API.
   returned: always

@@ -62,6 +62,38 @@ topics:
   returned: always
   type: list
   elements: dict
+  sample:
+    - LogsetId: null
+      TopicId: null
+      TopicName: null
+      PartitionCount: null
+      Index: null
+      AssumerUin: null
+      AssumerName: null
+      CreateTime: null
+      Status: null
+      Tags:
+        - Key: null
+          Value: null
+      RoleName: null
+      AutoSplit: null
+      MaxSplitPartitions: null
+      StorageType: null
+      Period: null
+      SubAssumerName: null
+      Describes: null
+      HotPeriod: null
+      KeyId: null
+      CustomKmsInfo: null
+      BizType: null
+      IsWebTracking: null
+      Extends: null
+      TopicAsyncTaskID: null
+      MigrationStatus: null
+      EffectiveDate: null
+      IsSourceFrom: null
+      BillingMode: null
+      NewBillingMode: null
 total_count:
   description: Number of log topics reported by the API.
   returned: always

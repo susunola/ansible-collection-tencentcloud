@@ -65,6 +65,57 @@ network_acls:
   returned: always
   type: list
   elements: dict
+  sample:
+    - VpcId: null
+      NetworkAclId: null
+      NetworkAclName: null
+      CreatedTime: null
+      SubnetSet:
+        - VpcId: null
+          SubnetId: null
+          SubnetName: null
+          CidrBlock: null
+          IsDefault: null
+          EnableBroadcast: null
+          Zone: null
+          RouteTableId: null
+          CreatedTime: null
+          AvailableIpAddressCount: null
+          Ipv6CidrBlock: null
+          NetworkAclId: null
+          IsRemoteVpcSnat: null
+          TotalIpAddressCount: null
+          TagSet:
+            - Key: null
+              Value: null
+          CdcId: null
+          IsCdcSubnet: null
+      IngressEntries:
+        - Protocol: null
+          Port: null
+          CidrBlock: null
+          Ipv6CidrBlock: null
+          Action: null
+          Description: null
+          ModifyTime: null
+          Priority: null
+          NetworkAclIpv4EntryId: null
+          NetworkAclIpv6EntryId: null
+      EgressEntries:
+        - Protocol: null
+          Port: null
+          CidrBlock: null
+          Ipv6CidrBlock: null
+          Action: null
+          Description: null
+          ModifyTime: null
+          Priority: null
+          NetworkAclIpv4EntryId: null
+          NetworkAclIpv6EntryId: null
+      NetworkAclType: null
+      TagSet:
+        - Key: null
+          Value: null
 total_count:
   description: Number of network ACLs reported by the API.
   returned: always

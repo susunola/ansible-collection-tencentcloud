@@ -49,6 +49,27 @@ resources:
   returned: always
   type: list
   elements: dict
+  sample:
+    - UIN: null
+      AppId: null
+      ResourceId: null
+      ZoneId: null
+      Status: null
+      IsolatedTimestamp: null
+      CreateTime: null
+      PayMode: null
+      Alias: null
+      GoodsDetail: null
+      RenewFlag: null
+      ExpireTime: null
+      Region: null
+      SdkAppId: null
+      AppName: null
+      PackageName: null
+      URL: null
+      Entry: null
+      InstType: null
+      Key: null
 total_count:
   description: Number of resources reported by the API.
   returned: always

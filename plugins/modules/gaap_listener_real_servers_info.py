@@ -51,6 +51,12 @@ listener_real_servers:
   returned: always
   type: list
   elements: dict
+  sample:
+    - RealServerIP: null
+      RealServerId: null
+      RealServerName: null
+      ProjectId: null
+      InBanBlacklist: null
 total_count:
   description: Number of listener real servers reported by the API.
   returned: always

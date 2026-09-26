@@ -62,6 +62,23 @@ attachments:
   returned: always
   type: list
   elements: dict
+  sample:
+    - CcnId: null
+      InstanceType: null
+      InstanceId: null
+      InstanceName: null
+      InstanceRegion: null
+      InstanceUin: null
+      CidrBlock: null
+      State: null
+      AttachedTime: null
+      CcnUin: null
+      InstanceArea: null
+      Description: null
+      RouteTableId: null
+      RouteTableName: null
+      AliasType: null
+      AliasInstanceId: null
 total_count:
   description: Number of attachments reported by the API.
   returned: always

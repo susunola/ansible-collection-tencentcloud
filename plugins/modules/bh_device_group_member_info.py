@@ -62,6 +62,44 @@ device_group_members:
   returned: always
   type: list
   elements: dict
+  sample:
+    - Id: null
+      InstanceId: null
+      Name: null
+      PublicIp: null
+      PrivateIp: null
+      ApCode: null
+      ApName: null
+      OsName: null
+      Kind: null
+      Port: null
+      GroupSet:
+        - Id: null
+          Name: null
+          Department: null
+          Count: null
+      AccountCount: null
+      VpcId: null
+      SubnetId: null
+      Resource: null
+      Department: null
+      IpPortSet: null
+      DomainId: null
+      DomainName: null
+      EnableSSL: null
+      SSLCertName: null
+      IOAId: null
+      ManageDimension: null
+      ManageAccountId: null
+      Namespace: null
+      Workload: null
+      SyncPodCount: null
+      TotalPodCount: null
+      CloudAccountId: null
+      CloudAccountName: null
+      ProviderType: null
+      ProviderName: null
+      SyncCloudDeviceStatus: null
 total_count:
   description: Number of device group members reported by the API.
   returned: always

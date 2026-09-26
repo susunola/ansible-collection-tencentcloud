@@ -54,6 +54,13 @@ access_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    - AccessGroupId: null
+      AccessGroupName: null
+      Description: null
+      CreateTime: null
+      VpcType: null
+      VpcId: null
 total_count:
   description: Number of access groups returned (the API reports no total count).
   returned: always

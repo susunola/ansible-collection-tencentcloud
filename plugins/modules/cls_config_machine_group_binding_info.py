@@ -54,6 +54,22 @@ bindings:
   returned: always
   type: list
   elements: dict
+  sample:
+    - ConfigId: null
+      Name: null
+      LogFormat: null
+      Path: null
+      LogType: null
+      ExtractRule: null
+      ExcludePaths:
+        - Type: null
+          Value: null
+      Output: null
+      UpdateTime: null
+      CreateTime: null
+      UserDefineRule: null
+      AdvancedConfig: null
+      InputType: null
 total_count:
   description: Number of bindings returned (the API reports no pageable total).
   returned: always
