@@ -304,10 +304,11 @@ Three limits are deliberate rather than worked around:
   captured sample nor benefit from a fix to the shared harness.
   ``scripts/check_quality_gates.py`` freezes the ones that drive ``run_module``
   this way in ``scripts/quality_baselines/private_harness.txt`` (shrink-only),
-  and two are migrated as worked examples: ``vpc_info`` and ``subnet_info``
+  and three are migrated as worked examples: ``vpc_info``, ``subnet_info``
+  and ``security_group_info``
   now call ``run``/``module_args``/``AnsibleFailJson`` like every other module
   test, keeping only the SDK injection and the two factory patches their
-  modules need. The census fell from 40 to 38 and the sample census with it,
+  modules need. The census fell from 40 to 37 and the sample census with it,
   because each migration makes a payload observable and
   ``add_return_samples.py`` writes it. One thing the migration teaches: the
   fixture has to become realistic at the same time -- ``subnet_info``'s

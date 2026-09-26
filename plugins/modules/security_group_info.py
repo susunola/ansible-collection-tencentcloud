@@ -61,10 +61,14 @@ security_groups:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - SecurityGroupId: sg-a
 total_count:
   description: Number of security groups reported by the API.
   returned: always
   type: int
+  sample: 3
 '''
 
 from ansible.module_utils.basic import AnsibleModule

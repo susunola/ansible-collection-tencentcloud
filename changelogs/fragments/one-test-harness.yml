@@ -10,10 +10,11 @@ minor_changes:
     cannot gain a captured RETURN sample and a fix to the shared harness does
     not reach it. ``check_quality_gates.py`` freezes the 39 static matches in
     ``scripts/quality_baselines/private_harness.txt`` (shrink-only), and
-    ``vpc_info`` and ``subnet_info`` are migrated as worked examples -- their
-    tests now use ``run``/``module_args``/``AnsibleFailJson``, the census fell
-    from 40 to 38, and their ``RETURN`` samples were captured automatically
-    once the payloads became observable (sample census 62 to 60). Migrating
+    ``vpc_info``, ``subnet_info`` and ``security_group_info`` are migrated as
+    worked examples -- their tests now use
+    ``run``/``module_args``/``AnsibleFailJson``, the census fell from 40 to 37,
+    and their ``RETURN`` samples were captured automatically once the payloads
+    became observable (sample census 62 to 59). Migrating
     also means making the fixture realistic: ``subnet_info``'s fake item
     returned a generic ``Marker``, which would have been captured as the
     module's documented sample, so it returns ``SubnetId`` now.
