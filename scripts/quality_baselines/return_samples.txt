@@ -46,7 +46,6 @@ monitor_grafana_integration_info
 monitor_grafana_whitelist_info
 monitor_prometheus_alertmanager_config_info
 organization_member_identity
-route_table_info
 ssm_supported_product_info
 tat_invocation_info
 tione_data_source_info

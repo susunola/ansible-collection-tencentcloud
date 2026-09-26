@@ -93,7 +93,7 @@ IDEMPOTENCY_RATCHET = 0
 # What is left is hand-written modules whose tests build a private harness (so
 # no payload is captured) and two whose payload is a blob that cannot be
 # wrapped under the line pep8 allows.
-RETURN_SAMPLE_RATCHET = 59
+RETURN_SAMPLE_RATCHET = 58
 
 # Write modules that claim ``check_mode: full`` with no dry-run test. The
 # claim is user-facing and load-bearing: a user runs --check expecting no
