@@ -393,6 +393,10 @@ def baseline_problems(family, findings):
     problems = []
     frozen = read_baseline(family)
     if frozen is None:
+        if not findings:
+            # A family with no debt needs no file: the rule is satisfied, and
+            # the missing file is the visible sign that the debt was paid off.
+            return []
         return ["%s is missing: freeze the current %d finding(s) with "
                 "`python scripts/check_quality_gates.py --write-baseline %s`"
                 % (baseline_path(family), len(findings), family)]

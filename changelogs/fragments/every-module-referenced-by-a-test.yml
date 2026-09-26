@@ -1,0 +1,11 @@
+---
+minor_changes:
+  - >-
+    unit tests - cover ``cos_bucket_inventory_info``, the last hand-written
+    module no test referenced, so the census is zero and its baseline file is
+    deleted. The module joins the parametrised suite that covers its five
+    siblings; its reader takes an inventory id, so the parametrisation carries
+    per-module arguments now. A baseline family with no findings no longer
+    needs a file: ``check_quality_gates.py`` treats a missing baseline as
+    satisfied when the census is empty, which makes deleting the file the
+    visible sign that a debt was paid off.

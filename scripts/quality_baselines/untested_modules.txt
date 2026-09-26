@@ -1,8 +1,0 @@
-# Frozen findings for the 'untested_modules' family of scripts/check_quality_gates.py.
-# One module name per line.
-# This list may only shrink: a baselined module that no longer has the
-# finding must be delisted (the gate names it), and a module that is not on
-# the list must not have the finding at all.
-# a hand-written module needs a test that references it -- run_module end to
-# end, not only a helper -- before it ships
-plugins/modules/cos_bucket_inventory_info.py: no file under tests/unit/ references it, so nothing executes or checks this module
