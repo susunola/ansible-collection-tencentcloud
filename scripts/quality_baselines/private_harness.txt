@@ -7,7 +7,6 @@
 # tests/unit/plugins/modules/harness.py, not a private double, so the payload
 # is observable and the conventions live in one place
 plugins/modules/cam_policy_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/cam_role_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/cam_user_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/cvm_instance_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/dlc_inference_engine_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness

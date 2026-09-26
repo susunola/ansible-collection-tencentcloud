@@ -2,8 +2,16 @@
 
 Covers build_request's page-based pagination, run_module pagination through
 DescribeRoleList, the client-side role_id/role_name filters, empty-page
-termination and the sdk_call failure contract.
+termination and the sdk_call failure contract -- driven through the shared
+harness rather than a private double.
+
+The module builds its own SDK client, so the tests still inject a fake
+``tencentcloud.cam.v20190116`` service and patch the two factories. Driving
+the real ``AnsibleModule`` is what makes the payload observable, and the
+fixture already serialises ``RoleId``/``RoleName``, so the captured payload is
+what ``add_return_samples.py`` writes into the module's RETURN sample.
 """
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -14,6 +22,11 @@ import types
 import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import cam_role_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -55,31 +68,6 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.cam.v20190116")
     service.models = FakeModels
@@ -90,53 +78,64 @@ def _inject_sdk(monkeypatch, client):
     monkeypatch.setitem(sys.modules, "tencentcloud.cam.v20190116", service)
 
 
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    monkeypatch.setattr(cam_role_info, "AnsibleModule", lambda **kwargs: fake)
+@pytest.fixture
+def sdk(monkeypatch):
+    """Patch the credential/client factories the module builds its client with."""
     monkeypatch.setattr(cam_role_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(cam_role_info, "create_client_profile", lambda module, endpoint: object())
-    with pytest.raises(ModuleExit):
-        cam_role_info.run_module()
-    return fake
+    monkeypatch.setattr(cam_role_info, "create_client_profile",
+                        lambda module, endpoint: object())
 
 
-def test_run_module_paginates_until_total_num_reached(monkeypatch):
+def _args(**extra):
+    params = {"region": "ap-guangzhou", "page_size": 2}
+    params.update(extra)
+    module_args(**params)
+
+
+def test_run_module_paginates_until_total_num_reached(monkeypatch, sdk):
     client = FakeClient([
         FakeListResponse([FakeItem("A1", "role-a"), FakeItem("A2", "role-b")], 3),
         FakeListResponse([FakeItem("A3", "role-c")], 3),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", role_id=None,
-                role_name=None, page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(cam_role_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["RoleName"] for item in payload["roles"]] == ["role-a", "role-b", "role-c"]
+    assert [item["RoleName"] for item in payload["roles"]] == [
+        "role-a", "role-b", "role-c"]
     assert payload["total_count"] == 3
     assert [request.Page for request in client.requests] == [1, 2]
 
 
-def test_run_module_applies_role_id_and_name_filters(monkeypatch):
+def test_run_module_applies_role_id_and_name_filters(monkeypatch, sdk):
     client = FakeClient([
-        FakeListResponse([FakeItem("A1", "role-a"), FakeItem("A1", "role-other"), FakeItem("A9", "role-a")], 3),
+        FakeListResponse([FakeItem("A1", "role-a"), FakeItem("A1", "role-other"),
+                          FakeItem("A9", "role-a")], 3),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", role_id="A1",
-                role_name="role-a", page_size=10)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args(role_id="A1", role_name="role-a", page_size=10)
+
+    payload = run(cam_role_info.run_module)
+
     assert payload["roles"] == [{"RoleId": "A1", "RoleName": "role-a"}]
     assert payload["total_count"] == 1
 
 
-def test_run_module_stops_on_empty_page(monkeypatch):
+def test_run_module_stops_on_empty_page(monkeypatch, sdk):
     client = FakeClient([FakeListResponse([], 0)])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", role_id=None,
-                role_name=None, page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(cam_role_info.run_module)
+
     assert payload["roles"] == []
     assert payload["total_count"] == 0
     assert len(client.requests) == 1
 
 
-def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch, sdk):
     class FailingClient:
         def DescribeRoleList(self, request):
             raise RuntimeError("api exploded")
@@ -155,19 +154,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
             )
 
     _inject_sdk(monkeypatch, FailingClient())
-    fake = FakeModule({
-        "region": "ap-guangzhou",
-        "role_id": None,
-        "role_name": None,
-        "page_size": 2,
-    })
-    monkeypatch.setattr(cam_role_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(cam_role_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(cam_role_info, "create_client_profile", lambda module, endpoint: object())
     monkeypatch.setattr(cam_role_info, "sdk_call", failing_sdk_call)
-    with pytest.raises(ModuleFail) as excinfo:
-        cam_role_info.run_module()
-    payload = excinfo.value.payload
+    _args()
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(cam_role_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"

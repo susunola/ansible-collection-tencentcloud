@@ -305,12 +305,13 @@ Three limits are deliberate rather than worked around:
   ``scripts/check_quality_gates.py`` freezes the ones that drive ``run_module``
   this way in ``scripts/quality_baselines/private_harness.txt`` (shrink-only),
   and five are migrated as worked examples: ``vpc_info``, ``subnet_info``,
-  ``security_group_info``, ``route_table_info`` and ``eip_info`` -- the last
-  one outside the vpc family, with three selectors instead of two, so the
-  recipe is not one-product luck
+  ``security_group_info``, ``route_table_info``, ``eip_info`` and
+  ``cam_role_info`` -- the last two outside the vpc family (three selectors,
+  integer pagination, and a client-side id/name filter), so the recipe is not
+  one-product luck
   now call ``run``/``module_args``/``AnsibleFailJson`` like every other module
   test, keeping only the SDK injection and the two factory patches their
-  modules need. The census fell from 40 to 35 and the sample census with it,
+  modules need. The census fell from 40 to 34 and the sample census with it,
   because each migration makes a payload observable and
   ``add_return_samples.py`` writes it. One thing the migration teaches: the
   fixture has to become realistic at the same time -- ``subnet_info``'s
