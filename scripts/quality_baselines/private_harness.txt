@@ -20,7 +20,6 @@ plugins/modules/dlc_notebook_session_log_info.py: its tests drive run_module thr
 plugins/modules/dlc_notebook_statement_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/dlc_ray_job_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/dlc_ray_job_list_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/eip_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/gaap_layer4_listener_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/key_pair_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/monitor_grafana_integration_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness

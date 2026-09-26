@@ -38,7 +38,6 @@ dlc_notebook_session_log_info
 dlc_notebook_statement_info
 dlc_ray_job_info
 dlc_ray_job_list_info
-eip_info
 elasticsearch_index
 gaap_layer4_listener_info
 key_pair_info
