@@ -302,12 +302,17 @@ Three limits are deliberate rather than worked around:
   the main path -- ``vpc_info`` asserts the paginated payload on it -- but the
   payload is invisible outside the test file, so the module can neither gain a
   captured sample nor benefit from a fix to the shared harness.
-  ``scripts/check_quality_gates.py`` freezes the 39 that drive ``run_module``
-  this way in ``scripts/quality_baselines/private_harness.txt``, and migrating
-  ``vpc_info`` to the shared harness is the worked example: its tests now call
-  ``run``/``module_args``/``AnsibleFailJson`` like every other module test, the
-  census dropped to 39 and the sample census to 61, because the payload became
-  observable and ``add_return_samples.py`` wrote it.
+  ``scripts/check_quality_gates.py`` freezes the ones that drive ``run_module``
+  this way in ``scripts/quality_baselines/private_harness.txt`` (shrink-only),
+  and two are migrated as worked examples: ``vpc_info`` and ``subnet_info``
+  now call ``run``/``module_args``/``AnsibleFailJson`` like every other module
+  test, keeping only the SDK injection and the two factory patches their
+  modules need. The census fell from 40 to 38 and the sample census with it,
+  because each migration makes a payload observable and
+  ``add_return_samples.py`` writes it. One thing the migration teaches: the
+  fixture has to become realistic at the same time -- ``subnet_info``'s
+  ``FakeItem`` returned ``{"Marker": ...}``, which would have been captured as
+  the module's documented sample, so it returns ``SubnetId`` now.
 
 ### Every module that can delete shows how
 

@@ -49,7 +49,6 @@ organization_member_identity
 route_table_info
 security_group_info
 ssm_supported_product_info
-subnet_info
 tat_invocation_info
 tione_data_source_info
 tione_model_service_diagnostics_info
