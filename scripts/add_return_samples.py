@@ -220,9 +220,13 @@ def generated_modules():
 class PayloadRecorder(object):
     """A pytest plugin that records the ``exit_json`` payload of each module.
 
-    The harness patches ``AnsibleModule.exit_json`` with
-    ``harness._exit_json``, so wrapping that function sees every payload a
-    module produces under test, whichever test module asked for it.
+    Two hooks catch the two ways a test intercepts a result. The harness
+    replaces ``harness._exit_json``, and ``TencentCloudModule.exit_json`` --
+    the method the hand-written modules call -- is wrapped as well, because a
+    test that patches ``AnsibleModule.exit_json`` itself (``cos_*_info`` and
+    the other raw-``AnsibleModule`` modules do) would otherwise be invisible:
+    the wrapper records and then calls whatever ``exit_json`` is in place,
+    including the test's own.
     """
 
     def __init__(self, modules_dir):
@@ -258,18 +262,41 @@ class PayloadRecorder(object):
         files = self.module_files(item)
         self.current = sorted(files)[0] if len(files) == 1 else None
 
+    def record(self, payload):
+        """Keep *payload* for the current module, ignoring a repeat."""
+        if not self.current:
+            return
+        payload.setdefault("changed", False)
+        kept = self.payloads[os.path.realpath(self.current)]
+        if not kept or kept[-1] != payload:
+            kept.append(payload)
+
     def install(self):
         recorder = self
         harness = self.harness
 
         def _exit_json(module, **kwargs):
-            kwargs.setdefault("changed", False)
-            if recorder.current:
-                recorder.payloads[os.path.realpath(recorder.current)].append(
-                    kwargs)
+            recorder.record(kwargs)
             raise harness.AnsibleExitJson(kwargs)
 
         harness._exit_json = _exit_json
+
+        # ``TencentCloudModule.exit_json`` is what a hand-written module calls;
+        # wrapping it sees the payload before any test-level patch of
+        # ``AnsibleModule.exit_json`` replaces the method underneath.
+        try:
+            base = importlib.import_module(
+                "ansible_collections.susunola.tencentcloud.plugins."
+                "module_utils.base")
+        except ImportError:
+            return
+        original = base.TencentCloudModule.exit_json
+
+        def _tencent_exit_json(module, **kwargs):
+            recorder.record(kwargs)
+            return original(module, **kwargs)
+
+        base.TencentCloudModule.exit_json = _tencent_exit_json
 
 
 def capture(test_paths=None):

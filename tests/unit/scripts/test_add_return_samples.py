@@ -133,3 +133,36 @@ def test_committed_samples_are_documented_and_marked(samples):
               if samples.marked_keys(name)]
     assert marked == ["alb_listener"]
     assert samples.marked_keys("vpc") == set()
+
+
+def test_recorder_wraps_the_module_exit_json(samples):
+    """A test that patches ``AnsibleModule.exit_json`` itself is invisible.
+
+    ``cos_*_info`` and the other raw-``AnsibleModule`` tests replace
+    ``AnsibleModule.exit_json`` on the class, so wrapping the harness helper
+    alone never sees their payloads. The recorder wraps
+    ``TencentCloudModule.exit_json`` as well -- the method the hand-written
+    modules call -- and calls whatever is in place underneath.
+    """
+    # Importable in the collection layout (CI, and /tmp collection trees);
+    # skipped when the suite is run straight from a repository checkout.
+    base = pytest.importorskip(
+        "ansible_collections.susunola.tencentcloud.plugins.module_utils.base")
+    harness = pytest.importorskip(
+        "ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness")
+
+    recorder = samples.PayloadRecorder(samples.MODULES_DIR)
+    original_harness = harness._exit_json
+    original_tencent = base.TencentCloudModule.exit_json
+    try:
+        recorder.install()
+        assert harness._exit_json is not original_harness
+        assert base.TencentCloudModule.exit_json is not original_tencent
+        recorder.current = str(samples.MODULES_DIR / "alb_listener.py")
+        recorder.record({"changed": True, "listener": {"ListenerId": "lbl-1"}})
+        recorder.record({"changed": True, "listener": {"ListenerId": "lbl-1"}})
+        kept = recorder.payloads[recorder.current]
+        assert len(kept) == 1, "a repeated payload must not be stored twice"
+    finally:
+        harness._exit_json = original_harness
+        base.TencentCloudModule.exit_json = original_tencent
