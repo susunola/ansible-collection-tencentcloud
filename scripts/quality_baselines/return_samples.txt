@@ -67,4 +67,3 @@ tse_governance_service_contract_info
 tse_instance_tag_info
 tse_sre_access_address_info
 tse_sre_topology_info
-vpc_info

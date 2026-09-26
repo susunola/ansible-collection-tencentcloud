@@ -293,8 +293,21 @@ Three limits are deliberate rather than worked around:
 - **generated samples carry no values.** A reader learns the field names and
   the nesting, not what a value looks like. That is the honest half of the
   claim, and it is the half a caller needs to write `result.items[0].TagSet`.
-- **the 62 that remain** are hand-written modules whose unit tests build a
+- **the 61 that remain** are hand-written modules whose unit tests build a
   private harness (so no payload is captured) and the two blob cases above.
+  That is a measurement, not an assumption: running the module test suite with
+  the recorder attached shows 57 hand-written modules whose payload never
+  passes through a real ``AnsibleModule``, because their test file replaces
+  ``AnsibleModule`` with a private double of its own. Those tests do exercise
+  the main path -- ``vpc_info`` asserts the paginated payload on it -- but the
+  payload is invisible outside the test file, so the module can neither gain a
+  captured sample nor benefit from a fix to the shared harness.
+  ``scripts/check_quality_gates.py`` freezes the 39 that drive ``run_module``
+  this way in ``scripts/quality_baselines/private_harness.txt``, and migrating
+  ``vpc_info`` to the shared harness is the worked example: its tests now call
+  ``run``/``module_args``/``AnsibleFailJson`` like every other module test, the
+  census dropped to 39 and the sample census to 61, because the payload became
+  observable and ``add_return_samples.py`` wrote it.
 
 ### Every module that can delete shows how
 

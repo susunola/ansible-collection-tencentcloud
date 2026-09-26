@@ -1,0 +1,47 @@
+# Frozen findings for the 'private_harness' family of scripts/check_quality_gates.py.
+# One module name per line.
+# This list may only shrink: a baselined module that no longer has the
+# finding must be delisted (the gate names it), and a module that is not on
+# the list must not have the finding at all.
+# a module test drives its module through
+# tests/unit/plugins/modules/harness.py, not a private double, so the payload
+# is observable and the conventions live in one place
+plugins/modules/cam_policy_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cam_role_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cam_user_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cvm_instance_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_inference_engine_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_inference_model_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_inference_service_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_model_artifact_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_model_version_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_notebook_session_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_notebook_session_log_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_notebook_statement_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_ray_job_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/dlc_ray_job_list_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/eip_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/gaap_layer4_listener_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/key_pair_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/monitor_grafana_integration_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/route_table_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/security_group_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/ssm_supported_product_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/subnet_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tat_invocation_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tione_data_source_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tione_model_service_diagnostics_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tione_model_service_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tione_notebook_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tione_training_model_version_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tione_training_task_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_config_file_catalog_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_config_file_release_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_config_file_template_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_gateway_ip_lookup_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_gateway_runtime_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_gateway_service_inventory_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_governance_service_contract_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_instance_tag_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_sre_access_address_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tse_sre_topology_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness

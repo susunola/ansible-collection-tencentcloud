@@ -1,0 +1,16 @@
+---
+minor_changes:
+  - >-
+    unit tests - measure and freeze the modules whose tests drive
+    ``run_module`` through a private double instead of
+    ``tests/unit/plugins/modules/harness.py``. Running the suite with the
+    payload recorder attached shows 57 hand-written modules whose result never
+    passes through a real ``AnsibleModule``: their tests do exercise the main
+    path, but the payload is invisible outside the test file, so such a module
+    cannot gain a captured RETURN sample and a fix to the shared harness does
+    not reach it. ``check_quality_gates.py`` freezes the 39 static matches in
+    ``scripts/quality_baselines/private_harness.txt`` (shrink-only), and
+    ``vpc_info`` is migrated as the worked example -- its tests now use
+    ``run``/``module_args``/``AnsibleFailJson``, the census fell to 39, and its
+    ``RETURN`` sample was captured automatically once the payload became
+    observable (sample census 62 to 61).
