@@ -1,0 +1,16 @@
+---
+minor_changes:
+  - >-
+    unit tests - cover the "cos_*_info" modules that nothing referenced.
+    ``scripts/check_quality_gates.py`` now fails when a hand-written module is
+    named by no file under ``tests/unit/`` (generated modules are exempt: their
+    tests are generated beside them), and it found seven: the certificate, the
+    default intelligent-tiering rule, the object lock, the origin, the referer,
+    the replication and the response-control readers. The first two get their
+    own test files; five share one parametrised suite, because they differ only
+    in the reader they call and the two keys they return. Each test drives
+    ``run_module`` end to end with the readers monkeypatched: the bucket it
+    addresses, both return keys, the empty case and the COS error path.
+    ``cos_bucket_inventory_info`` still needs a test of its own (its reader
+    takes an inventory id) and is frozen in
+    ``scripts/quality_baselines/untested_modules.txt``, which may only shrink.
