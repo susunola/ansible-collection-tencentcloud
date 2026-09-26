@@ -113,6 +113,44 @@ when a sample stops matching. Two rules follow:
 Generated modules are skipped by the script — `generate_info_modules.py` owns
 their `RETURN` and would flag the edit.
 
+## Module test harness
+
+Every module test drives its module through
+`tests/unit/plugins/modules/harness.py`: `module_args(...)` injects the
+arguments, `run(mod.run_module)` returns the `exit_json` payload and raises
+`AnsibleFailJson` on failure. That is not a style preference. A test that
+replaces `AnsibleModule` with a private double of its own still exercises the
+main path, but the payload never passes through a real `AnsibleModule`, so
+nothing outside the test file can observe it: the module cannot gain a
+captured `RETURN` sample, and a fix to the harness does not reach the test.
+`scripts/check_quality_gates.py` counts those files and freezes them in
+`scripts/quality_baselines/private_harness.txt`; the list may only shrink.
+
+Migrating one is five steps, verified on `vpc_info`, `subnet_info`,
+`security_group_info`, `route_table_info`, `eip_info` and `cam_role_info`:
+
+1. import `AnsibleFailJson`, `module_args` and `run` from the harness;
+2. delete the private scaffolding (`ModuleExit`, `ModuleFail`, `FakeModule`,
+   `_run`) and the `pytest.raises(ModuleExit)` wrapper -- `run()` returns the
+   payload instead;
+3. add a small `sdk` fixture for the factories the module builds its client
+   with (`create_credential`, `create_client_profile`) and keep the
+   `sys.modules` injection of the fake SDK service, which the harness does not
+   provide because the module reaches the SDK directly;
+4. replace `pytest.raises(ModuleFail)` with `pytest.raises(AnsibleFailJson)`
+   and read the payload from `failure.value.args[0]`;
+5. **make the fixture realistic at the same moment.** The payload becomes the
+   module's documented `RETURN` sample, so a fake item that serialises
+   `{"Marker": ...}` would document a field the API never returns. It has to
+   serialise the real field (`SubnetId`, `AddressId`, ...), and the assertions
+   move with it.
+
+Two things that cost time on the way: Ansible counts an explicitly passed
+`None` as specified, so passing `vpc_ids=None` *and* `filters={}` trips the
+module's `mutually_exclusive` -- pass one and omit the other; and pagination
+field types differ per product (`Offset` as a string in VPC, an integer in
+EIP), so keep the existing assertions rather than assuming.
+
 ## Roles
 
 Roles use the `tc_` prefix (e.g. `tc_launch`, `tc_clb_http`). Every role

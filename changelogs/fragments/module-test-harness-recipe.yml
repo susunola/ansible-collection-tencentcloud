@@ -1,0 +1,11 @@
+---
+minor_changes:
+  - >-
+    docs - write down the module-test-harness migration recipe in
+    CONTRIBUTING.md, with the two traps it cost time to find: Ansible counts an
+    explicitly passed ``None`` as specified (so passing ``vpc_ids=None`` and
+    ``filters={}`` together trips ``mutually_exclusive``), and the fake item
+    has to become realistic in the same commit, because the payload it builds
+    is what ``add_return_samples.py`` writes into the module's ``RETURN``
+    sample. Six modules have been migrated with it so far; the 34 that remain
+    are listed in ``scripts/quality_baselines/private_harness.txt``.
