@@ -1,0 +1,11 @@
+# Frozen findings for the 'untested_main_path' family of scripts/check_quality_gates.py.
+# One module name per line.
+# This list may only shrink: a baselined module that no longer has the
+# finding must be delisted (the gate names it), and a module that is not on
+# the list must not have the finding at all.
+# a module test drives run_module, not only the module's helpers, so the body
+# that talks to the API is executed at least once
+plugins/modules/config_aggregate_delivery_info.py: no test under tests/unit/ calls run_module, so the module body is never executed
+plugins/modules/cos_bucket_domain_info.py: no test under tests/unit/ calls run_module, so the module body is never executed
+plugins/modules/monitor_grafana_whitelist_info.py: no test under tests/unit/ calls run_module, so the module body is never executed
+plugins/modules/monitor_prometheus_alertmanager_config_info.py: no test under tests/unit/ calls run_module, so the module body is never executed

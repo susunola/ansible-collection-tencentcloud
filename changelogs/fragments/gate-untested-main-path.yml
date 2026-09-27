@@ -1,0 +1,13 @@
+---
+minor_changes:
+  - >-
+    tests - gate a blind spot no other census covered: a module whose test file
+    only exercises its helpers never executes the body that talks to the API.
+    Such a module is referenced (so the "no test references it" census is
+    satisfied) and needs no private harness (so that census is satisfied too),
+    which is why four slipped through:
+    ``config_aggregate_delivery_info``, ``cos_bucket_domain_info``,
+    ``cos_bucket_encryption_info`` and ``cos_bucket_logging_info``.
+    ``check_quality_gates.py`` now freezes them in
+    ``scripts/quality_baselines/untested_main_path.txt`` (shrink-only): a
+    module with tests must have at least one that drives ``run_module``.
