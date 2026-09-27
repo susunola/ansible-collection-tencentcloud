@@ -26,8 +26,6 @@ cos_bucket_replication_info
 cos_bucket_response_control_info
 cos_bucket_website_info
 dlc_inference_engine_info
-dlc_inference_model_info
-dlc_inference_service_info
 dlc_model_artifact_info
 dlc_model_version_info
 dlc_notebook_session_info

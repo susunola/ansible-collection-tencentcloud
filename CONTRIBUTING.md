@@ -131,7 +131,8 @@ Migrating one is five steps, verified on `vpc_info`, `subnet_info`,
 `cam_user_info`, `cam_policy_info`,
 `key_pair_info`, `cvm_instance_info`,
 `ssm_supported_product_info`, `tat_invocation_info`,
-`gaap_layer4_listener_info` and `monitor_grafana_integration_info`:
+`gaap_layer4_listener_info`, `monitor_grafana_integration_info`,
+`dlc_inference_model_info` and `dlc_inference_service_info`:
 
 1. import `AnsibleFailJson`, `module_args` and `run` from the harness;
 2. delete the private scaffolding (`ModuleExit`, `ModuleFail`, `FakeModule`,

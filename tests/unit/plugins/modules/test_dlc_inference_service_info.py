@@ -4,17 +4,29 @@ Covers build_request (time bounds, stable filter ordering, ordered sort
 fields, page-number pagination) plus run_module page pagination, page-budget
 truncation, empty results, parameter validation and the sdk_error_payload
 failure contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the base
+class's ``create_client`` and the module's own ``_load`` (which is where it
+imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fake item serialises ``Name``, a real
+``InferenceServiceInfo`` field the API returns, so the payload
+``add_return_samples.py`` captures is the shape a caller really sees.
 """
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_inference_service_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class Object:
@@ -84,16 +96,6 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
 class SDKError(Exception):
     def get_code(self):
         return "UnauthorizedOperation"
@@ -102,50 +104,12 @@ class SDKError(Exception):
         return "req-err"
 
 
-class FakeModule:
-    def __init__(self, params, client):
-        self.params = params
-        self.client = client
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self.client
-
-    def sdk_call(self, operation, request=None, retry=True):
-        if request is None:
-            return operation()
-        return operation(request)
-
-
-def _inject_sdk(monkeypatch):
-    service = types.ModuleType("tencentcloud.dlc.v20210125")
-    service.models = FakeModels
-    service.dlc_client = types.SimpleNamespace(DlcClient=object)
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
-                        types.ModuleType("tencentcloud.dlc"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
-
-
-def _run(monkeypatch, client, expect_fail=False, **p):
-    _inject_sdk(monkeypatch)
-    fake = FakeModule(p, client)
-    monkeypatch.setattr(dlc_inference_service_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail if expect_fail else ModuleExit):
-        dlc_inference_service_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(dlc_inference_service_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(DlcClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_follows_all_service_pages(monkeypatch):
@@ -153,8 +117,11 @@ def test_run_module_follows_all_service_pages(monkeypatch):
         FakeResponse([FakeItem("a"), FakeItem("b")], 2, 3, "r1"),
         FakeResponse([FakeItem("c")], 2, 3, "r2"),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(dlc_inference_service_info.run_module)
+
     assert payload["changed"] is False
     assert [item["Name"] for item in payload["services"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
@@ -165,10 +132,12 @@ def test_run_module_follows_all_service_pages(monkeypatch):
 
 
 def test_run_module_reports_truncation_at_max_pages(monkeypatch):
-    p = params(max_pages=1)
     client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")], 2, 3, "r1")])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params(max_pages=1))
+
+    payload = run(dlc_inference_service_info.run_module)
+
     assert [item["Name"] for item in payload["services"]] == ["a", "b"]
     assert payload["total_count"] == 3
     assert payload["truncated"] is True
@@ -177,20 +146,28 @@ def test_run_module_reports_truncation_at_max_pages(monkeypatch):
 
 def test_run_module_returns_empty_when_no_services(monkeypatch):
     client = FakeClient([FakeResponse([], 0, 0, "r-empty")])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(dlc_inference_service_info.run_module)
+
     assert payload["services"] == []
     assert payload["total_count"] == 0
     assert payload["truncated"] is False
 
 
 def test_run_module_validates_page_size_and_time_bounds(monkeypatch):
-    payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **params(page_size=300)).fail_payload
-    assert payload["msg"] == "page_size must be between 1 and 200"
-    payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **params(start_time=30, end_time=10)).fail_payload
-    assert payload["msg"] == "start_time must not exceed end_time"
+    _patch_sdk(monkeypatch, FakeClient([]))
+
+    module_args(region="ap-guangzhou", **params(page_size=300))
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_inference_service_info.run_module)
+    assert failure.value.args[0]["msg"] == "page_size must be between 1 and 200"
+
+    module_args(region="ap-guangzhou", **params(start_time=30, end_time=10))
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_inference_service_info.run_module)
+    assert failure.value.args[0]["msg"] == "start_time must not exceed end_time"
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
@@ -198,8 +175,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def ListInferenceServices(self, request):
             raise SDKError("api exploded")
 
-    payload = _run(monkeypatch, FailingClient(), expect_fail=True,
-                   region="ap-guangzhou", **params()).fail_payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_inference_service_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "UnauthorizedOperation"
