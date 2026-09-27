@@ -89,10 +89,15 @@ listeners:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ListenerId: udp-1
+      protocol: UDP
 total_count:
   description: Number of listeners reported by the API across the queried protocols.
   returned: always
   type: int
+  sample: 4
 request_id:
   description: Request ID of the last API call, for cross-referencing cloud audit logs.
   returned: always
