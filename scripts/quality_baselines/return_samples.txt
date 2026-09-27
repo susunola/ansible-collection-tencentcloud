@@ -6,7 +6,6 @@
 # a module added from now on documents its return values with a `sample:` (see
 # cam_user_info for the shape), and a baselined module that gains one is
 # removed from scripts/quality_baselines/return_samples.txt
-cam_policy_info
 cam_saml_provider
 cdb_database_info
 chdfs_mount_access_groups_info

@@ -79,10 +79,15 @@ policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - PolicyName: app-x
+      PolicyId: 42
 total_count:
   description: Number of policies returned.
   returned: always
   type: int
+  sample: 3
 '''
 
 from ansible.module_utils.basic import AnsibleModule

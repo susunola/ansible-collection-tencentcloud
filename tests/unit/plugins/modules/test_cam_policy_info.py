@@ -2,8 +2,16 @@
 
 Covers build_request (scope map, keyword, page-based pagination), the
 client-side exact-name filter, the direct GetPolicy branch, page-list
-pagination through run_module and the sdk_call failure contract.
+pagination through run_module and the sdk_call failure contract -- driven
+through the shared harness rather than a private double.
+
+The module builds its own SDK client, so the tests still inject a fake
+``tencentcloud.cam.v20190116`` service and patch the two factories. Driving
+the real ``AnsibleModule`` is what makes the payload observable, so the
+captured payload is what ``add_return_samples.py`` writes into the module's
+RETURN sample.
 """
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -14,6 +22,11 @@ import types
 import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import cam_policy_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -79,31 +92,6 @@ class FakeClient:
         return self._get_policy
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.cam.v20190116")
     service.models = FakeModels
@@ -114,67 +102,82 @@ def _inject_sdk(monkeypatch, client):
     monkeypatch.setitem(sys.modules, "tencentcloud.cam.v20190116", service)
 
 
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    monkeypatch.setattr(cam_policy_info, "AnsibleModule", lambda **kwargs: fake)
+@pytest.fixture
+def sdk(monkeypatch):
+    """Patch the credential/client factories the module builds its client with."""
     monkeypatch.setattr(cam_policy_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(cam_policy_info, "create_client_profile", lambda module, endpoint: object())
-    with pytest.raises(ModuleExit):
-        cam_policy_info.run_module()
-    return fake
+    monkeypatch.setattr(cam_policy_info, "create_client_profile",
+                        lambda module, endpoint: object())
 
 
-def test_run_module_lists_policies_across_pages(monkeypatch):
+def _args(**extra):
+    params = {"region": "ap-guangzhou", "scope": "all", "page_size": 2}
+    params.update(extra)
+    module_args(**params)
+
+
+def test_run_module_lists_policies_across_pages(monkeypatch, sdk):
     client = FakeClient([
-        FakeListResponse([FakeItem({"PolicyName": "app-a"}), FakeItem({"PolicyName": "app-b"})], 3),
+        FakeListResponse([FakeItem({"PolicyName": "app-a"}),
+                          FakeItem({"PolicyName": "app-b"})], 3),
         FakeListResponse([FakeItem({"PolicyName": "app-c"})], 3),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", policy_id=None,
-                policy_name=None, scope="all", page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(cam_policy_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["PolicyName"] for item in payload["policies"]] == ["app-a", "app-b", "app-c"]
+    assert [item["PolicyName"] for item in payload["policies"]] == [
+        "app-a", "app-b", "app-c"]
     assert payload["total_count"] == 3
     assert [request.Page for request in client.list_requests] == [1, 2]
     assert [request.Rp for request in client.list_requests] == [2, 2]
 
 
-def test_run_module_filters_by_exact_policy_name(monkeypatch):
+def test_run_module_filters_by_exact_policy_name(monkeypatch, sdk):
     client = FakeClient([
-        FakeListResponse([FakeItem({"PolicyName": "app-read-only"}), FakeItem({"PolicyName": "other"})], 2),
+        FakeListResponse([FakeItem({"PolicyName": "app-read-only"}),
+                          FakeItem({"PolicyName": "other"})], 2),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", policy_id=None,
-                policy_name="app-read-only", scope="local", page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args(policy_name="app-read-only", scope="local")
+
+    payload = run(cam_policy_info.run_module)
+
     assert [item["PolicyName"] for item in payload["policies"]] == ["app-read-only"]
     assert payload["total_count"] == 1
     assert client.list_requests[0].Scope == "Local"
     assert client.list_requests[0].Keyword == "app-read-only"
 
 
-def test_run_module_fetches_policy_by_id(monkeypatch):
-    client = FakeClient(get_policy=FakeItem({"PolicyName": "app-x", "RequestId": "req-get"}))
-    fake = _run(monkeypatch, client, region="ap-guangzhou", policy_id=42,
-                policy_name=None, scope="all", page_size=100)
-    payload = fake.exit_payload
+def test_run_module_fetches_policy_by_id(monkeypatch, sdk):
+    client = FakeClient(get_policy=FakeItem({"PolicyName": "app-x",
+                                             "RequestId": "req-get"}))
+    _inject_sdk(monkeypatch, client)
+    _args(policy_id=42, page_size=100)
+
+    payload = run(cam_policy_info.run_module)
+
     assert payload["total_count"] == 1
     assert payload["policies"] == [{"PolicyName": "app-x", "PolicyId": 42}]
     assert [request.PolicyId for request in client.get_requests] == [42]
     assert client.list_requests == []
 
 
-def test_run_module_stops_on_empty_page(monkeypatch):
+def test_run_module_stops_on_empty_page(monkeypatch, sdk):
     client = FakeClient([FakeListResponse([], 0)])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", policy_id=None,
-                policy_name=None, scope="all", page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(cam_policy_info.run_module)
+
     assert payload["policies"] == []
     assert payload["total_count"] == 0
     assert len(client.list_requests) == 1
 
 
-def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch, sdk):
     class FailingClient:
         def ListPolicies(self, request):
             raise RuntimeError("api exploded")
@@ -193,20 +196,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
             )
 
     _inject_sdk(monkeypatch, FailingClient())
-    fake = FakeModule({
-        "region": "ap-guangzhou",
-        "policy_id": None,
-        "policy_name": None,
-        "scope": "all",
-        "page_size": 2,
-    })
-    monkeypatch.setattr(cam_policy_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(cam_policy_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(cam_policy_info, "create_client_profile", lambda module, endpoint: object())
     monkeypatch.setattr(cam_policy_info, "sdk_call", failing_sdk_call)
-    with pytest.raises(ModuleFail) as excinfo:
-        cam_policy_info.run_module()
-    payload = excinfo.value.payload
+    _args()
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(cam_policy_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"
