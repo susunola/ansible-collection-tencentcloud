@@ -45,16 +45,21 @@ products:
   returned: always
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - cvm
 total_count:
   description:
     - Number of supported products.
   returned: always
   type: int
+  sample: 3
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-ok
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
