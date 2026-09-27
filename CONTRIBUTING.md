@@ -134,7 +134,10 @@ Migrating one is five steps, verified on `vpc_info`, `subnet_info`,
 `gaap_layer4_listener_info`, `monitor_grafana_integration_info`,
 `dlc_inference_model_info`, `dlc_inference_service_info`,
 `dlc_inference_engine_info`, `dlc_model_artifact_info`, `dlc_model_version_info`,
-`tione_data_source_info`, `tione_notebook_info` and `tione_training_task_info`:
+`dlc_ray_job_info`, `dlc_ray_job_list_info`, `dlc_notebook_session_info`,
+`tione_data_source_info`, `tione_notebook_info`, `tione_training_task_info`,
+`tione_model_service_info`, `tione_model_service_diagnostics_info` and
+`tione_training_model_version_info`:
 
 1. import `AnsibleFailJson`, `module_args` and `run` from the harness;
 2. delete the private scaffolding (`ModuleExit`, `ModuleFail`, `FakeModule`,

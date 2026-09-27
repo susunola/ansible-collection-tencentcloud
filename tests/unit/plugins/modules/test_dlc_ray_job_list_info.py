@@ -1,21 +1,35 @@
 """Deep harness tests for dlc_ray_job_list_info.
 
 Covers build_request (page numbering, time bounds, stable filters,
-sort fields, scalar wrapping) and run_module() end to end: page-based
-pagination until the reported TotalPages, max_pages truncation,
-argument validation, and the sdk_error_payload fail contract.
+sort fields, scalar wrapping) and run_module() end to end through the
+shared harness: page-based pagination until the reported TotalPages,
+max_pages truncation, argument validation, and the sdk_error_payload
+fail contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the base
+class's ``create_client`` and the module's own ``_load`` (which is where it
+imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fake item serialises ``Id``, the
+identity field a ``RayJobSubmitEntity`` carries and the sibling
+``dlc_ray_job_info`` module reads as well, instead of a generic ``Marker``, so
+the payload ``add_return_samples.py`` captures is the shape the API returns.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_ray_job_list_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 def params():
@@ -73,11 +87,11 @@ def test_build_request_omits_unset_optional_fields():
 
 
 class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+    def __init__(self, job_id):
+        self.job_id = job_id
 
     def _serialize(self, allow_none=True):
-        return {"Marker": self.marker}
+        return {"Id": self.job_id}
 
 
 class FakeResponse:
@@ -97,100 +111,6 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.dlc.v20210125")
-    service.models = FakeModels
-    service.dlc_client = types.SimpleNamespace(DlcClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
-                        types.ModuleType("tencentcloud.dlc"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(dlc_ray_job_list_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        dlc_ray_job_list_info.run_module()
-    return fake
-
-
-def test_run_module_paginates_until_reported_total_pages(monkeypatch):
-    client = FakeClient([
-        FakeResponse([FakeItem("a"), FakeItem("b")], 2, "req-1"),
-        FakeResponse([FakeItem("c")], 2, "req-2"),
-    ])
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
-    assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["ray_jobs"]] == ["a", "b", "c"]
-    assert payload["fetched_count"] == 3
-    assert payload["total_pages"] == 2
-    assert payload["truncated"] is False
-    assert payload["request_id"] == "req-2"
-    assert [request.Page for request in client.requests] == [1, 2]
-
-
-def test_run_module_flags_truncation_when_page_budget_exhausted(monkeypatch):
-    p = params()
-    p["max_pages"] = 1
-    client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")], 2, "req-1")])
-    fake = _run(monkeypatch, client, **p)
-    payload = fake.exit_payload
-    assert [item["Marker"] for item in payload["ray_jobs"]] == ["a", "b"]
-    assert payload["total_pages"] == 2
-    assert payload["truncated"] is True
-    assert payload["request_id"] == "req-1"
-
-
-def test_run_module_validates_page_size_bounds(monkeypatch):
-    p = params()
-    p["page_size"] = 0
-    fake = FakeModule(p)
-    monkeypatch.setattr(dlc_ray_job_list_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        dlc_ray_job_list_info.run_module()
-    assert excinfo.value.payload["msg"] == "page_size must be between 1 and 200"
-
-
 class SdkError(Exception):
     def __init__(self, code, request_id):
         self._code = code
@@ -204,19 +124,72 @@ class SdkError(Exception):
         return self._request_id
 
 
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(dlc_ray_job_list_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(DlcClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
+
+
+def test_run_module_paginates_until_reported_total_pages(monkeypatch):
+    client = FakeClient([
+        FakeResponse([FakeItem("a"), FakeItem("b")], 2, "req-1"),
+        FakeResponse([FakeItem("c")], 2, "req-2"),
+    ])
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(dlc_ray_job_list_info.run_module)
+
+    assert payload["changed"] is False
+    assert [item["Id"] for item in payload["ray_jobs"]] == ["a", "b", "c"]
+    assert payload["fetched_count"] == 3
+    assert payload["total_pages"] == 2
+    assert payload["truncated"] is False
+    assert payload["request_id"] == "req-2"
+    assert [request.Page for request in client.requests] == [1, 2]
+
+
+def test_run_module_flags_truncation_when_page_budget_exhausted(monkeypatch):
+    p = params()
+    p["max_pages"] = 1
+    client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")], 2, "req-1")])
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **p)
+
+    payload = run(dlc_ray_job_list_info.run_module)
+
+    assert [item["Id"] for item in payload["ray_jobs"]] == ["a", "b"]
+    assert payload["total_pages"] == 2
+    assert payload["truncated"] is True
+    assert payload["request_id"] == "req-1"
+
+
+def test_run_module_validates_page_size_bounds(monkeypatch):
+    p = params()
+    p["page_size"] = 0
+    _patch_sdk(monkeypatch, FakeClient([]))
+    module_args(region="ap-guangzhou", **p)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_list_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "page_size must be between 1 and 200"
+
+
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     class FailingClient:
         def ListRayJobs(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(params())
-    fake._client = failing
-    monkeypatch.setattr(dlc_ray_job_list_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        dlc_ray_job_list_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_list_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

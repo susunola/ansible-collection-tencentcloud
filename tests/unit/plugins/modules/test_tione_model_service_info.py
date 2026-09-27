@@ -2,21 +2,40 @@
 
 Covers the exact service/group request builders, the list-mode request
 builder (offset pagination, workspace scoping, stable filters, tag
-filters, ordering) and run_module() end to end: exact service and
-group lookups, bounded service-group list pagination with global
-totals, argument validation, and the sdk_error_payload fail contract.
+filters, ordering) and run_module() end to end through the shared
+harness: exact service and group lookups, bounded service-group list
+pagination with global totals, argument validation, and the
+sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. ``params()`` carries the selectors as
+``None`` for the request-builder tests, but Ansible counts an explicitly passed
+``None`` as specified, so ``module_params()`` leaves the unused selectors out --
+both the selectors the mode does not use and, in exact-lookup mode, the filter
+options that ``mutually_exclusive`` forbids beside a selector. The fixture
+serialises the identity field of the model it stands in for (``ServiceId`` on
+``Service``, ``ServiceGroupId`` on ``ServiceGroup``) rather than a generic
+``Marker``, so the payload is what ``add_return_samples.py`` captures as the
+module's documented sample.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tione_model_service_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 def params(**overrides):
@@ -33,6 +52,24 @@ def params(**overrides):
     }
     options.update(overrides)
     return options
+
+
+def module_params(**overrides):
+    """Module arguments with the unsupplied selectors omitted, not passed as None.
+
+    Ansible counts an explicitly passed ``None`` as specified, so
+    ``service_id=None`` next to the filter options trips the module's
+    ``("service_id", "filters")`` mutual exclusion. Exact-lookup mode is
+    mutually exclusive with both filter options as well, so they are dropped
+    whenever a selector is supplied; their ``{}`` defaults fill them back in
+    for list mode.
+    """
+    values = {key: value for key, value in params().items() if value is not None}
+    values.update(overrides)
+    if values.get("service_id") or values.get("service_group_id"):
+        values.pop("filters", None)
+        values.pop("tag_filters", None)
+    return values
 
 
 class FakeRequest:
@@ -79,11 +116,19 @@ def test_list_request_maps_filters_tags_and_order_stably():
 
 
 class FakeItem:
-    def __init__(self, marker):
+    """SDK-shaped resource; ``field`` is the identity field it serialises.
+
+    The list payload and the exact group lookup return ``ServiceGroup``, whose
+    identity is ``ServiceGroupId``; the exact service lookup returns ``Service``,
+    whose identity is ``ServiceId``.
+    """
+
+    def __init__(self, marker, field="ServiceGroupId"):
         self.marker = marker
+        self.field = field
 
     def _serialize(self, allow_none=True):
-        return {"Marker": self.marker}
+        return {self.field: self.marker}
 
 
 class FakeResponse:
@@ -116,60 +161,12 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tione.v20211111")
-    service.models = FakeModels
-    service.tione_client = types.SimpleNamespace(TioneClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tione",
-                        types.ModuleType("tencentcloud.tione"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tione.v20211111", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tione_model_service_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tione_model_service_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tione_model_service_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TioneClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_paginates_service_groups_until_total_count(monkeypatch):
@@ -177,10 +174,13 @@ def test_run_module_paginates_service_groups_until_total_count(monkeypatch):
         FakeResponse([FakeItem("g1"), FakeItem("g2")], 3, 8, "req-1"),
         FakeResponse([FakeItem("g3")], 3, 8, "req-2"),
     ])
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params())
+
+    payload = run(tione_model_service_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["service_groups"]] == ["g1", "g2", "g3"]
+    assert [item["ServiceGroupId"] for item in payload["service_groups"]] == ["g1", "g2", "g3"]
     assert payload["total_count"] == 3
     assert payload["global_total_count"] == 8
     assert payload["truncated"] is False
@@ -190,12 +190,13 @@ def test_run_module_paginates_service_groups_until_total_count(monkeypatch):
 
 def test_run_module_describes_exact_service(monkeypatch):
     client = FakeClient()
-    client.service_response = types.SimpleNamespace(Service=FakeItem("ms-1"), RequestId="req-svc")
-    p = params()
-    p["service_id"] = "ms-1"
-    fake = _run(monkeypatch, client, **p)
-    payload = fake.exit_payload
-    assert payload["service"] == {"Marker": "ms-1"}
+    client.service_response = types.SimpleNamespace(Service=FakeItem("ms-1", "ServiceId"), RequestId="req-svc")
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params(service_id="ms-1"))
+
+    payload = run(tione_model_service_info.run_module)
+
+    assert payload["service"] == {"ServiceId": "ms-1"}
     assert payload["request_id"] == "req-svc"
     assert len(client.service_requests) == 1
 
@@ -203,23 +204,23 @@ def test_run_module_describes_exact_service(monkeypatch):
 def test_run_module_describes_exact_service_group(monkeypatch):
     client = FakeClient()
     client.group_response = types.SimpleNamespace(ServiceGroup=FakeItem("msg-1"), RequestId="req-grp")
-    p = params()
-    p["service_group_id"] = "msg-1"
-    fake = _run(monkeypatch, client, **p)
-    payload = fake.exit_payload
-    assert payload["service_group"] == {"Marker": "msg-1"}
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params(service_group_id="msg-1"))
+
+    payload = run(tione_model_service_info.run_module)
+
+    assert payload["service_group"] == {"ServiceGroupId": "msg-1"}
     assert payload["request_id"] == "req-grp"
     assert len(client.group_requests) == 1
 
 
-def test_run_module_validates_page_size_bounds(monkeypatch):
-    p = params()
-    p["page_size"] = 101
-    fake = FakeModule(p)
-    monkeypatch.setattr(tione_model_service_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_model_service_info.run_module()
-    assert excinfo.value.payload["msg"] == "page_size must be between 1 and 100"
+def test_run_module_validates_page_size_bounds():
+    module_args(**module_params(page_size=101))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_model_service_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "page_size must be between 1 and 100"
 
 
 class SdkError(Exception):
@@ -240,14 +241,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeModelServiceGroups(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(params())
-    fake._client = failing
-    monkeypatch.setattr(tione_model_service_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_model_service_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(**module_params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_model_service_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "FailedOperation"
     assert payload["request_id"] == "req-err"

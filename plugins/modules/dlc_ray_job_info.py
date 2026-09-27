@@ -98,39 +98,59 @@ ray_job:
     - Ray job detail.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: job-1
+    Status: running
 history:
   description:
     - Ordered job status history.
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Id: h1
 events:
   description:
     - Ordered Ray job events.
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Message: ev1
 pods:
   description:
     - Matching Ray job Pods.
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - PodName: p1
 yaml:
   description:
     - Submitted RayJob YAML.
   returned: when include_yaml
   type: str
+  sample: 'kind: RayJob'
 truncated:
   description:
     - Diagnostic stream truncation flags.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    history: false
+    events: false
+    pods: false
 request_id:
   description:
     - Request ID from the Ray job detail call.
   returned: always
   type: str
+  sample: rr
 """
 
 import re

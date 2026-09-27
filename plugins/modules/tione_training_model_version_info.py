@@ -69,22 +69,30 @@ model_version:
     - Exact training-model version detail.
   returned: when version_id is provided
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TrainingModelVersionId: mv-1
 model_versions:
   description:
     - Versions within the selected parent model.
   returned: in list mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - TrainingModelVersionId: v1
 total_count:
   description:
     - Number of returned parent-scoped versions.
   returned: in list mode
   type: int
+  sample: 2
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-detail
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

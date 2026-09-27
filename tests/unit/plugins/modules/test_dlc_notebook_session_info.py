@@ -4,17 +4,30 @@ Covers build_request (offset pagination, exact engine/state filters, ordered
 notebook-keyword and engine-generation filter pairs, sort fields) plus
 run_module offset pagination over DescribeNotebookSessions, empty results,
 page_size validation and the sdk_error_payload failure contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the base
+class's ``create_client`` and the module's own ``_load`` (which is where it
+imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fake item already serialised
+``Name``, a real ``NotebookSessions`` field, so no field is renamed; the empty
+result test leaves its absent filters out of the module args instead of passing
+them as explicit ``None``, which AnsibleModule would count as specified.
 """
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_notebook_session_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class Object:
@@ -38,6 +51,16 @@ def params(**overrides):
     }
     options.update(overrides)
     return options
+
+
+def absent_filter_params():
+    """Module args for a run with every filter absent.
+
+    The filter options are left out rather than passed as ``None``: an
+    explicit ``None`` counts as specified for AnsibleModule, and an absent
+    option reaches ``build_request`` as ``None`` all the same.
+    """
+    return {"ascending": False, "page_size": 2}
 
 
 def test_build_request_maps_filters_sort_and_pagination():
@@ -89,16 +112,6 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
 class SDKError(Exception):
     def get_code(self):
         return "UnauthorizedOperation"
@@ -107,50 +120,12 @@ class SDKError(Exception):
         return "req-err"
 
 
-class FakeModule:
-    def __init__(self, params, client):
-        self.params = params
-        self.client = client
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self.client
-
-    def sdk_call(self, operation, request=None, retry=True):
-        if request is None:
-            return operation()
-        return operation(request)
-
-
-def _inject_sdk(monkeypatch):
-    service = types.ModuleType("tencentcloud.dlc.v20210125")
-    service.models = FakeModels
-    service.dlc_client = types.SimpleNamespace(DlcClient=object)
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
-                        types.ModuleType("tencentcloud.dlc"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
-
-
-def _run(monkeypatch, client, expect_fail=False, **p):
-    _inject_sdk(monkeypatch)
-    fake = FakeModule(p, client)
-    monkeypatch.setattr(dlc_notebook_session_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail if expect_fail else ModuleExit):
-        dlc_notebook_session_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(dlc_notebook_session_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(DlcClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_fetches_all_session_pages(monkeypatch):
@@ -158,8 +133,11 @@ def test_run_module_fetches_all_session_pages(monkeypatch):
         FakeResponse([FakeItem("a"), FakeItem("b")], 3, "r1"),
         FakeResponse([FakeItem("c")], 3, "r2"),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(dlc_notebook_session_info.run_module)
+
     assert payload["changed"] is False
     assert [item["Name"] for item in payload["sessions"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
@@ -169,11 +147,12 @@ def test_run_module_fetches_all_session_pages(monkeypatch):
 
 
 def test_run_module_returns_empty_when_no_sessions(monkeypatch):
-    p = {"data_engine_name": None, "states": None, "keyword": None, "engine_generation": None,
-         "sort_fields": None, "ascending": False, "page_size": 2}
     client = FakeClient([FakeResponse([], 0, "r-empty")])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **absent_filter_params())
+
+    payload = run(dlc_notebook_session_info.run_module)
+
     assert payload["sessions"] == []
     assert payload["total_count"] == 0
     assert payload["request_id"] == "r-empty"
@@ -181,9 +160,13 @@ def test_run_module_returns_empty_when_no_sessions(monkeypatch):
 
 
 def test_run_module_validates_page_size_range(monkeypatch):
-    payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **params(page_size=200)).fail_payload
-    assert payload["msg"] == "page_size must be between 1 and 100"
+    _patch_sdk(monkeypatch, FakeClient([]))
+    module_args(region="ap-guangzhou", **params(page_size=200))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_session_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "page_size must be between 1 and 100"
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
@@ -191,8 +174,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeNotebookSessions(self, request):
             raise SDKError("api exploded")
 
-    payload = _run(monkeypatch, FailingClient(), expect_fail=True,
-                   region="ap-guangzhou", **params()).fail_payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_session_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "UnauthorizedOperation"

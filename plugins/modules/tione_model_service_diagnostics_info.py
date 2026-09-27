@@ -71,16 +71,25 @@ call_info:
     - All available gateway and intranet call metadata.
   returned: in service_group_id mode
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceCallInfo:
+      ServiceGroupId: legacy
+    IntranetCallInfo:
+      PrivateLinkInfos:
+        - private
 model_turbo_flag:
   description:
     - Allowed or Forbidden acceleration preflight result.
   returned: in preflight mode
   type: str
+  sample: Allowed
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-call
 """
 
 import json

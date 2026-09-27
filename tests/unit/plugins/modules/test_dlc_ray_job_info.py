@@ -4,17 +4,32 @@ Covers the request helpers (job identity, page/context diagnostics), the
 GetRayJob detail branch and each optional diagnostic stream (history, events,
 pods, yaml) through run_module, plus truncation, repeated-context and
 parameter-validation failures and the sdk_error_payload failure contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the base
+class's ``create_client`` and the module's own ``_load`` (which is where it
+imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fixtures serialise real fields the
+API returns: the detail carries ``Id`` (there is no ``RayJobId`` in
+``GetRayJobResponse``), and each stream names a field of its own item model --
+``JobStatusHistory.Id`` for history, ``RayJobEventItem.Message`` for events and
+``JobPodEntity.PodName`` for pods -- instead of the generic ``Value``, so the
+payload ``add_return_samples.py`` captures is the shape a caller really sees.
 """
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_ray_job_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class Object:
@@ -63,11 +78,14 @@ def test_request_helpers_keep_job_identity_and_diagnostic_bounds():
 
 
 class FakeItem:
-    def __init__(self, value):
+    """Serialisable item whose ``field`` names a real field of its item model."""
+
+    def __init__(self, value, field):
         self.value = value
+        self.field = field
 
     def _serialize(self, allow_none=True):
-        return {"Value": self.value}
+        return {self.field: self.value}
 
 
 class DetailResponse:
@@ -79,14 +97,14 @@ class DetailResponse:
 
 
 class PageResponse:
-    def __init__(self, values, total_pages):
-        self.Items = [FakeItem(value) for value in values]
+    def __init__(self, values, total_pages, field):
+        self.Items = [FakeItem(value, field) for value in values]
         self.TotalPages = total_pages
 
 
 class EventResponse:
-    def __init__(self, values, context, list_over):
-        self.Events = [FakeItem(value) for value in values]
+    def __init__(self, values, context, list_over, field):
+        self.Events = [FakeItem(value, field) for value in values]
         self.Context = context
         self.ListOver = list_over
 
@@ -130,16 +148,6 @@ class FakeClient:
         return self.yaml_response
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
 class SDKError(Exception):
     def get_code(self):
         return "UnauthorizedOperation"
@@ -148,69 +156,35 @@ class SDKError(Exception):
         return "req-err"
 
 
-class FakeModule:
-    def __init__(self, params, client):
-        self.params = params
-        self.client = client
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self.client
-
-    def sdk_call(self, operation, request=None, retry=True):
-        if request is None:
-            return operation()
-        return operation(request)
-
-
-def _inject_sdk(monkeypatch):
-    service = types.ModuleType("tencentcloud.dlc.v20210125")
-    service.models = FakeModels
-    service.dlc_client = types.SimpleNamespace(DlcClient=object)
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
-                        types.ModuleType("tencentcloud.dlc"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
-
-
-def _run(monkeypatch, client, expect_fail=False, **p):
-    _inject_sdk(monkeypatch)
-    fake = FakeModule(p, client)
-    monkeypatch.setattr(dlc_ray_job_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail if expect_fail else ModuleExit):
-        dlc_ray_job_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(dlc_ray_job_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(DlcClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_collects_all_diagnostics(monkeypatch):
     p = params(include_history=True, include_events=True, include_pods=True, include_yaml=True)
     client = FakeClient(
-        detail=DetailResponse({"RayJobId": "job-1", "Status": "running", "RequestId": "rr"}),
-        history=[PageResponse(["h1", "h2"], 2), PageResponse(["h3"], 2)],
-        events=[EventResponse(["ev1"], "c2", False), EventResponse(["ev2"], None, True)],
-        pods=[PageResponse(["p1", "p2"], 1)],
+        detail=DetailResponse({"Id": "job-1", "Status": "running", "RequestId": "rr"}),
+        history=[PageResponse(["h1", "h2"], 2, "Id"), PageResponse(["h3"], 2, "Id")],
+        events=[EventResponse(["ev1"], "c2", False, "Message"),
+                EventResponse(["ev2"], None, True, "Message")],
+        pods=[PageResponse(["p1", "p2"], 1, "PodName")],
         yaml_response=YamlResponse("kind: RayJob"),
     )
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **p)
+
+    payload = run(dlc_ray_job_info.run_module)
+
     assert payload["changed"] is False
-    assert payload["ray_job"] == {"RayJobId": "job-1", "Status": "running"}
+    assert payload["ray_job"] == {"Id": "job-1", "Status": "running"}
     assert payload["request_id"] == "rr"
-    assert [item["Value"] for item in payload["history"]] == ["h1", "h2", "h3"]
-    assert [item["Value"] for item in payload["events"]] == ["ev1", "ev2"]
-    assert [item["Value"] for item in payload["pods"]] == ["p1", "p2"]
+    assert [item["Id"] for item in payload["history"]] == ["h1", "h2", "h3"]
+    assert [item["Message"] for item in payload["events"]] == ["ev1", "ev2"]
+    assert [item["PodName"] for item in payload["pods"]] == ["p1", "p2"]
     assert payload["yaml"] == "kind: RayJob"
     assert payload["truncated"] == {"history": False, "events": False, "pods": False}
     assert client.history_pages == [1, 2]
@@ -223,12 +197,15 @@ def test_run_module_collects_all_diagnostics(monkeypatch):
 def test_run_module_fetches_history_only(monkeypatch):
     p = params(include_history=True)
     client = FakeClient(
-        detail=DetailResponse({"RayJobId": "job-1", "RequestId": "rr"}),
-        history=[PageResponse(["h1", "h2"], 1)],
+        detail=DetailResponse({"Id": "job-1", "RequestId": "rr"}),
+        history=[PageResponse(["h1", "h2"], 1, "Id")],
     )
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
-    assert [item["Value"] for item in payload["history"]] == ["h1", "h2"]
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **p)
+
+    payload = run(dlc_ray_job_info.run_module)
+
+    assert [item["Id"] for item in payload["history"]] == ["h1", "h2"]
     assert payload["events"] == []
     assert payload["pods"] == []
     assert payload["yaml"] is None
@@ -240,38 +217,54 @@ def test_run_module_fetches_history_only(monkeypatch):
 def test_run_module_reports_truncated_history_at_max_pages(monkeypatch):
     p = params(include_history=True, max_pages=1)
     client = FakeClient(
-        detail=DetailResponse({"RayJobId": "job-1", "RequestId": "rr"}),
-        history=[PageResponse(["h1", "h2"], 2)],
+        detail=DetailResponse({"Id": "job-1", "RequestId": "rr"}),
+        history=[PageResponse(["h1", "h2"], 2, "Id")],
     )
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
-    assert [item["Value"] for item in payload["history"]] == ["h1", "h2"]
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **p)
+
+    payload = run(dlc_ray_job_info.run_module)
+
+    assert [item["Id"] for item in payload["history"]] == ["h1", "h2"]
     assert payload["truncated"] == {"history": True, "events": False, "pods": False}
 
 
 def test_run_module_fails_on_repeated_event_context(monkeypatch):
     p = params(include_events=True)
     client = FakeClient(
-        detail=DetailResponse({"RayJobId": "job-1", "RequestId": "rr"}),
-        events=[EventResponse(["ev1"], "ctx", False), EventResponse(["ev2"], "ctx", False)],
+        detail=DetailResponse({"Id": "job-1", "RequestId": "rr"}),
+        events=[EventResponse(["ev1"], "ctx", False, "Message"),
+                EventResponse(["ev2"], "ctx", False, "Message")],
     )
-    payload = _run(monkeypatch, client, expect_fail=True,
-                   region="ap-guangzhou", **p).fail_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **p)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "DLC Ray job event pagination repeated a context token"
     assert payload["ray_job_id"] == "job-1"
     assert payload["context"] == "ctx"
 
 
 def test_run_module_validates_page_size_and_event_type(monkeypatch):
-    payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **params(page_size=300)).fail_payload
-    assert payload["msg"] == "page_size must be between 1 and 200"
-    payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **params(event_type="Warn123")).fail_payload
-    assert payload["msg"] == "event_type must contain ASCII letters only"
-    payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **params(start_time=30, end_time=10)).fail_payload
-    assert payload["msg"] == "start_time must not exceed end_time"
+    _patch_sdk(monkeypatch, FakeClient())
+
+    module_args(region="ap-guangzhou", **params(page_size=300))
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_info.run_module)
+    assert failure.value.args[0]["msg"] == "page_size must be between 1 and 200"
+
+    module_args(region="ap-guangzhou", **params(event_type="Warn123"))
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_info.run_module)
+    assert failure.value.args[0]["msg"] == "event_type must contain ASCII letters only"
+
+    module_args(region="ap-guangzhou", **params(start_time=30, end_time=10))
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_info.run_module)
+    assert failure.value.args[0]["msg"] == "start_time must not exceed end_time"
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
@@ -279,8 +272,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def GetRayJob(self, request):
             raise SDKError("api exploded")
 
-    payload = _run(monkeypatch, FailingClient(), expect_fail=True,
-                   region="ap-guangzhou", **params()).fail_payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_ray_job_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "UnauthorizedOperation"

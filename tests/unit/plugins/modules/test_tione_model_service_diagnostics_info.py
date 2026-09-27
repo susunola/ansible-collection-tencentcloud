@@ -4,6 +4,16 @@ Covers call_request / preflight_request builders, serialize_call_info
 gateway-variant serialization and run_module() end to end in both
 mutually exclusive modes (service_group_id call info vs hot-update
 preflight), mode validation, and the sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fixture serialises real fields of the
+call-info models it stands in for -- ``ServiceGroupId`` on ``ServiceCallInfo``
+and ``ServiceCallInfoV2``, ``Host`` on ``DefaultNginxGatewayCallInfo`` and
+``PrivateLinkInfos`` on ``IntranetCallInfo`` -- rather than a generic
+``Marker``, so the payload is what ``add_return_samples.py`` captures as the
+module's documented sample.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -11,12 +21,17 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tione_model_service_diagnostics_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -65,70 +80,27 @@ def test_preflight_request_builds_only_supplied_sdk_models():
 
 
 class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+    """SDK-shaped call-info resource carrying the real fields it serialises."""
+
+    def __init__(self, data):
+        self._data = dict(data)
 
     def _serialize(self, allow_none=True):
-        return {"Marker": self.marker}
+        return dict(self._data)
 
 
 def test_serialize_call_info_preserves_all_gateway_variants():
     response = types.SimpleNamespace(
-        ServiceCallInfo=FakeItem("legacy"), InferGatewayCallInfo=None,
-        DefaultNginxGatewayCallInfo=FakeItem("nginx"), TJCallInfo=None,
-        IntranetCallInfo=FakeItem("private"), ServiceCallInfoV2=FakeItem("gateway-v2"))
+        ServiceCallInfo=FakeItem({"ServiceGroupId": "legacy"}), InferGatewayCallInfo=None,
+        DefaultNginxGatewayCallInfo=FakeItem({"Host": "nginx"}), TJCallInfo=None,
+        IntranetCallInfo=FakeItem({"PrivateLinkInfos": ["private"]}),
+        ServiceCallInfoV2=FakeItem({"ServiceGroupId": "gateway-v2"}))
     value = tione_model_service_diagnostics_info.serialize_call_info(response)
-    assert value["ServiceCallInfo"] == {"Marker": "legacy"}
+    assert value["ServiceCallInfo"] == {"ServiceGroupId": "legacy"}
     assert value["InferGatewayCallInfo"] is None
-    assert value["DefaultNginxGatewayCallInfo"] == {"Marker": "nginx"}
-    assert value["IntranetCallInfo"] == {"Marker": "private"}
-    assert value["ServiceCallInfoV2"] == {"Marker": "gateway-v2"}
-
-
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tione.v20211111")
-    service.models = FakeModels
-    service.tione_client = types.SimpleNamespace(TioneClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tione",
-                        types.ModuleType("tencentcloud.tione"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tione.v20211111", service)
+    assert value["DefaultNginxGatewayCallInfo"] == {"Host": "nginx"}
+    assert value["IntranetCallInfo"] == {"PrivateLinkInfos": ["private"]}
+    assert value["ServiceCallInfoV2"] == {"ServiceGroupId": "gateway-v2"}
 
 
 class FakeClient:
@@ -146,58 +118,63 @@ class FakeClient:
         return self.preflight_response
 
 
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tione_model_service_diagnostics_info, "TencentCloudModule",
-                        lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tione_model_service_diagnostics_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tione_model_service_diagnostics_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TioneClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_returns_call_info_for_service_group(monkeypatch):
     client = FakeClient()
     client.call_response = types.SimpleNamespace(
-        ServiceCallInfo=FakeItem("legacy"), InferGatewayCallInfo=None,
+        ServiceCallInfo=FakeItem({"ServiceGroupId": "legacy"}), InferGatewayCallInfo=None,
         DefaultNginxGatewayCallInfo=None, TJCallInfo=None,
-        IntranetCallInfo=FakeItem("private"), ServiceCallInfoV2=None,
+        IntranetCallInfo=FakeItem({"PrivateLinkInfos": ["private"]}), ServiceCallInfoV2=None,
         RequestId="req-call")
-    fake = _run(monkeypatch, client, **call_params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**call_params())
+
+    payload = run(tione_model_service_diagnostics_info.run_module)
+
     assert payload["changed"] is False
-    assert payload["call_info"]["ServiceCallInfo"] == {"Marker": "legacy"}
-    assert payload["call_info"]["IntranetCallInfo"] == {"Marker": "private"}
+    assert payload["call_info"]["ServiceCallInfo"] == {"ServiceGroupId": "legacy"}
+    assert payload["call_info"]["IntranetCallInfo"] == {"PrivateLinkInfos": ["private"]}
     assert payload["request_id"] == "req-call"
 
 
 def test_run_module_returns_preflight_flag_for_hot_update_inputs(monkeypatch):
     client = FakeClient()
     client.preflight_response = types.SimpleNamespace(ModelTurboFlag="Allowed", RequestId="req-hot")
-    fake = _run(monkeypatch, client, **preflight_params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**preflight_params())
+
+    payload = run(tione_model_service_diagnostics_info.run_module)
+
     assert payload["model_turbo_flag"] == "Allowed"
     assert payload["request_id"] == "req-hot"
     assert client.requests[0].ImageInfo.payload == preflight_params()["image_info"]
 
 
-def test_run_module_rejects_mixing_modes_and_stray_project_id(monkeypatch):
-    both = dict(call_params(), image_info={"ImageType": "TCR"})
-    fake = FakeModule(both)
-    monkeypatch.setattr(tione_model_service_diagnostics_info, "TencentCloudModule",
-                        lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_model_service_diagnostics_info.run_module()
-    assert "but not both" in excinfo.value.payload["msg"]
+def test_run_module_rejects_mixing_modes_and_stray_project_id():
+    both = call_params()
+    both["image_info"] = {"ImageType": "TCR"}
+    module_args(**both)
 
-    stray = dict(preflight_params(), project_id="p1")
-    fake = FakeModule(stray)
-    monkeypatch.setattr(tione_model_service_diagnostics_info, "TencentCloudModule",
-                        lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_model_service_diagnostics_info.run_module()
-    assert excinfo.value.payload["msg"] == "project_id is only valid with service_group_id"
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_model_service_diagnostics_info.run_module)
+
+    assert "but not both" in failure.value.args[0]["msg"]
+
+    stray = preflight_params()
+    stray["project_id"] = "p1"
+    module_args(**stray)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_model_service_diagnostics_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "project_id is only valid with service_group_id"
 
 
 class SdkError(Exception):
@@ -218,15 +195,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeModelServiceHotUpdated(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(preflight_params())
-    fake._client = failing
-    monkeypatch.setattr(tione_model_service_diagnostics_info, "TencentCloudModule",
-                        lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_model_service_diagnostics_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(**preflight_params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_model_service_diagnostics_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "FailedOperation"
     assert payload["request_id"] == "req-err"

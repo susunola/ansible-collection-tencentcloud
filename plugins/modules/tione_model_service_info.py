@@ -104,37 +104,50 @@ service:
     - Exact deployed service-version detail.
   returned: when service_id is provided
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceId: ms-1
 service_group:
   description:
     - Exact service-group detail.
   returned: when service_group_id is provided
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceGroupId: msg-1
 service_groups:
   description:
     - Matching service groups and embedded versions.
   returned: in list mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ServiceGroupId: g1
 total_count:
   description:
     - Number of matching service groups.
   returned: in list mode
   type: int
+  sample: 3
 global_total_count:
   description:
     - Total service groups in the current account and region.
   returned: in list mode
   type: int
+  sample: 8
 truncated:
   description:
     - Whether max_pages stopped pagination.
   returned: in list mode
   type: bool
+  sample: false
 request_id:
   description:
     - Request ID from the exact request or final page.
   returned: always
   type: str
+  sample: req-svc
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

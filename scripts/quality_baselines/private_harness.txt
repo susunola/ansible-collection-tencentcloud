@@ -6,14 +6,8 @@
 # a module test drives its module through
 # tests/unit/plugins/modules/harness.py, not a private double, so the payload
 # is observable and the conventions live in one place
-plugins/modules/dlc_notebook_session_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/dlc_notebook_session_log_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/dlc_notebook_statement_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/dlc_ray_job_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/dlc_ray_job_list_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/tione_model_service_diagnostics_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/tione_model_service_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/tione_training_model_version_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/tse_config_file_catalog_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/tse_config_file_release_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/tse_config_file_template_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
