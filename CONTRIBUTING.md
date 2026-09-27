@@ -127,7 +127,8 @@ captured `RETURN` sample, and a fix to the harness does not reach the test.
 `scripts/quality_baselines/private_harness.txt`; the list may only shrink.
 
 Migrating one is five steps, verified on `vpc_info`, `subnet_info`,
-`security_group_info`, `route_table_info`, `eip_info` and `cam_role_info`:
+`security_group_info`, `route_table_info`, `eip_info`, `cam_role_info` and
+`cam_user_info`:
 
 1. import `AnsibleFailJson`, `module_args` and `run` from the harness;
 2. delete the private scaffolding (`ModuleExit`, `ModuleFail`, `FakeModule`,
