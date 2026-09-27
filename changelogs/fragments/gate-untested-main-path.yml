@@ -12,3 +12,8 @@ minor_changes:
     ``check_quality_gates.py`` now freezes them in
     ``scripts/quality_baselines/untested_main_path.txt`` (shrink-only): a
     module with tests must have at least one that drives ``run_module``.
+    All four now have end-to-end tests through the shared harness (the
+    delivery reader, the COS domain reader with its real get_domains path, and
+    the Grafana and Alertmanager readers with their audit-trail assertions), so
+    that census is zero and its baseline file is deleted -- a paid-off family
+    needs no file, by the same rule the untested_modules baseline followed.

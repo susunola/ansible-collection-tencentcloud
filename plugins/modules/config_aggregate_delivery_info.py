@@ -49,16 +49,37 @@ deliveries:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - DeliverName: audit-delivery
+      TargetArn: qcs::ckafka:ap-guangzhou::ckafkaId/ckafka-abc123
+      Status: Enabled
+      CreateTime: '2026-01-05 10:20:31'
+      DeliverPrefix: config-audit
+      DeliverType: Ckafka
+      DeliverUin: '100000000001'
+      DeliverContentType: ConfigurationItem
 delivery:
   description:
     - Aggregate Config delivery configuration.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DeliverName: audit-delivery
+    TargetArn: qcs::ckafka:ap-guangzhou::ckafkaId/ckafka-abc123
+    Status: Enabled
+    CreateTime: '2026-01-05 10:20:31'
+    DeliverPrefix: config-audit
+    DeliverType: Ckafka
+    DeliverUin: '100000000001'
+    DeliverContentType: ConfigurationItem
 request_id:
   description:
     - Request ID returned by the API.
   returned: always
   type: str
+  sample: req-none
 '''
 
 from ansible.module_utils.basic import AnsibleModule

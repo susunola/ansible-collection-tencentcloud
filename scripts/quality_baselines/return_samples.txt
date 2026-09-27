@@ -9,11 +9,9 @@
 cam_saml_provider
 cdb_database_info
 chdfs_mount_access_groups_info
-config_aggregate_delivery_info
 config_delivery_info
 config_recorder_info
 cos_bucket_domain_certificate_info
-cos_bucket_domain_info
 cos_bucket_encryption_info
 cos_bucket_intelligent_tiering_info
 cos_bucket_inventory_info

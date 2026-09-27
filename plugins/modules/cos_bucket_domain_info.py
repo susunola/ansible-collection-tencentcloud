@@ -55,16 +55,31 @@ domain_configurations:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - DomainRule:
+        - Name: a.example.com
+          Status: ENABLED
+        - Name: z.example.com
+          Status: ENABLED
 domains:
   description:
     - Effective custom-domain configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DomainRule:
+      - Name: a.example.com
+        Status: ENABLED
+      - Name: z.example.com
+        Status: ENABLED
 txt_verification:
   description:
     - DNS TXT verification value returned by COS.
   returned: always
   type: str
+  sample: cos-verify-20260105
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
