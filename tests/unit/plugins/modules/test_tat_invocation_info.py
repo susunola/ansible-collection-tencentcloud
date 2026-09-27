@@ -1,46 +1,59 @@
 """Deep harness tests for tat_invocation_info.
 
-Covers the request builders (exact InvocationIds vs command-id /
-instance-kind filters, task output hiding), scrub() redaction and
-run_module() end to end: bounded invocation list pagination, exact
-mode with per-instance task pagination, and the sdk_error_payload
+Covers the request builders (exact InvocationIds vs command-id / instance-kind
+filters, task output hiding), scrub() redaction and run_module() end to end
+through the shared harness: bounded invocation list pagination, exact mode with
+per-instance task pagination, the include_output guard and the sdk_error_payload
 fail contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the base
+class's ``create_client`` and the module's own ``_load`` (which is where it
+imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fixture serialises the fields the
+module actually returns, so the captured payload is what ``scrub`` leaves
+behind -- which is also the documented behaviour of this module.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tat_invocation_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
-def list_params():
-    return {
-        "invocation_id": None,
+def list_params(**extra):
+    """List-mode arguments; mutually exclusive ones are omitted, not None."""
+    params = {
         "command_id": "cmd-1",
-        "instance_kind": None,
         "include_tasks": True,
         "include_output": False,
-        "page_size": 2,
+        "page_size": 20,
         "max_pages": 5,
     }
+    params.update(extra)
+    return params
 
 
-def exact_params():
-    return {
+def exact_params(**extra):
+    params = {
         "invocation_id": "inv-1",
-        "command_id": None,
-        "instance_kind": None,
         "include_tasks": True,
         "include_output": False,
-        "page_size": 2,
+        "page_size": 20,
         "max_pages": 5,
     }
+    params.update(extra)
+    return params
 
 
 class FakeRequest:
@@ -68,7 +81,7 @@ def test_invocation_request_selects_ids_or_filters():
 
 def test_task_request_hides_output_and_filters_on_invocation():
     request = tat_invocation_info.task_request(FakeModels, exact_params(), 100)
-    assert request.Offset == 100 and request.Limit == 2
+    assert request.Offset == 100 and request.Limit == 20
     assert request.HideOutput is True
     assert [(item.Name, item.Values) for item in request.Filters] == [("invocation-id", ["inv-1"])]
 
@@ -94,7 +107,7 @@ class FakeItem:
 
     def _serialize(self, allow_none=True):
         return {
-            "Marker": self.marker,
+            "InvocationId": self.marker,
             "Parameters": '{"password":"x"}',
             "TaskResult": {"Output": "secret", "ExitCode": 0},
         }
@@ -123,60 +136,12 @@ class FakeClient:
         return self._tasks.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tat.v20201028")
-    service.models = FakeModels
-    service.tat_client = types.SimpleNamespace(TatClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tat",
-                        types.ModuleType("tencentcloud.tat"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tat.v20201028", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tat_invocation_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tat_invocation_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tat_invocation_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TatClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_lists_and_scrubs_redacted_invocations(monkeypatch):
@@ -184,10 +149,13 @@ def test_run_module_lists_and_scrubs_redacted_invocations(monkeypatch):
         FakeResponse("InvocationSet", [FakeItem("i1"), FakeItem("i2")], 3, "req-1"),
         FakeResponse("InvocationSet", [FakeItem("i3")], 3, "req-2"),
     ])
-    fake = _run(monkeypatch, client, **list_params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**list_params())
+
+    payload = run(tat_invocation_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["invocations"]] == ["i1", "i2", "i3"]
+    assert [item["InvocationId"] for item in payload["invocations"]] == ["i1", "i2", "i3"]
     assert all(item["Parameters"] == "<redacted>" for item in payload["invocations"])
     assert all(item["TaskResult"] == {"Output": "<redacted>"} for item in payload["invocations"])
     assert payload["total_count"] == 3
@@ -204,22 +172,26 @@ def test_run_module_exact_mode_paginates_tasks(monkeypatch):
             FakeResponse("InvocationTaskSet", [FakeItem("t3")], 3, "req-t2"),
         ],
     )
-    fake = _run(monkeypatch, client, **exact_params())
-    payload = fake.exit_payload
-    assert payload["invocation"]["Marker"] == "inv-1"
-    assert [task["Marker"] for task in payload["tasks"]] == ["t1", "t2", "t3"]
+    _patch_sdk(monkeypatch, client)
+    module_args(**exact_params())
+
+    payload = run(tat_invocation_info.run_module)
+
+    assert payload["invocation"]["InvocationId"] == "inv-1"
+    assert [task["InvocationId"] for task in payload["tasks"]] == ["t1", "t2", "t3"]
     assert payload["request_id"] == "req-t2"
     assert [request.Offset for request in client.task_requests] == [0, 2]
 
 
 def test_run_module_rejects_include_output_in_list_mode(monkeypatch):
-    p = list_params()
-    p["include_output"] = True
-    fake = FakeModule(p)
-    monkeypatch.setattr(tat_invocation_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tat_invocation_info.run_module()
-    assert excinfo.value.payload["msg"] == "include_output requires exact invocation_id mode"
+    client = FakeClient([])
+    _patch_sdk(monkeypatch, client)
+    module_args(**list_params(include_output=True))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tat_invocation_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "include_output requires exact invocation_id mode"
 
 
 class SdkError(Exception):
@@ -240,14 +212,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeInvocations(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(list_params())
-    fake._client = failing
-    monkeypatch.setattr(tat_invocation_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tat_invocation_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(**list_params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tat_invocation_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "FailedOperation"
     assert payload["request_id"] == "req-err"

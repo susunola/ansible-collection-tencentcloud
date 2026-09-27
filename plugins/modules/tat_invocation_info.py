@@ -84,33 +84,60 @@ invocation:
     - Exact redacted invocation.
   returned: exact mode
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InvocationId: inv-1
+    Parameters: <redacted>
+    TaskResult:
+      Output: <redacted>
+    DefaultParameters: <redacted>
+    CommandContent: <redacted>
 tasks:
   description:
     - Exact invocation instance tasks.
   returned: exact mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - InvocationId: t1
+      Parameters: <redacted>
+      TaskResult:
+        Output: <redacted>
+      DefaultParameters: <redacted>
+      CommandContent: <redacted>
 invocations:
   description:
     - Matching redacted invocations.
   returned: list mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - InvocationId: i1
+      Parameters: <redacted>
+      TaskResult:
+        Output: <redacted>
+      DefaultParameters: <redacted>
+      CommandContent: <redacted>
 total_count:
   description:
     - Matching invocation count.
   returned: list mode
   type: int
+  sample: 3
 truncated:
   description:
     - Whether max_pages stopped pagination.
   returned: list mode
   type: bool
+  sample: false
 request_id:
   description:
     - Last Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-t2
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

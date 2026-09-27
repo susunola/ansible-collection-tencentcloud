@@ -18,7 +18,6 @@ plugins/modules/dlc_ray_job_info.py: its tests drive run_module through a privat
 plugins/modules/dlc_ray_job_list_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/gaap_layer4_listener_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/monitor_grafana_integration_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
-plugins/modules/tat_invocation_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/tione_data_source_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/tione_model_service_diagnostics_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
 plugins/modules/tione_model_service_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
