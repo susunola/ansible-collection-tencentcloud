@@ -582,3 +582,26 @@ debt budget so the list cannot simply be extended.
   internal working documents; the guard works, but the coupling is fragile.
 - **No integration run is claimed here.** The integration targets need a real
   Tencent Cloud account.
+
+### Why the last modules still carry no RETURN sample
+
+Measured, not assumed: running the capture and comparing each unsampled module
+against the payload the recorder actually saw splits the remainder in two.
+
+* **29 produce no payload the census can use.** Their tests do run the module
+  (24 of them reach `run_module` through the shared harness), so the recorder
+  is not attributing those payloads to the module: the census looks a payload
+  up by module name, and one captured while a test module ran ends up under a
+  name it does not recognise. The follow-up is to record the module an
+  `exit_json` call came from -- the calling frame's `__name__` -- rather than
+  the test's snapshot, which would let these modules document themselves.
+* **5 return a list, not a mapping** (`cam_saml_provider`,
+  `cos_bucket_domain_certificate_info`, `cos_bucket_intelligent_tiering_info`,
+  `elasticsearch_index`, and one more). The writer only attaches a sample to a
+  documented key inside a dict, so a bare-list payload is skipped; the
+  follow-up is to attach the list to the module's single documented top-level
+  key instead of dropping it.
+
+Neither case is a coverage gap in the ordinary sense -- those modules are
+executed and asserted -- so the census is a documentation debt with two known,
+enumerated causes rather than an unexplained number.
