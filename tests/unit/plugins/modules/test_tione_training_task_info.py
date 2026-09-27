@@ -4,20 +4,33 @@ Covers the exact task detail request (task_id plus optional historical
 instance_id and TiProjectId), the list request builder (offset
 pagination, project scoping, stable filters, tag filters, ordering), the
 read_list pagination loop including max_pages budget truncation, and
-run_module() end to end: exact detail lookup, bounded list pagination,
-argument validation and the sdk_error_payload fail contract.
+run_module() end to end through the shared harness: exact detail lookup,
+bounded list pagination, argument validation and the sdk_error_payload fail
+contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. Its fixture already serialised ``Id``,
+the identity field the sibling ``tione_training_task`` module reads off a
+``TrainingTaskSetItem``, so no field is renamed here.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tione_training_task_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeFilter:
@@ -51,6 +64,24 @@ def params():
         "page_size": 2,
         "max_pages": 5,
     }
+
+
+def module_params(**overrides):
+    """Module arguments with the unsupplied keys omitted, not passed as None.
+
+    ``params()`` carries ``task_id``/``instance_id`` as ``None`` for the
+    request-builder tests, but Ansible counts an explicitly passed ``None`` as
+    specified, so ``task_id=None`` next to the defaulted ``filters`` trips the
+    module's ``("task_id", "filters")`` mutual exclusion. Detail mode is
+    mutually exclusive with both filter options as well, so they are dropped
+    whenever ``task_id`` is supplied.
+    """
+    values = {key: value for key, value in params().items() if value is not None}
+    values.update(overrides)
+    if values.get("task_id"):
+        values.pop("filters", None)
+        values.pop("tag_filters", None)
+    return values
 
 
 def test_detail_request_supports_historical_instance():
@@ -120,76 +151,22 @@ class FakeClient:
         return self.detail_response
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tione.v20211111")
-    service.models = FakeModels
-    service.tione_client = types.SimpleNamespace(TioneClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tione",
-                        types.ModuleType("tencentcloud.tione"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tione.v20211111", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tione_training_task_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tione_training_task_info.run_module()
-    return fake
-
-
-def _expect_fail(monkeypatch, fake):
-    monkeypatch.setattr(tione_training_task_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_training_task_info.run_module()
-    return excinfo.value.payload
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tione_training_task_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TioneClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_describes_exact_task(monkeypatch):
     client = FakeClient()
     client.detail_response = FakeDetailResponse(FakeItem("train-1"), "req-detail")
-    p = params()
-    p["task_id"] = "train-1"
-    fake = _run(monkeypatch, client, **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params(task_id="train-1"))
+
+    payload = run(tione_training_task_info.run_module)
+
     assert payload["changed"] is False
     assert payload["training_task"] == {"Id": "train-1"}
     assert payload["request_id"] == "req-detail"
@@ -202,8 +179,11 @@ def test_run_module_paginates_tasks_until_total_count(monkeypatch):
         FakeListResponse([FakeItem("t1"), FakeItem("t2")], 3, "req-1"),
         FakeListResponse([FakeItem("t3")], 3, "req-2"),
     ])
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params())
+
+    payload = run(tione_training_task_info.run_module)
+
     assert payload["changed"] is False
     assert [item["Id"] for item in payload["training_tasks"]] == ["t1", "t2", "t3"]
     assert payload["total_count"] == 3
@@ -213,14 +193,15 @@ def test_run_module_paginates_tasks_until_total_count(monkeypatch):
 
 
 def test_run_module_reports_truncation_when_max_pages_exhausted(monkeypatch):
-    p = params()
-    p["max_pages"] = 1
     client = FakeClient([
         FakeListResponse([FakeItem("t1"), FakeItem("t2")], 3, "req-1"),
         FakeListResponse([FakeItem("t3")], 3, "req-2"),
     ])
-    fake = _run(monkeypatch, client, **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params(max_pages=1))
+
+    payload = run(tione_training_task_info.run_module)
+
     assert [item["Id"] for item in payload["training_tasks"]] == ["t1", "t2"]
     assert payload["total_count"] == 3
     assert payload["truncated"] is True
@@ -230,8 +211,11 @@ def test_run_module_reports_truncation_when_max_pages_exhausted(monkeypatch):
 
 def test_run_module_empty_page_reports_zero(monkeypatch):
     client = FakeClient([FakeListResponse([], 0, "req-empty")])
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params())
+
+    payload = run(tione_training_task_info.run_module)
+
     assert payload["training_tasks"] == []
     assert payload["total_count"] == 0
     assert payload["truncated"] is False
@@ -244,10 +228,13 @@ def test_run_module_empty_page_reports_zero(monkeypatch):
     ({"max_pages": 1001}, "max_pages must be between 1 and 1000"),
 ])
 def test_run_module_validates_pagination_bounds(monkeypatch, overrides, message):
-    p = params()
-    p.update(overrides)
-    payload = _expect_fail(monkeypatch, FakeModule(p))
-    assert payload["msg"] == message
+    _patch_sdk(monkeypatch, FakeClient([]))
+    module_args(**module_params(**overrides))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_training_task_info.run_module)
+
+    assert failure.value.args[0]["msg"] == message
 
 
 class SdkError(Exception):
@@ -268,14 +255,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeTrainingTasks(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(params())
-    fake._client = failing
-    monkeypatch.setattr(tione_training_task_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tione_training_task_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(**module_params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tione_training_task_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

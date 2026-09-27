@@ -5,17 +5,30 @@ end-to-end over the config/files/readme artifact calls: request identity,
 independent artifact selection, ConfigJson parsing, the "no artifact
 selected" validation and the sdk_error_payload failure contract. This module
 has no paginator; each artifact is a single describe call.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the base
+class's ``create_client`` and the module's own ``_load`` (which is where it
+imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fixtures serialise ``ModelName``,
+``ConfigJson``, ``Files`` (``FileNode``) and ``Readme``, the fields the
+``GetModelConfig``/``GetModelFiles``/``GetModelReadme`` responses really carry,
+so the payload ``add_return_samples.py`` captures is the shape a caller sees.
 """
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_model_artifact_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class Request:
@@ -70,16 +83,6 @@ class FakeClient:
         return self._serve("readme", request)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
 class SDKError(Exception):
     def get_code(self):
         return "UnauthorizedOperation"
@@ -88,50 +91,12 @@ class SDKError(Exception):
         return "req-err"
 
 
-class FakeModule:
-    def __init__(self, params, client):
-        self.params = params
-        self.client = client
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self.client
-
-    def sdk_call(self, operation, request=None, retry=True):
-        if request is None:
-            return operation()
-        return operation(request)
-
-
-def _inject_sdk(monkeypatch):
-    service = types.ModuleType("tencentcloud.dlc.v20210125")
-    service.models = FakeModels
-    service.dlc_client = types.SimpleNamespace(DlcClient=object)
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
-                        types.ModuleType("tencentcloud.dlc"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
-
-
-def _run(monkeypatch, client, expect_fail=False, **p):
-    _inject_sdk(monkeypatch)
-    fake = FakeModule(p, client)
-    monkeypatch.setattr(dlc_model_artifact_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail if expect_fail else ModuleExit):
-        dlc_model_artifact_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(dlc_model_artifact_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(DlcClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_combines_all_artifacts_and_parses_config_json(monkeypatch):
@@ -140,8 +105,11 @@ def test_run_module_combines_all_artifacts_and_parses_config_json(monkeypatch):
         "files": {"Files": [{"Name": "weights"}], "RequestId": "rf"},
         "readme": {"Readme": "# Model", "RequestId": "rr"},
     })
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(dlc_model_artifact_info.run_module)
+
     assert payload["changed"] is False
     assert payload["request_ids"] == {"config": "rc", "files": "rf", "readme": "rr"}
     assert payload["config"]["Config"] == {"layers": 12}
@@ -155,8 +123,15 @@ def test_run_module_combines_all_artifacts_and_parses_config_json(monkeypatch):
 def test_run_module_honours_selection_and_tolerates_invalid_config_json(monkeypatch):
     p = params(include_files=False, include_readme=False)
     client = FakeClient({"config": {"ConfigJson": "not-json", "RequestId": "rc"}})
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **p)
+
+    payload = run(dlc_model_artifact_info.run_module)
+
+    # The real TencentCloudModule.exit_json adds the audit trail of the SDK
+    # calls it recorded, so take it out before the exact payload assertion.
+    calls = payload.pop("tc_api_calls")
+    assert [call["operation"] for call in calls] == ["GetModelConfig"]
     assert payload == {
         "changed": False,
         "request_ids": {"config": "rc"},
@@ -167,9 +142,13 @@ def test_run_module_honours_selection_and_tolerates_invalid_config_json(monkeypa
 
 def test_run_module_rejects_no_selected_artifact(monkeypatch):
     p = params(include_config=False, include_files=False, include_readme=False)
-    payload = _run(monkeypatch, None, expect_fail=True,
-                   region="ap-guangzhou", **p).fail_payload
-    assert payload["msg"] == "at least one model artifact must be selected"
+    _patch_sdk(monkeypatch, None)
+    module_args(region="ap-guangzhou", **p)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_model_artifact_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "at least one model artifact must be selected"
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
@@ -181,8 +160,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         GetModelFiles = _explode
         GetModelReadme = _explode
 
-    payload = _run(monkeypatch, FailingClient(), expect_fail=True,
-                   region="ap-guangzhou", **params()).fail_payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_model_artifact_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "UnauthorizedOperation"

@@ -92,21 +92,27 @@ notebooks:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Id: n1
 total_count:
   description:
     - Number of notebooks reported by the API.
   returned: always
   type: int
+  sample: 3
 truncated:
   description:
     - Whether max_pages stopped pagination.
   returned: always
   type: bool
+  sample: false
 request_id:
   description:
     - Request ID from the final page.
   returned: always
   type: str
+  sample: req-2
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

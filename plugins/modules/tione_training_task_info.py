@@ -101,27 +101,36 @@ training_task:
     - Exact training-task detail.
   returned: when task_id is provided
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: train-1
 training_tasks:
   description:
     - Matching training tasks.
   returned: in list mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Id: t1
 total_count:
   description:
     - Number of tasks reported by the API.
   returned: in list mode
   type: int
+  sample: 3
 truncated:
   description:
     - Whether max_pages stopped pagination.
   returned: in list mode
   type: bool
+  sample: false
 request_id:
   description:
     - Request ID from the exact request or final page.
   returned: always
   type: str
+  sample: req-detail
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

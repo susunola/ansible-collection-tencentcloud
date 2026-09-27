@@ -78,21 +78,39 @@ config:
     - Model config response, including raw ConfigJson and parsed Config when valid JSON.
   returned: when include_config
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ModelName: m
+    ConfigJson: '{"layers": 12}'
+    Config:
+      layers: 12
 files:
   description:
     - Model file-tree response.
   returned: when include_files
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Files:
+      - Name: weights
 readme:
   description:
     - Model README and descriptive metadata.
   returned: when include_readme
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Readme: '# Model'
 request_ids:
   description:
     - Request IDs keyed by requested artifact.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    config: rc
+    files: rf
+    readme: rr
 """
 
 import json
