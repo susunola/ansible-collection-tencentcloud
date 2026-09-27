@@ -38,7 +38,6 @@ dlc_ray_job_info
 dlc_ray_job_list_info
 elasticsearch_index
 gaap_layer4_listener_info
-key_pair_info
 monitor_grafana_integration_info
 monitor_grafana_whitelist_info
 monitor_prometheus_alertmanager_config_info

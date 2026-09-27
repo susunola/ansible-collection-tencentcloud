@@ -75,10 +75,14 @@ key_pairs:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - KeyId: skey-a
 total_count:
   description: Number of key pairs reported by the API.
   returned: always
   type: int
+  sample: 3
 '''
 
 from ansible.module_utils.basic import AnsibleModule

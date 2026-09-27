@@ -1,9 +1,16 @@
 """Deep harness tests for key_pair_info.
 
-Covers build_request (pagination, key ids, sorted filters, scalar
-value wrapping) and run_module() end to end: multi-page collection
-driven by TotalCount, an empty result set, and the sdk_call fail
+Covers build_request (pagination, key ids, sorted filters, scalar value
+wrapping) and run_module() end to end through the shared harness: multi-page
+collection driven by TotalCount, an empty result set, and the sdk_call fail
 contract (msg/error/error_code/request_id).
+
+The module builds its own SDK client, so the tests still inject a fake
+``tencentcloud.cvm.v20170312`` service and patch the two factories. They no
+longer replace ``AnsibleModule`` with a private double, which is what makes
+the payload observable: the fixture returns ``KeyId`` rather than a generic
+``Marker``, because that payload is now what ``add_return_samples.py``
+captures as the module's documented sample.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -16,6 +23,11 @@ import types
 import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import key_pair_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeFilter:
@@ -56,7 +68,7 @@ class FakeItem:
         self.marker = marker
 
     def _serialize(self, allow_none=True):
-        return {"Marker": self.marker}
+        return {"KeyId": self.marker}
 
 
 class FakeResponse:
@@ -76,31 +88,6 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(Exception):
-    pass
-
-
-class ModuleFail(Exception):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.cvm.v20170312")
     service.models = FakeModels
@@ -111,40 +98,51 @@ def _inject_sdk(monkeypatch, client):
     monkeypatch.setitem(sys.modules, "tencentcloud.cvm.v20170312", service)
 
 
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    monkeypatch.setattr(key_pair_info, "AnsibleModule", lambda **kwargs: fake)
+@pytest.fixture
+def sdk(monkeypatch):
+    """Patch the credential/client factories the module builds its client with."""
     monkeypatch.setattr(key_pair_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(key_pair_info, "create_client_profile", lambda module, endpoint: object())
-    with pytest.raises(ModuleExit):
-        key_pair_info.run_module()
-    return fake
+    monkeypatch.setattr(key_pair_info, "create_client_profile",
+                        lambda module, endpoint: object())
 
 
-def test_run_module_paginates_until_total_count(monkeypatch):
+def _args(**extra):
+    """Pass one of key_ids/filters: the module makes them mutually exclusive."""
+    params = {"region": "ap-guangzhou", "page_size": 2}
+    params.update(extra or {"filters": {}})
+    module_args(**params)
+
+
+def test_run_module_paginates_until_total_count(monkeypatch, sdk):
     client = FakeClient([
-        FakeResponse([FakeItem("a"), FakeItem("b")], 3),
-        FakeResponse([FakeItem("c")], 3),
+        FakeResponse([FakeItem("skey-a"), FakeItem("skey-b")], 3),
+        FakeResponse([FakeItem("skey-c")], 3),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", key_ids=None, filters={}, page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(key_pair_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["key_pairs"]] == ["a", "b", "c"]
+    assert [item["KeyId"] for item in payload["key_pairs"]] == [
+        "skey-a", "skey-b", "skey-c"]
     assert payload["total_count"] == 3
     assert [request.Offset for request in client.requests] == [0, 2]
 
 
-def test_run_module_returns_empty_on_empty_first_page(monkeypatch):
+def test_run_module_returns_empty_on_empty_first_page(monkeypatch, sdk):
     client = FakeClient([FakeResponse([], 0)])
-    fake = _run(monkeypatch, client, region="ap-guangzhou", key_ids=None, filters={}, page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(key_pair_info.run_module)
+
     assert payload["key_pairs"] == []
     assert payload["total_count"] == 0
     assert len(client.requests) == 1
 
 
-def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch, sdk):
     class FailingClient:
         def DescribeKeyPairs(self, request):
             raise RuntimeError("api exploded")
@@ -163,14 +161,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
             )
 
     _inject_sdk(monkeypatch, FailingClient())
-    fake = FakeModule({"region": "ap-guangzhou", "key_ids": None, "filters": {}, "page_size": 2})
-    monkeypatch.setattr(key_pair_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(key_pair_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(key_pair_info, "create_client_profile", lambda module, endpoint: object())
     monkeypatch.setattr(key_pair_info, "sdk_call", failing_sdk_call)
-    with pytest.raises(ModuleFail) as excinfo:
-        key_pair_info.run_module()
-    payload = excinfo.value.payload
+    _args()
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(key_pair_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"
