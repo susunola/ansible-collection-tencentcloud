@@ -1,0 +1,10 @@
+---
+minor_changes:
+  - >-
+    docs - record why the last 34 modules carry no RETURN sample, measured
+    rather than assumed: 29 produce no payload the recorder can attribute to
+    them (their tests do run the module, but the capture looks the payload up
+    by module name and does not recognise it) and 5 return a list rather than a
+    mapping, which the sample writer cannot attach to a documented key. Both
+    causes are enumerated with their follow-ups, so the remaining documentation
+    debt is a known quantity rather than a mystery.
