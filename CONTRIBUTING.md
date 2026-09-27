@@ -136,9 +136,13 @@ Migrating one is five steps, verified on `vpc_info`, `subnet_info`,
    `_run`) and the `pytest.raises(ModuleExit)` wrapper -- `run()` returns the
    payload instead;
 3. add a small `sdk` fixture for the factories the module builds its client
-   with (`create_credential`, `create_client_profile`) and keep the
-   `sys.modules` injection of the fake SDK service, which the harness does not
-   provide because the module reaches the SDK directly;
+   with and keep the `sys.modules` injection of the fake SDK service, which the
+   harness does not provide because the module reaches the SDK directly. Which
+   factories depends on what the module subclasses: an `AnsibleModule` module
+   has `create_credential` and `create_client_profile` imported into its own
+   namespace, while a `TencentCloudModule` module calls
+   `module.create_client(cls, endpoint)` -- patch that method on the class and
+   let `module_args()` supply the credentials the base class validates;
 4. replace `pytest.raises(ModuleFail)` with `pytest.raises(AnsibleFailJson)`
    and read the payload from `failure.value.args[0]`;
 5. **make the fixture realistic at the same moment.** The payload becomes the
