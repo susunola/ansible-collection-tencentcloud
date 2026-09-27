@@ -25,7 +25,6 @@ cos_bucket_referer_info
 cos_bucket_replication_info
 cos_bucket_response_control_info
 cos_bucket_website_info
-cvm_instance_info
 dlc_inference_engine_info
 dlc_inference_model_info
 dlc_inference_service_info

@@ -3,7 +3,13 @@
 Covers build_request (instance-id passthrough, stable filter ordering,
 offset/limit pagination), run_module offset pagination until the reported
 total count is reached, empty-page termination and the sdk_call failure
-contract.
+contract -- driven through the shared harness rather than a private double.
+
+The module builds its own SDK client, so the tests still inject a fake
+``tencentcloud.cvm.v20170312`` service and patch the two factories. Driving
+the real ``AnsibleModule`` is what makes the payload observable, and the
+fixture already serialises ``InstanceId``, so the captured payload is what
+``add_return_samples.py`` writes into the module's RETURN sample.
 """
 from __future__ import absolute_import, division, print_function
 
@@ -15,6 +21,11 @@ import types
 import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import cvm_instance_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeFilter:
@@ -63,6 +74,7 @@ class FakeResponse:
     def __init__(self, items, total_count):
         self.InstanceSet = items
         self.TotalCount = total_count
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -75,31 +87,6 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.cvm.v20170312")
     service.models = FakeModels
@@ -110,43 +97,58 @@ def _inject_sdk(monkeypatch, client):
     monkeypatch.setitem(sys.modules, "tencentcloud.cvm.v20170312", service)
 
 
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    monkeypatch.setattr(cvm_instance_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(cvm_instance_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(cvm_instance_info, "create_client_profile", lambda module, endpoint: object())
-    with pytest.raises(ModuleExit):
-        cvm_instance_info.run_module()
-    return fake
+@pytest.fixture
+def sdk(monkeypatch):
+    """Patch the credential/client factories the module builds its client with."""
+    monkeypatch.setattr(cvm_instance_info, "create_credential",
+                        lambda module: object())
+    monkeypatch.setattr(cvm_instance_info, "create_client_profile",
+                        lambda module, endpoint: object())
 
 
-def test_run_module_paginates_until_total_count(monkeypatch):
+def _args(**extra):
+    """Pass one of instance_ids/filters: they are mutually exclusive.
+
+    ``page_size`` has choices (20/50/100) rather than a free integer -- the
+    private harness never validated it, which is one of the reasons the real
+    one is worth the migration.
+    """
+    params = {"region": "ap-guangzhou", "page_size": 20}
+    params.update(extra or {"filters": {}})
+    module_args(**params)
+
+
+def test_run_module_paginates_until_total_count(monkeypatch, sdk):
     client = FakeClient([
         FakeResponse([FakeItem("ins-a"), FakeItem("ins-b")], 3),
         FakeResponse([FakeItem("ins-c")], 3),
     ])
-    fake = _run(monkeypatch, client, region="ap-guangzhou",
-                instance_ids=None, filters={}, page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(cvm_instance_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["InstanceId"] for item in payload["instances"]] == ["ins-a", "ins-b", "ins-c"]
+    assert [item["InstanceId"] for item in payload["instances"]] == [
+        "ins-a", "ins-b", "ins-c"]
     assert payload["total_count"] == 3
     assert [request.Offset for request in client.requests] == [0, 2]
-    assert [request.Limit for request in client.requests] == [2, 2]
+    assert [request.Limit for request in client.requests] == [20, 20]
 
 
-def test_run_module_stops_on_empty_first_page(monkeypatch):
+def test_run_module_stops_on_empty_first_page(monkeypatch, sdk):
     client = FakeClient([FakeResponse([], 0)])
-    fake = _run(monkeypatch, client, region="ap-guangzhou",
-                instance_ids=None, filters={}, page_size=2)
-    payload = fake.exit_payload
+    _inject_sdk(monkeypatch, client)
+    _args()
+
+    payload = run(cvm_instance_info.run_module)
+
     assert payload["instances"] == []
     assert payload["total_count"] == 0
     assert len(client.requests) == 1
 
 
-def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch, sdk):
     class FailingClient:
         def DescribeInstances(self, request):
             raise RuntimeError("api exploded")
@@ -165,19 +167,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
             )
 
     _inject_sdk(monkeypatch, FailingClient())
-    fake = FakeModule({
-        "region": "ap-guangzhou",
-        "instance_ids": None,
-        "filters": {},
-        "page_size": 2,
-    })
-    monkeypatch.setattr(cvm_instance_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(cvm_instance_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(cvm_instance_info, "create_client_profile", lambda module, endpoint: object())
     monkeypatch.setattr(cvm_instance_info, "sdk_call", failing_sdk_call)
-    with pytest.raises(ModuleFail) as excinfo:
-        cvm_instance_info.run_module()
-    payload = excinfo.value.payload
+    _args()
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(cvm_instance_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"
