@@ -254,17 +254,17 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
     elif resource_type == "elasticsearch_instance":
         request.InstanceNames = [name]
     elif resource_type in ("cfs_file_system", "chdfs_file_system", "chdfs_access_group", "chdfs_mount_point", "goosefs_file_system"):
-        pass
+        pass  # These APIs have no server-side name filter; client-side match only.
     elif resource_type in ("direct_connect", "direct_connect_tunnel"):
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "ckafka_instance":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "instance-name", [name]
         request.Filters = [api_filter]
     elif resource_type == "mqtt_instance":
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "event_bus":
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "rocketmq_cluster":
         request.NameKeyword = name
     elif resource_type == "rabbitmq_instance":
@@ -278,9 +278,9 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         api_filter.Name, api_filter.Values = "zone-name", [name]
         request.Filters = [api_filter]
     elif resource_type == "alb_load_balancer":
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type in ("gwlb_load_balancer", "gwlb_target_group"):
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "api_gateway_service":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "ServiceName", [name]
@@ -291,13 +291,13 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.Keyword = name
         request.SourceChannel = 0
     elif resource_type == "tcr_instance":
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "organization_member":
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "dts_migration_job":
         request.JobName = name
     elif resource_type == "gaap_proxy":
-        pass
+        pass  # No name filter available in the Describe API.
     elif resource_type == "autoscaling_group":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "auto-scaling-group-name", [name]

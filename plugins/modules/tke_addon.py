@@ -179,12 +179,21 @@ def _raw(value):
 
 
 def _canonical_raw(value):
+    """Decode the API's base64-encoded RawValues and normalise for comparison.
+
+    Returns ``None`` when *value* cannot be decoded, signalling the caller
+    that the live value is unreadable and drift detection must be skipped
+    rather than falsely reporting *changed* on every run.
+    """
     if not value:
         return _values_json({})
     try:
         value = base64.b64decode(value, validate=True).decode("utf-8")
     except (ValueError, UnicodeDecodeError):
-        pass
+        # The API returned a RawValues that is not valid base64 or not
+        # decodable as UTF-8.  Return None so the caller skips the drift
+        # check instead of reporting changed on every run.
+        return None
     return _values_json(value)
 
 
@@ -318,7 +327,11 @@ def run_module():
             current = wait_for_addon(module, client, models, p["cluster_id"], p["name"])
             module.exit_json(changed=True, **(diff or {}), addon=_safe(current), msg="TKE addon installed")
         version_drift = p["version"] is not None and current.get("AddonVersion") != p["version"]
-        values_drift = p["values"] is not None and _canonical_raw(current.get("RawValues")) != _values_json(p["values"])
+        canonical = _canonical_raw(current.get("RawValues"))
+        # canonical is None when the API returned a RawValues that could not
+        # be base64-decoded; skip the values comparison to avoid falsely
+        # reporting changed on every run.
+        values_drift = p["values"] is not None and canonical is not None and canonical != _values_json(p["values"])
         current_version = _version_tuple(current.get("AddonVersion"))
         desired_version = _version_tuple(p["version"])
         if version_drift and not p["allow_downgrade"] and current_version and desired_version and desired_version < current_version:
