@@ -116,6 +116,7 @@ import argparse
 import asyncio
 import json
 import os
+import sys
 import time
 
 
@@ -266,7 +267,10 @@ if __name__ == "__main__":
         try:
             while True:
                 event = await sink.get()
-                print(json.dumps(event, ensure_ascii=False, default=str))
+                # ansible-rulebook reads events from stdout; use explicit
+                # sys.stdout.write to make this intent clear.
+                sys.stdout.write(json.dumps(event, ensure_ascii=False, default=str) + "\n")
+                sys.stdout.flush()
         except KeyboardInterrupt:
             task.cancel()
 

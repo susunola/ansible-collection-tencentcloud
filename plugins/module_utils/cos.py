@@ -231,8 +231,13 @@ def fetch_appid(module):
             return str(response.AppId)
     except Exception:
         # No CAM permission, no CAM SDK, or an account shape CAM refuses:
-        # fall through to the STS-derived value.
-        pass
+        # fall through to the STS-derived AccountId (the root-account UIN).
+        # Warn so the user can tell the authoritative source was skipped.
+        module.warn(
+            "CAM GetUserAppId failed; falling back to STS AccountId. "
+            "If COS returns AccessDenied, grant cam:GetUserAppId or set "
+            "the appid module parameter explicitly."
+        )
     models, sts_client = _load_sts()
     sts = module.create_client(sts_client.StsClient, "sts.tencentcloudapi.com")
     response = module.sdk_call(sts.GetCallerIdentity, models.GetCallerIdentityRequest())
