@@ -1,0 +1,12 @@
+---
+bugfixes:
+  - >-
+    tests - the AppId fallback announces itself, so the test double has to be
+    able to listen. The observability change made ``fetch_appid`` call
+    ``module.warn`` when CAM is denied and the account id comes from STS, but
+    the module double in ``tests/unit/plugins/module_utils/test_cos.py`` was a
+    bare ``SimpleNamespace``: the fallback path raised ``AttributeError:
+    'types.SimpleNamespace' object has no attribute 'warn'`` and the unit-test
+    step failed on every leg of the push workflow. The double records warnings
+    now and the fallback test asserts the message, so the newly visible
+    behaviour is covered instead of being an error.

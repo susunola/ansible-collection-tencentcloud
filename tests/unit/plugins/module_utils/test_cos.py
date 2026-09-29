@@ -635,8 +635,14 @@ def test_get_bucket_lifecycle_maps_missing_configuration_to_empty():
 
 
 def _appid_module(cam_appid=None, cam_error=None, sts_account="200037874754"):
-    """Module double whose CAM/STS clients answer AppId lookups."""
+    """Module double whose CAM/STS clients answer AppId lookups.
+
+    ``warnings`` records what the module told the user through ``module.warn``:
+    the CAM-denied fallback announces itself now, and a double without ``warn``
+    turns that observability into an AttributeError instead of a test.
+    """
     seen = []
+    warnings = []
 
     def create_client(client_class, endpoint):
         seen.append(endpoint)
@@ -653,7 +659,10 @@ def _appid_module(cam_appid=None, cam_error=None, sts_account="200037874754"):
     def sdk_call(method, request, **kwargs):
         return method(request)
 
-    return SimpleNamespace(params={}, create_client=create_client, sdk_call=sdk_call), seen
+    module = SimpleNamespace(params={}, create_client=create_client,
+                             sdk_call=sdk_call, warn=warnings.append,
+                             warnings=warnings)
+    return module, seen
 
 
 def _stub_credential_sdk(monkeypatch):
@@ -713,6 +722,8 @@ def test_fetch_appid_falls_back_to_sts_when_cam_is_denied(monkeypatch):
     module, seen = _appid_module(cam_error=RuntimeError("cam:GetUserAppId denied"))
     assert cos.fetch_appid(module) == "200037874754"
     assert seen == ["cam.tencentcloudapi.com", "sts.tencentcloudapi.com"]
+    assert len(module.warnings) == 1
+    assert "falling back to STS AccountId" in module.warnings[0]
 
 
 def test_resolve_appid_prefers_the_explicit_parameter():
