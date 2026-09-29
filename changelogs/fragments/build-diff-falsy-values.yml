@@ -1,0 +1,11 @@
+---
+bugfixes:
+  - >-
+    module_utils - keep falsy values in a diff. ``build_diff`` folded the
+    current and desired state into ``None`` whenever either was falsy, so
+    ``--diff`` and check mode reported a resource that is currently off, zero or
+    empty as if it were absent: ``{"before": None, "after": True}`` instead of
+    ``{"before": False, "after": True}``. Only ``None`` means absent now.
+    Measured across the whole unit suite, monitor_grafana_internet is the module
+    that actually passes such a value, and its check-mode test pinned the folded
+    output -- that assertion is corrected in this commit rather than kept.

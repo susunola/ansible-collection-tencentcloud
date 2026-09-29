@@ -21,6 +21,15 @@ def test_build_diff_create():
     assert build_diff(None, {"name": "web"}) == {"before": None, "after": {"name": "web"}}
 
 
+def test_build_diff_keeps_falsy_values():
+    """False, 0 and "" are values, not absence."""
+    assert build_diff(False, True) == {"before": False, "after": True}
+    assert build_diff(0, 5) == {"before": 0, "after": 5}
+    assert build_diff("", "x") == {"before": "", "after": "x"}
+    assert build_diff({"off": False}, {"off": True}) == {
+        "before": {"off": False}, "after": {"off": True}}
+
+
 def test_build_diff_delete():
     assert build_diff({"name": "web"}, None) == {"before": {"name": "web"}, "after": None}
 

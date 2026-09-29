@@ -276,7 +276,9 @@ def test_run_module_check_mode_predicts_the_change_without_writing(monkeypatch):
     assert payload.keys() == {"changed", "enabled", "diff", "tc_api_calls"}
     assert payload["changed"] is True
     assert payload["enabled"] is True
-    assert payload["diff"] == {"before": None, "after": True}
+    # The instance is currently off, so ``before`` is False -- an earlier
+    # build_diff folded that into None and this test pinned the folding.
+    assert payload["diff"] == {"before": False, "after": True}
     assert client.operations == ["DescribeGrafanaInstances"]
     assert client.instances[0]["InternetUrl"] == ""
 

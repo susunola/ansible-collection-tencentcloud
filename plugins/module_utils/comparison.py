@@ -30,8 +30,13 @@ def build_diff(before, after):
     :returns: dict with ``before`` and ``after`` keys, or ``None`` when both
         sides are empty/absent (nothing to show).
     """
-    before = _normalize(before) if before else None
-    after = _normalize(after) if after else None
+    # ``is not None``, not truthiness: ``False``, ``0`` and ``""`` are values a
+    # resource can hold, and folding them into "absent" makes --diff and check
+    # mode report a currently-off switch as if nothing were there. Measured
+    # across the whole unit suite, monitor_grafana_internet is the module that
+    # actually passes such a value (before=False).
+    before = _normalize(before) if before is not None else None
+    after = _normalize(after) if after is not None else None
     if before is None and after is None:
         return None
     return {"before": before, "after": after}
