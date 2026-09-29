@@ -207,7 +207,9 @@ def comparable(value):
         "SnapshotName": value.get("SnapshotName"),
         "Indices": sorted(set(value.get("Indices") or [])),
         "EsRepositoryType": int(value.get("EsRepositoryType") or 0),
-        "StorageDuration": int(value.get("StorageDuration") or 7),
+        # 0 is a legal StorageDuration ("keep forever"), so only a value the
+        # service did not return at all falls back to the documented 7 days.
+        "StorageDuration": int(value["StorageDuration"]) if value.get("StorageDuration") is not None else 7,
         "CosRetention": int(value.get("CosRetention") or 0),
         "RetainUntilDate": value.get("RetainUntilDate"),
         "RetentionGraceTime": int(value.get("RetentionGraceTime") or 0),

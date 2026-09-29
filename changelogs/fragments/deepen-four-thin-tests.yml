@@ -1,0 +1,20 @@
+---
+bugfixes:
+  - >-
+    elasticsearch_snapshot - read ``StorageDuration: 0`` as the value it is.
+    ``comparable()`` treated a zero storage window as unset (``or 7``), so a
+    snapshot created with ``storage_days: 0`` ("keep forever", legal per the
+    API's [0, INF) contract) was reported as drift: the run failed demanding
+    ``force_replace=true``, and with it the module deleted and recreated an
+    already-correct snapshot. Missing still defaults to 7.
+minor_changes:
+  - >-
+    tests - deepen the next four module test files the roadmap's P0-09 badge
+    flagged as shallow, from 28-36 lines to 287-756: chdfs_mount_access_groups_info,
+    dnspod_custom_line, dnspod_line_group, elasticsearch_index,
+    elasticsearch_snapshot, lighthouse_key_pair and lighthouse_snapshot now have
+    their required options, request shapes, documented return keys as exact key
+    sets, empty/not-found paths, failure envelopes, check mode and idempotency
+    pinned through the shared harness with SDK-shaped fakes (122 tests where
+    there were 7). The badge's list of files under 80 lines falls from 7 to 3,
+    and one real defect was found by doing it.
