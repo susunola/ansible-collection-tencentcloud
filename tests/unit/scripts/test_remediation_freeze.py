@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import runpy
+import subprocess
 import sys
 from pathlib import Path
 
@@ -37,15 +37,20 @@ SCRIPT = _find_script("check_remediation_freeze.py")
            "was copied into (ansible-test units copies tests without scripts/)",
 )
 def test_freeze_script_print_exits_zero():
-    previous = sys.argv[:]
-    try:
-        sys.argv = [str(SCRIPT), "--print"]
-        try:
-            runpy.run_path(str(SCRIPT), run_name="__not_main__")
-        except SystemExit as exc:
-            assert exc.code in (0, None)
-    finally:
-        sys.argv = previous
+    """Run the script the way a user does.
+
+    ``runpy.run_path`` on the script path raises ``ImportError: can't find
+    '__main__' module in '<script>'`` under ``ansible-test units`` (its pytest
+    invocation runs from the collection root, and runpy treats the path as a
+    directory there), which says nothing about the script. A subprocess has no
+    such heuristic: it runs the file and reports the exit status the test is
+    actually about.
+    """
+    finished = subprocess.run(
+        [sys.executable, str(SCRIPT), "--print"],
+        cwd=str(ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    )
+    assert finished.returncode == 0, finished.stdout.decode("utf-8", "replace")
 
 
 def test_allowlist_stays_under_cap():
