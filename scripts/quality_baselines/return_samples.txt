@@ -8,3 +8,13 @@
 # removed from scripts/quality_baselines/return_samples.txt
 cam_saml_provider
 cdb_database_info
+#
+# Why two and not zero -- measured, not assumed:
+#   cam_saml_provider      the value under `saml_provider` is one long scalar;
+#   cdb_database_info      same shape under its remaining entry.
+# Neither can be folded inside the 150-character line budget that
+# add_return_samples.py enforces without altering the value it documents (a
+# folded YAML scalar inserts spaces into a JSON string). They are the budget's
+# floor, not a thinner form of the debt the rest of this file used to be:
+# every other module documents what it returns, and organization_member_identity
+# left this list once choose_sample stopped letting an empty capture win.
