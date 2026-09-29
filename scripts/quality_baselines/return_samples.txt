@@ -8,4 +8,3 @@
 # removed from scripts/quality_baselines/return_samples.txt
 cam_saml_provider
 cdb_database_info
-organization_member_identity

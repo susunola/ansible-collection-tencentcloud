@@ -349,6 +349,14 @@ def choose_sample(payloads, key):
         if key not in payload:
             continue
         sample = sample_of(payload[key])
+        if sample is None or not sample:
+            # An empty capture is not a sample. Most modules' tests include an
+            # empty-result case, and under the longest-wins rule below an empty
+            # candidate can beat the real value: "null" (4 characters) and "[]" (2)
+            # both outrank a pruned list's "[1]" (3), because sample_of reduces a
+            # list to its first element. That is how a key the module really returns
+            # ended up with no sample at all.
+            continue
         candidates.append((len(json.dumps(sample, sort_keys=True, default=str)),
                            json.dumps(sample, sort_keys=True, default=str),
                            sample))

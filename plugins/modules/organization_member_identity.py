@@ -68,7 +68,11 @@ RETURN = r"""identity_ids:
     - Resulting identity ID set.
   returned: always
   type: list
-  elements: int"""
+  elements: int
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - 1
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

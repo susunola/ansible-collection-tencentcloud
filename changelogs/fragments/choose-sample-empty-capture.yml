@@ -1,0 +1,17 @@
+---
+bugfixes:
+  - >-
+    scripts - stop an empty capture from winning the sample. ``choose_sample``
+    picked the candidate with the longest JSON, and ``sample_of`` prunes a list
+    to its first element: an empty list prunes to ``None``, whose JSON "null"
+    (4 characters) outranks a real "[1]" (3), so a module whose tests include
+    the usual empty-result case could keep no sample even though its payload
+    carried values. Candidates that are empty are no longer considered, with a
+    test that pins both halves of it.
+minor_changes:
+  - >-
+    docs - organization_member_identity now documents what it returns. Its
+    census entry was this bug, not a thin test: the write module's own tests
+    assert ``identity_ids == [1, 12]`` while the writer kept choosing the empty
+    capture. The sample census falls from 3 to 2, and what is left is the pair
+    whose values cannot be folded inside the 150-character line budget.

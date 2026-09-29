@@ -63,6 +63,18 @@ def test_choose_sample_is_deterministic_and_prefers_the_richest(samples):
     assert samples.choose_sample(payloads, "absent") is None
 
 
+def test_choose_sample_ignores_an_empty_capture(samples):
+    """An empty capture must not win over a value the module returns.
+
+    sample_of prunes a list to its first element, so an empty list prunes
+    to None and its JSON, "null", is longer than a real "[1]" -- under the
+    longest-wins rule the empty capture won and the key kept no sample.
+    """
+    assert samples.choose_sample([{"k": [1]}, {"k": []}], "k") == [1]
+    assert samples.choose_sample([{"k": []}], "k") is None
+    assert samples.choose_sample([{"k": {}}, {"k": []}], "k") is None
+
+
 def test_render_sample_indents_sequences_and_inlines_scalars(samples):
     rendered = samples.render_sample({"a": [{"b": 1}]})
     assert rendered[0] == "  sample:"
