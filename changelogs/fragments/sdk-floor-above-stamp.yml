@@ -1,0 +1,10 @@
+---
+bugfixes:
+  - >-
+    requirements.txt - the declared floor was raised to 3.1.179 while the
+    generated _info artifacts are still stamped with 3.1.174, which the SDK
+    drift sentinel rejects: the artifacts were discovered from a release users
+    cannot install, and the floor was never the release under test. The floor
+    is back at the stamped 3.1.174 until the specs are re-discovered and the
+    modules regenerated against the newer release, which is the change that
+    should carry the bump.
