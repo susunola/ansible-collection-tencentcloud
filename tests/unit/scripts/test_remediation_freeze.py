@@ -7,10 +7,35 @@ import runpy
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[3]
-SCRIPT = ROOT / "scripts" / "check_remediation_freeze.py"
 
 
+def _find_script(name):
+    """Locate a repository script from wherever this test file was copied.
+
+    ``ansible-test units`` runs the tests from a copy that contains the plugin
+    tree but not ``scripts/``, so ``parents[3]`` alone points at a directory
+    where the script is absent and ``runpy`` answers with a confusing
+    ``ImportError: can't find '__main__' module``. Walking up looks in every
+    enclosing tree and says where it looked when it finds nothing.
+    """
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / "scripts" / name
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+SCRIPT = _find_script("check_remediation_freeze.py")
+
+
+@pytest.mark.skipif(
+    SCRIPT is None,
+    reason="scripts/check_remediation_freeze.py is outside the tree this test "
+           "was copied into (ansible-test units copies tests without scripts/)",
+)
 def test_freeze_script_print_exits_zero():
     previous = sys.argv[:]
     try:

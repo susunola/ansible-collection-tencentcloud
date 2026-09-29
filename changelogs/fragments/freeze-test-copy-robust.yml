@@ -1,0 +1,9 @@
+---
+bugfixes:
+  - >-
+    tests - stop the remediation-freeze test from depending on where it was
+    copied to. It resolved its script through ``parents[3]``, which under
+    ``ansible-test units`` points into a copy that holds the plugin tree but
+    not ``scripts/``, so the unit-test step failed with a misleading
+    ``ImportError: can't find '__main__' module``; the test now walks up to find
+    the script and skips with that reason when the tree genuinely is not there.
