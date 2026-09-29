@@ -1,0 +1,25 @@
+---
+bugfixes:
+  - >-
+    cos bucket readers - an empty provider configuration reads as absent, not as
+    a configured-but-empty one. ``normalize`` helpers returned a truthy empty
+    container for a present-but-empty config, so the ``[value] if value else []``
+    idiom desynchronised the documented plural/singular keys (``policies: []``
+    beside ``policy: {}``, ``website: {}`` with ``websites: []``,
+    ``encryption: {"Rule": []}``), and ``normalize_tiering`` raised ``KeyError``
+    on a config that omits the optional counters, so
+    ``cos_bucket_intelligent_tiering_info`` reported "Tencent Cloud COS request
+    failed" for an unconfigured bucket instead of an empty result. The nine
+    helpers in ``module_utils/cos_bucket_read.py`` and the three module-local
+    ones now share one rule -- a falsy response, or a falsy config once the
+    envelope is unwrapped, is ``None`` -- and missing counters default to zero.
+minor_changes:
+  - >-
+    tests - deepen the five COS bucket test files that the roadmap's P0-09 badge
+    flagged as shallow (23-29 lines each). They now drive their readers through
+    the shared harness with a fake ``qcloud_cos`` client and cover required
+    options, ``appid`` resolution versus a full bucket name, the exact reader
+    call, both documented return keys as an exact key set, the empty and
+    ``NoSuchBucket`` cases, the COS error envelope and ``changed is False``: 137
+    tests where there were 11. The badge's list of module test files under 80
+    lines falls from 12 to 7.

@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Shared COS bucket configuration reads used by resource and info modules."""
+"""Shared COS bucket configuration reads used by resource and info modules.
+
+Every ``normalize_*`` helper follows one rule: absence reads as ``None``. COS
+describes an unset feature either as nothing at all or as an empty envelope
+(``{"ResponseControlConfiguration": {}}``), so the response and the
+configuration unwrapped from it are both checked for falsiness. The modules
+pair a plural return key with a singular one built from
+``[value] if value else []``, so ``None`` is the only value that keeps the two
+agreeing: a present but empty envelope must not survive as ``{}`` or
+``{"Rule": []}``. What a helper reads out of a present configuration follows
+the same rule -- a missing counter is zero, an absent rule is no rule.
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -21,6 +32,8 @@ def normalize_certificate(value):
     if not value:
         return None
     root = value.get("DomainCertificate", value)
+    if not root:
+        return None
     info = root.get("CertificateInfo") or {}
     return {"Status": root.get("Status"), "CertType": root.get("CertType") or info.get("CertType"), "CertificateInfo": {"CertID": info.get("CertID")}}
 
@@ -33,6 +46,8 @@ def normalize_domains(value):
     if not value:
         return None
     root = value.get("DomainConfiguration", value)
+    if not root:
+        return None
     rules = root.get("DomainRule") or []
     if isinstance(rules, dict):
         rules = [rules]
@@ -53,10 +68,12 @@ def normalize_tiering(value):
     if not value:
         return None
     root = value.get("IntelligentTieringConfiguration", value)
+    if not root:
+        return None
     tiering = root.get("Tiering") or {}
     return {"Id": root.get("Id") or "default", "Status": root.get("Status"),
-            "Tiering": {"AccessTier": tiering.get("AccessTier"), "Days": int(tiering["Days"]),
-                        "RequestFrequent": int(tiering["RequestFrequent"])}}
+            "Tiering": {"AccessTier": tiering.get("AccessTier"), "Days": int(tiering.get("Days") or 0),
+                        "RequestFrequent": int(tiering.get("RequestFrequent") or 0)}}
 
 
 def get_rule(client, bucket):
@@ -66,7 +83,10 @@ def get_rule(client, bucket):
 def normalize_inventory(value, inventory_id):
     if not value:
         return None
-    result = copy.deepcopy(value.get("InventoryConfiguration", value))
+    root = value.get("InventoryConfiguration", value)
+    if not root:
+        return None
+    result = copy.deepcopy(root)
     result["Id"] = inventory_id
     optional = result.get("OptionalFields")
     if optional and isinstance(optional.get("Field"), list):
@@ -83,6 +103,8 @@ def normalize_object_lock(value):
     if not value:
         return None
     root = value.get("ObjectLockConfiguration", value)
+    if not root:
+        return None
     result = {"ObjectLockEnabled": root.get("ObjectLockEnabled")}
     rule = root.get("Rule") or {}
     retention = rule.get("DefaultRetention") or {}
@@ -104,6 +126,8 @@ def normalize_origin(value):
     if not value:
         return None
     root = value.get("OriginConfiguration", value)
+    if not root:
+        return None
     rules = root.get("OriginRule") or []
     if isinstance(rules, dict):
         rules = [rules]
@@ -118,6 +142,8 @@ def normalize_referer(value):
     if not value:
         return None
     root = value.get("RefererConfiguration", value)
+    if not root:
+        return None
     if root.get("Status") != "Enabled":
         return None
     domains = (root.get("DomainList") or {}).get("Domain") or []
@@ -136,6 +162,8 @@ def normalize_replication(value):
     if not value:
         return None
     root = value.get("ReplicationConfiguration", value)
+    if not root:
+        return None
     rules = root.get("Rule") or []
     return {"Role": root.get("Role"), "Rule": sorted(rules, key=lambda x: (x.get("ID") or "", x.get("Prefix") or ""))}
 
@@ -148,6 +176,8 @@ def normalize_control(value):
     if not value:
         return None
     root = value.get("ResponseControlConfiguration", value)
+    if not root:
+        return None
     params = (root.get("ControlParamList") or {}).get("Param") or []
     if isinstance(params, str):
         params = [params]

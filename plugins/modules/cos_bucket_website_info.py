@@ -70,7 +70,10 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import 
 def normalize(value):
     if not value:
         return None
-    return value.get("WebsiteConfiguration", value)
+    root = value.get("WebsiteConfiguration", value)
+    if not root:
+        return None
+    return root
 
 
 def read_website(client, bucket):

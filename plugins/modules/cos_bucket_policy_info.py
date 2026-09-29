@@ -70,7 +70,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import 
 
 
 def normalize(value):
-    if value is None:
+    if not value:
         return None
     if isinstance(value, str):
         value = json.loads(value)

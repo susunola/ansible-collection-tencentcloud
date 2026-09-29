@@ -71,7 +71,10 @@ def normalize(value):
     if not value:
         return None
     root = value.get("ServerSideEncryptionConfiguration", value)
-    return {"Rule": root.get("Rule") or []}
+    rules = root.get("Rule") or []
+    if not rules:
+        return None
+    return {"Rule": rules}
 
 
 def read_encryption(client, bucket):
