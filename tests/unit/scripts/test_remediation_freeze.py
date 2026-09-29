@@ -49,6 +49,7 @@ def test_freeze_script_print_exits_zero():
     finished = subprocess.run(
         [sys.executable, str(SCRIPT), "--print"],
         cwd=str(ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        check=False,
     )
     assert finished.returncode == 0, finished.stdout.decode("utf-8", "replace")
 
