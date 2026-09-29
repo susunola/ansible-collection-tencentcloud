@@ -1,0 +1,11 @@
+---
+bugfixes:
+  - >-
+    scripts - revert the attempt to document a bare-list payload from the
+    capture. The sample gate caught it immediately: the recorder stores a list
+    of payloads per module, so attaching "the payload" to the single unsampled
+    key wrote the whole capture into the sample
+    (``[{"changed": null, "identity_ids": [null]}]``) instead of the value the
+    key holds. The capability is worth having and needs the payload's own value
+    for that key, not the payload list; until then the census stays at 3, which
+    is the honest number.
