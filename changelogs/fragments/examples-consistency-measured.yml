@@ -1,0 +1,10 @@
+---
+minor_changes:
+  - >-
+    docs - record that two EXAMPLES consistency dimensions measure clean across
+    all 1027 modules: no example gives a ``choices`` option a value outside its
+    choices (templated values excluded), and no example passes an option the
+    module does not document. A gate for either would have no true positives to
+    report, so what ships is the measurement and the baseline it establishes --
+    a future regression is then a change from a known-clean state rather than an
+    unknown.

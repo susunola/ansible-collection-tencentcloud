@@ -664,3 +664,19 @@ A gate whose only possible findings are nine false positives is the kind that
 gets switched off, and a switched-off gate protects nothing. The rule is
 written down instead, next to the fix it came from; if the shape ever appears in
 a module, the reviewer reading this section has the classification to judge it.
+
+### EXAMPLES consistency: measured clean, so no gate
+
+Two dimensions of EXAMPLES quality that a gate could check were measured
+across all 1027 modules before deciding whether to write one:
+
+* a `choices` option given a value outside its choices in an example (templated
+  values skipped): **0 findings**;
+* an example task passing an option the module does not document: **0
+  findings**.
+
+Both are the state a reviewer would hope for, which means a check would have no
+true positives to report -- the same reason the truthiness check was not built.
+They are recorded here as measurements so the next person does not have to
+re-derive them, and so a future regression is recognised as a change from a
+clean baseline rather than as an unknown.
