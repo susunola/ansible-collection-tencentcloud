@@ -68,7 +68,121 @@ RETURN = r"""identity_ids:
     - Resulting identity ID set.
   returned: always
   type: list
-  elements: int"""
+  elements: int
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - changed: false
+      identity_ids: &id001
+        - 1
+        - 12
+    - changed: false
+      identity_ids: *id001
+      tc_api_calls:
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+    - changed: true
+      identity_ids: &id002
+        - 1
+        - 12
+    - changed: true
+      identity_ids: *id002
+      tc_api_calls:
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: CreateOrganizationMemberAuthIdentity
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+    - changed: true
+      diff: &id003
+        before:
+          - 1
+        after:
+          - 1
+          - 12
+      identity_ids: &id004
+        - 1
+    - changed: true
+      diff: *id003
+      identity_ids: *id004
+      tc_api_calls:
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+    - changed: true
+      identity_ids: &id005
+        - 1
+        - 12
+    - changed: true
+      identity_ids: *id005
+      tc_api_calls:
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: DeleteOrganizationMemberAuthIdentity
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+    - changed: false
+      identity_ids: &id006
+        - 1
+        - 30
+    - changed: false
+      identity_ids: *id006
+      tc_api_calls:
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+    - changed: true
+      identity_ids: &id007 []
+    - changed: true
+      identity_ids: *id007
+      tc_api_calls:
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: DeleteOrganizationMemberAuthIdentity
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: DeleteOrganizationMemberAuthIdentity
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+        - operation: DescribeOrganizationMemberAuthIdentities
+          request_id: null
+          duration_ms: 0
+          status: ok
+          error: null
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -438,6 +438,15 @@ def write_samples(payloads, out=sys.stdout):
             if "sample" in entry:
                 continue
             sample = choose_sample(payloads[name], key)
+            if sample is None and isinstance(payloads[name], list):
+                # A module whose payload is the list itself (no wrapping dict)
+                # cannot be matched to a key by name. When exactly one
+                # documented entry is still unsampled there is nothing to
+                # guess: that entry is the list.
+                pending = [other for other, entry in entries.items()
+                           if "sample" not in entry]
+                if len(pending) == 1:
+                    sample = payloads[name]
             if sample is None:
                 no_value += 1
                 continue
