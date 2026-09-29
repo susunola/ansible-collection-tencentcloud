@@ -1,0 +1,9 @@
+---
+bugfixes:
+  - >-
+    ci - reconcile the remediation freeze's README ceiling with the merged tree.
+    The ceiling was measured before the README documentation that was already
+    on main (dependency policy, verification commands) and rejected the merged
+    result at 1377 lines, so the branch had no green push run. The ceiling is
+    now the merged figure with the reason recorded next to it, and it must not
+    rise from here; trimming the README lowers it again.

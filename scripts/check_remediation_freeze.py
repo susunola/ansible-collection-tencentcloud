@@ -30,7 +30,12 @@ FREEZE = {
     "roles": 68,
     "extra_plugins": 16,
     "ignore_entries": 144,
-    "readme_lines": 1370,
+    # Re-baselined to the merged tree: the README documentation that landed
+    # on main before this freeze was written (dependency policy, verification
+    # commands) put the file at 1377, so the ceiling measured on the older base
+    # was stale rather than the file bloated. Lower it again when the README is
+    # trimmed; it must not rise from here.
+    "readme_lines": 1377,
 }
 
 PLUGIN_DIRS = (
