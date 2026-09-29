@@ -56,11 +56,29 @@ referers:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Status: Enabled
+      RefererType: White-List
+      EmptyReferConfiguration: Deny
+      DomainList:
+        Domain:
+          - '*.example.com'
+          - app.example.com
 referer:
   description:
     - Effective referer configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: Enabled
+    RefererType: White-List
+    EmptyReferConfiguration: Deny
+    DomainList:
+      Domain:
+        - '*.example.com'
+        - app.example.com
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

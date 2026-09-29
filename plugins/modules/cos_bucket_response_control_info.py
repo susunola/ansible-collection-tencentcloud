@@ -55,11 +55,23 @@ response_controls:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ControlParamList:
+        Param:
+          - response-content-type
+          - response-expires
 response_control:
   description:
     - Effective response-control configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ControlParamList:
+      Param:
+        - response-content-type
+        - response-expires
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

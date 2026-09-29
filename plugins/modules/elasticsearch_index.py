@@ -106,7 +106,32 @@ RETURN = r"""index:
   description:
     - Elasticsearch index metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    IndexType: normal
+    IndexName: orders
+    IndexMetaJson: '{"mappings": {"dynamic": "true", "properties": {"order_id": {"type": "keyword"}}}, "settings":
+      {"number_of_replicas": 1, "number_of_shards": 3, "refresh_interval": "1s"}}'
+    IndexStatus: open
+    IndexStorage: 4096
+    IndexCreateTime: '2026-02-01 09:12:44'
+    ClusterId: es-9a1b2c3d
+    ClusterName: search-prod
+    ClusterVersion: 7.14.2
+    AppId: 1300000000
+    IndexDocs: 12345
+    Metadata:
+      mappings:
+        dynamic: 'true'
+        properties:
+          order_id:
+            type: keyword
+      settings:
+        number_of_replicas: 1
+        number_of_shards: 3
+        refresh_interval: 1s
+"""
 
 import json
 

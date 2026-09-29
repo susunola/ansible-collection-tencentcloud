@@ -56,11 +56,21 @@ logging_configurations:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - LoggingEnabled:
+        TargetBucket: logs-1300000000
+        TargetPrefix: access/
 logging:
   description:
     - Effective logging configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    LoggingEnabled:
+      TargetBucket: logs-1300000000
+      TargetPrefix: access/
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

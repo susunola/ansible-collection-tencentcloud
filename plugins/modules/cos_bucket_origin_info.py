@@ -56,11 +56,29 @@ origins:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - OriginRule:
+        - RulePriority: '1'
+          OriginType: OriginTypeCrawler
+          OriginParameter: crawler.example
+        - RulePriority: '2'
+          OriginType: OriginTypeHeader
+          OriginParameter: X-Forwarded-Host
 origin:
   description:
     - Effective origin configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    OriginRule:
+      - RulePriority: '1'
+        OriginType: OriginTypeCrawler
+        OriginParameter: crawler.example
+      - RulePriority: '2'
+        OriginType: OriginTypeHeader
+        OriginParameter: X-Forwarded-Host
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

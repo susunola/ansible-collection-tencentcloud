@@ -56,11 +56,27 @@ encryptions:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Rule:
+        - ApplyServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+        - ApplyServerSideEncryptionByDefault:
+            SSEAlgorithm: KMS
+            KMSMasterKeyID: key-1
 encryption:
   description:
     - Effective encryption configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Rule:
+      - ApplyServerSideEncryptionByDefault:
+          SSEAlgorithm: AES256
+      - ApplyServerSideEncryptionByDefault:
+          SSEAlgorithm: KMS
+          KMSMasterKeyID: key-1
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

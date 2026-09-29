@@ -56,11 +56,23 @@ websites:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - IndexDocument:
+        Suffix: index.html
+      ErrorDocument:
+        Key: error.html
 website:
   description:
     - Effective website configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    IndexDocument:
+      Suffix: index.html
+    ErrorDocument:
+      Key: error.html
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

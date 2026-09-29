@@ -1,0 +1,9 @@
+---
+minor_changes:
+  - >-
+    docs - 31 more modules now show the shape they return. With the recorder
+    attributing payloads to the module that produced them, the samples those
+    modules were always able to produce can finally be written: the census of
+    modules whose RETURN carries no sample falls from 34 to 3, and its ratchet
+    with it. The three left are the two whose payload cannot fit a line under
+    150 characters plus one whose capture is genuinely absent.

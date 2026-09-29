@@ -58,14 +58,28 @@ access_group_ids:
   returned: always
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ag-2
 mount_point:
   description: Matching CHDFS mount point metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    MountPointId: mp-3f8c1a2b
+    MountPointName: etl-mount
+    FileSystemId: f-4d7a91c3
+    Status: 1
+    CreateTime: '2026-01-08 11:22:33'
+    AccessGroupIds:
+      - ag-9
+      - ag-2
 request_id:
   description: Request ID returned by the API, for cross-referencing cloud audit logs.
   returned: always
   type: str
+  sample: req-chdfs-1
 '''
 
 from ansible.module_utils.basic import AnsibleModule

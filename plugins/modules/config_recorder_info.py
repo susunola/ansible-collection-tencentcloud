@@ -43,16 +43,29 @@ recorders:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Status: 1
+      ResourceTypes:
+        - QCS::CVM::Instance
+        - QCS::VPC::VPC
 recorder:
   description:
     - Recorder state and monitored resource types.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: 1
+    ResourceTypes:
+      - QCS::CVM::Instance
+      - QCS::VPC::VPC
 request_id:
   description:
     - Request ID returned by the API.
   returned: always
   type: str
+  sample: req-config-1
 '''
 
 from ansible.module_utils.basic import AnsibleModule

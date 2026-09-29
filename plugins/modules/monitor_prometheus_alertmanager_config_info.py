@@ -52,11 +52,22 @@ config:
     - Alertmanager configuration returned by the API.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InhibitRules:
+      - Equal:
+          - cluster
+        SourceMatch:
+          - Name: alertname
+            Value: DiskFull
+    Receivers:
+      - Name: ops-webhook
 request_id:
   description:
     - Request ID of the API call.
   returned: always
   type: str
+  sample: req-alertmanager
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -61,11 +61,23 @@ domain_certificates:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Status: Enabled
+      CertType: CustomCert
+      CertificateInfo:
+        CertID: 8u9example
 domain_certificate:
   description:
     - Effective certificate configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: Enabled
+    CertType: CustomCert
+    CertificateInfo:
+      CertID: 8u9example
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

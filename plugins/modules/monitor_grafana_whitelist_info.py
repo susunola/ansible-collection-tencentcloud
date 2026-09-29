@@ -53,11 +53,15 @@ whitelist:
   returned: always
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - 192.0.2.7/32
 request_id:
   description:
     - Request ID of the API call.
   returned: always
   type: str
+  sample: req-whitelist
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -61,11 +61,41 @@ inventories:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Id: daily-objects
+      IsEnabled: 'true'
+      Filter:
+        Prefix: logs/
+      OptionalFields:
+        Field:
+          - ETag
+          - Size
+      Schedule:
+        Frequency: Daily
+      Destination:
+        Bucket: dest-1300000000
+        Format: CSV
 inventory:
   description:
     - Effective inventory rule or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: daily-objects
+    IsEnabled: 'true'
+    Filter:
+      Prefix: logs/
+    OptionalFields:
+      Field:
+        - ETag
+        - Size
+    Schedule:
+      Frequency: Daily
+    Destination:
+      Bucket: dest-1300000000
+      Format: CSV
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

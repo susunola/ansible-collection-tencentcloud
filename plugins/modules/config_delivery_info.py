@@ -43,16 +43,33 @@ deliveries:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Status: 1
+      DeliverName: compliance-archive
+      TargetArn: qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-archive
+      DeliverPrefix: config
+      DeliverType: COS
+      DeliverContentType: 3
 delivery:
   description:
     - Config delivery configuration.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: 1
+    DeliverName: compliance-archive
+    TargetArn: qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-archive
+    DeliverPrefix: config
+    DeliverType: COS
+    DeliverContentType: 3
 request_id:
   description:
     - Request ID returned by the API.
   returned: always
   type: str
+  sample: req-config-1
 '''
 
 from ansible.module_utils.basic import AnsibleModule

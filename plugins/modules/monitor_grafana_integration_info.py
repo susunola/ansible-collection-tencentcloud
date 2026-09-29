@@ -61,16 +61,25 @@ integrations:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - IntegrationId: integration-2
+      Kind: target
 integration:
   description:
     - Single integration when exactly one matches.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    IntegrationId: integration-2
+    Kind: target
 request_id:
   description:
     - Request ID of the API call.
   returned: always
   type: str
+  sample: req-1
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

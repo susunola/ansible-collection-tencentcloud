@@ -55,11 +55,39 @@ replications:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Role: qcs::cam::uin/100000000001:uin/100000000001
+      Rule:
+        - ID: rule-a
+          Prefix: a/
+          Status: Enabled
+          Destination:
+            Bucket: dest-1300000000
+        - ID: rule-b
+          Prefix: b/
+          Status: Enabled
+          Destination:
+            Bucket: dest-1300000000
 replication:
   description:
     - Effective replication configuration or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Role: qcs::cam::uin/100000000001:uin/100000000001
+    Rule:
+      - ID: rule-a
+        Prefix: a/
+        Status: Enabled
+        Destination:
+          Bucket: dest-1300000000
+      - ID: rule-b
+        Prefix: b/
+        Status: Enabled
+        Destination:
+          Bucket: dest-1300000000
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

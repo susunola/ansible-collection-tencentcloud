@@ -56,11 +56,27 @@ intelligent_tiering_rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Id: default
+      Status: Enabled
+      Tiering:
+        AccessTier: INFREQUENT
+        Days: 30
+        RequestFrequent: 1
 intelligent_tiering:
   description:
     - Effective default intelligent-tiering rule or null.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: default
+    Status: Enabled
+    Tiering:
+      AccessTier: INFREQUENT
+      Days: 30
+      RequestFrequent: 1
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
