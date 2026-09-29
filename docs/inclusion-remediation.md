@@ -605,3 +605,23 @@ against the payload the recorder actually saw splits the remainder in two.
 Neither case is a coverage gap in the ordinary sense -- those modules are
 executed and asserted -- so the census is a documentation debt with two known,
 enumerated causes rather than an unexplained number.
+
+### The three modules that keep no sample, named
+
+The census prints three names; each has a measured reason, and two of them are
+not the writer's problem at all.
+
+* **`organization_member_identity`** -- the only documented entry is
+  `identity_ids`, and every payload the tests produce carries it as ``null``
+  (twelve captures, all `None`): there is nothing to document yet. The fix
+  belongs in the test, which needs a case whose fake response actually has
+  members; writing `sample: null` would say less than the key alone does.
+* **`cam_saml_provider`**, **`cdb_database_info`** -- the value under the
+  remaining entry cannot be rendered inside the 150-character line budget
+  without altering it (a folded YAML scalar inserts spaces into a JSON string),
+  so they are a reasoned floor rather than a gap. Raising the budget is what
+  would make the number smaller, and the budget is a documentation rule.
+
+The recorder must not paper over the first case: a payload list is not a value,
+which is exactly what the sample gate caught when the writer tried to attach
+one.

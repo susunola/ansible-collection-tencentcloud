@@ -1,0 +1,10 @@
+---
+minor_changes:
+  - >-
+    docs - name the three modules the sample census still lists, with the reason
+    each one has: organization_member_identity's only documented entry is null
+    in every payload its tests produce (the fix is a test that returns members,
+    not a sample), and cam_saml_provider and cdb_database_info hold a value that
+    cannot be folded inside the 150-character line budget without changing it.
+    A numbered floor with named causes is worth more than a smaller number
+    reached by moving the rule.
