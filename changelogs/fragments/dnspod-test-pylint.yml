@@ -1,0 +1,6 @@
+---
+bugfixes:
+  - >-
+    tests - replace an unnecessary comprehension in the deepened DNSPod test
+    with ``list(clients)``, which is what pylint's ``unnecessary-comprehension``
+    asked for and the only thing keeping ``ansible-test sanity`` red on main.

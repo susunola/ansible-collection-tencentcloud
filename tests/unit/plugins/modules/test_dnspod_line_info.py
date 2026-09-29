@@ -270,7 +270,7 @@ def test_custom_line_present_creates_a_missing_line(monkeypatch):
         "DomainId": DOMAIN_ID, "Name": CUSTOM_NAME, "Area": CUSTOM_AREA, "UseCount": 1, "MaxCount": 10,
     }
     assert _operations(payload) == ["DescribeDomainCustomLineList", "CreateDomainCustomLine", "DescribeDomainCustomLineList"]
-    assert [(client_class, endpoint) for client_class, endpoint in clients] == [
+    assert list(clients) == [
         (FakeDnspodClientClass, "dnspod.tencentcloudapi.com")
     ]
     create_request = [request for name, request in client.calls if name == "CreateDomainCustomLine"][0]
