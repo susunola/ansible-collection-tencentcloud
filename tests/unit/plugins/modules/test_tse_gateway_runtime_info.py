@@ -5,18 +5,34 @@ hasattr check), the fetch_nodes pagination loop, and run_module() end to
 end: happy-path network/ports/addresses/nodes collection, nodes skipped
 when no group is selected, page_size validation and the
 sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule`` and loads its models and
+client in its own ``_load()``, so the migration patches that helper and
+the base class's ``create_client``, and lets ``module_args()`` supply the
+credentials the base class validates. Every fake result serialises a real
+field of its own model instead of a generic ``Marker``: ``GatewayId`` for
+``DescribeCloudNativeAPIGatewayConfigResult``, ``GatewayInstancePortList``
+for ``DescribeGatewayInstancePortResult``, ``Vip`` for
+``PublicAddressConfig`` and ``NodeId`` for ``CloudNativeAPIGatewayNode``,
+because that payload is what ``add_return_samples.py`` captures as the
+module's documented sample.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_gateway_runtime_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class GroupedRequest:
@@ -47,11 +63,14 @@ def test_request_skips_group_when_model_lacks_attribute():
 
 
 class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+    """SDK-shaped item serialising one real field of its response model."""
+
+    def __init__(self, field, value):
+        self.field = field
+        self.value = value
 
     def _serialize(self, allow_none=True):
-        return {"Marker": self.marker}
+        return {self.field: self.value}
 
 
 class FakeNodeResult:
@@ -99,91 +118,52 @@ class FakeClient:
         return self.address_response
 
 
-class ModuleExit(BaseException):
-    pass
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_gateway_runtime_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
+def _run(monkeypatch, client, **module_params):
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params)
+    return run(tse_gateway_runtime_info.run_module)
 
 
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_gateway_runtime_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_gateway_runtime_info.run_module()
-    return fake
-
-
-def _expect_fail(monkeypatch, fake):
-    monkeypatch.setattr(tse_gateway_runtime_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_gateway_runtime_info.run_module()
-    return excinfo.value.payload
+def _expect_fail(monkeypatch, module_params):
+    _patch_sdk(monkeypatch, FakeClient())
+    module_args(**module_params)
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_gateway_runtime_info.run_module)
+    return failure.value.args[0]
 
 
 def _runtime_client():
     client = FakeClient()
-    client.config_response = FakeResultResponse(FakeItem("net-cfg"), "req-config")
-    client.ports_response = FakeResultResponse(FakeItem("ports"), "req-ports")
+    client.config_response = FakeResultResponse(FakeItem("GatewayId", "gateway-1"), "req-config")
+    client.ports_response = FakeResultResponse(
+        FakeItem("GatewayInstancePortList", [{"Scheme": "HTTPS", "PortList": [443]}]), "req-ports")
     client.address_response = FakeResultResponse(
-        FakeAddressResult([FakeItem("addr-1")]), "req-address")
+        FakeAddressResult([FakeItem("Vip", "203.0.113.10")]), "req-address")
     return client
 
 
 def test_run_module_collects_runtime_with_group_nodes(monkeypatch):
     client = _runtime_client()
     client.node_pages = [
-        FakeNodeResponse([FakeItem("n1"), FakeItem("n2")], 3, "req-node-1"),
-        FakeNodeResponse([FakeItem("n3")], 3, "req-node-2"),
+        FakeNodeResponse([FakeItem("NodeId", "n1"), FakeItem("NodeId", "n2")], 3, "req-node-1"),
+        FakeNodeResponse([FakeItem("NodeId", "n3")], 3, "req-node-2"),
     ]
-    fake = _run(monkeypatch, client, gateway_id="gateway-1", group_id="group-1", page_size=2)
-    payload = fake.exit_payload
+
+    payload = _run(monkeypatch, client, gateway_id="gateway-1", group_id="group-1", page_size=2)
+
     assert payload["changed"] is False
-    assert payload["network_config"] == {"Marker": "net-cfg"}
-    assert payload["ports"] == {"Marker": "ports"}
-    assert payload["public_addresses"] == [{"Marker": "addr-1"}]
-    assert [item["Marker"] for item in payload["nodes"]] == ["n1", "n2", "n3"]
+    assert payload["network_config"] == {"GatewayId": "gateway-1"}
+    assert payload["ports"] == {"GatewayInstancePortList": [{"Scheme": "HTTPS", "PortList": [443]}]}
+    assert payload["public_addresses"] == [{"Vip": "203.0.113.10"}]
+    assert [item["NodeId"] for item in payload["nodes"]] == ["n1", "n2", "n3"]
     assert payload["node_count"] == 3
     assert payload["request_ids"] == {"network_config": "req-config", "ports": "req-ports",
                                       "public_addresses": "req-address", "nodes": "req-node-2"}
@@ -192,8 +172,9 @@ def test_run_module_collects_runtime_with_group_nodes(monkeypatch):
 
 def test_run_module_skips_nodes_without_group(monkeypatch):
     client = _runtime_client()
-    fake = _run(monkeypatch, client, gateway_id="gateway-1", group_id=None, page_size=2)
-    payload = fake.exit_payload
+
+    payload = _run(monkeypatch, client, gateway_id="gateway-1", page_size=2)
+
     assert payload["nodes"] == []
     assert payload["node_count"] == 0
     assert payload["request_ids"]["nodes"] is None
@@ -205,8 +186,7 @@ def test_run_module_skips_nodes_without_group(monkeypatch):
     (101, "page_size must be between 1 and 100"),
 ])
 def test_run_module_validates_page_size_bounds(monkeypatch, page_size, message):
-    p = {"gateway_id": "gateway-1", "group_id": None, "page_size": page_size}
-    payload = _expect_fail(monkeypatch, FakeModule(p))
+    payload = _expect_fail(monkeypatch, {"gateway_id": "gateway-1", "page_size": page_size})
     assert payload["msg"] == message
 
 
@@ -228,14 +208,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeCloudNativeAPIGatewayConfig(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule({"gateway_id": "gateway-1", "group_id": None, "page_size": 2})
-    fake._client = failing
-    monkeypatch.setattr(tse_gateway_runtime_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_gateway_runtime_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(gateway_id="gateway-1", page_size=2)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_gateway_runtime_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

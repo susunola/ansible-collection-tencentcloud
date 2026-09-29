@@ -6,18 +6,32 @@ that strips RequestId, and run_module() end to end: happy path access
 address payload, missing RequestId handling and the
 sdk_error_payload fail contract. This module performs one un-paginated
 DescribeSREInstanceAccessAddress call, so no paginator is exercised.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fake response serialises the real
+``IntranetAddress`` / ``InternetAddress`` / ``RequestId`` fields of
+``DescribeSREInstanceAccessAddressResponse``. Tests that need the optional
+scope fields absent leave them out of the module args instead of passing them
+as explicit ``None``.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_sre_access_address_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -75,66 +89,21 @@ class FakeClient:
         return self._response
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_sre_access_address_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_sre_access_address_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_sre_access_address_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_returns_access_address(monkeypatch):
     client = FakeClient(FakeResponse())
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(tse_sre_access_address_info.run_module)
+
     assert payload["changed"] is False
     assert payload["access_address"] == {
         "IntranetAddress": "10.0.0.8:8848", "InternetAddress": "203.0.113.8:8848"}
@@ -149,8 +118,11 @@ def test_run_module_tolerates_missing_request_id(monkeypatch):
             return {"IntranetAddress": "10.0.0.8:8848"}
 
     client = FakeClient(BareResponse())
-    fake = _run(monkeypatch, client, instance_id="ins1")
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", instance_id="ins1")
+
+    payload = run(tse_sre_access_address_info.run_module)
+
     assert payload["access_address"] == {"IntranetAddress": "10.0.0.8:8848"}
     assert payload["request_id"] is None
 
@@ -173,14 +145,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeSREInstanceAccessAddress(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule({"instance_id": "ins1"})
-    fake._client = failing
-    monkeypatch.setattr(tse_sre_access_address_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_sre_access_address_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", instance_id="ins1")
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_sre_access_address_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

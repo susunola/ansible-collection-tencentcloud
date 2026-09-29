@@ -5,6 +5,14 @@ filters plus ConfigFileTag payloads hydrated from user dicts and offset
 pagination), the fetch_all helper loop, and run_module() end to end:
 happy-path pagination until TotalCount, empty results, page_size
 validation and the sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule`` and loads its models and
+client in its own ``_load()``, so the migration patches that helper and
+the base class's ``create_client``, and lets ``module_args()`` supply the
+credentials the base class validates. The fake item serialises ``Name``, a
+real ``ConfigFile`` field (the API never returns ``FileName`` there),
+because that payload is what ``add_return_samples.py`` captures as the
+module's documented sample.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -12,12 +20,17 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_config_file_catalog_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -37,16 +50,17 @@ class FakeModels:
     ConfigFileTag = FakeTag
 
 
-def params():
-    return {
+def params(**overrides):
+    """Module arguments minus the optional name/config_file_id, which are omitted."""
+    options = {
         "instance_id": "ins-1",
         "namespace": "prod",
         "group": "app",
-        "name": None,
-        "config_file_id": None,
         "tags": [{"Key": "team", "Value": "payments"}],
         "page_size": 2,
     }
+    options.update(overrides)
+    return options
 
 
 def test_catalog_request_maps_filters_and_pagination():
@@ -68,11 +82,11 @@ def test_catalog_request_maps_optional_ids():
 
 
 class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+    def __init__(self, name):
+        self.name = name
 
     def _serialize(self, allow_none=True):
-        return {"FileName": self.marker}
+        return {"Name": self.name}
 
 
 class FakeResponse:
@@ -92,67 +106,26 @@ class FakeClient:
         return self._pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_config_file_catalog_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
+def _run(monkeypatch, client, **module_params):
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params)
+    return run(tse_config_file_catalog_info.run_module)
 
 
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_config_file_catalog_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_config_file_catalog_info.run_module()
-    return fake
-
-
-def _expect_fail(monkeypatch, fake):
-    monkeypatch.setattr(tse_config_file_catalog_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_config_file_catalog_info.run_module()
-    return excinfo.value.payload
+def _expect_fail(monkeypatch, module_params):
+    _patch_sdk(monkeypatch, FakeClient([]))
+    module_args(**module_params)
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_config_file_catalog_info.run_module)
+    return failure.value.args[0]
 
 
 def test_fetch_all_paginates_catalog():
@@ -160,10 +133,12 @@ def test_fetch_all_paginates_catalog():
         FakeResponse([FakeItem("a"), FakeItem("b")], 3, "request-0"),
         FakeResponse([FakeItem("c")], 3, "request-2"),
     ])
-    fake = FakeModule(params())
-    fake._client = client
-    values, total, request_id = tse_config_file_catalog_info.fetch_all(fake, client, FakeModels, params())
-    assert values == [{"FileName": "a"}, {"FileName": "b"}, {"FileName": "c"}]
+    # fetch_all only needs the module's real sdk_call (retry plus the
+    # tc_api_calls audit trail), so it runs against the real base class.
+    module_args()
+    module = TencentCloudModule(argument_spec={})
+    values, total, request_id = tse_config_file_catalog_info.fetch_all(module, client, FakeModels, params())
+    assert values == [{"Name": "a"}, {"Name": "b"}, {"Name": "c"}]
     assert (total, request_id) == (3, "request-2")
     assert [request.Offset for request in client.requests] == [0, 2]
 
@@ -173,10 +148,9 @@ def test_run_module_paginates_config_files_until_total_count(monkeypatch):
         FakeResponse([FakeItem("a"), FakeItem("b")], 3, "req-1"),
         FakeResponse([FakeItem("c")], 3, "req-2"),
     ])
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    payload = _run(monkeypatch, client, **params())
     assert payload["changed"] is False
-    assert [item["FileName"] for item in payload["config_files"]] == ["a", "b", "c"]
+    assert [item["Name"] for item in payload["config_files"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-2"
     assert [request.Offset for request in client.requests] == [0, 2]
@@ -184,8 +158,7 @@ def test_run_module_paginates_config_files_until_total_count(monkeypatch):
 
 def test_run_module_empty_page_stops_with_zero_total(monkeypatch):
     client = FakeClient([FakeResponse([], 0, "req-empty")])
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    payload = _run(monkeypatch, client, **params())
     assert payload["config_files"] == []
     assert payload["total_count"] == 0
     assert payload["request_id"] == "req-empty"
@@ -196,9 +169,7 @@ def test_run_module_empty_page_stops_with_zero_total(monkeypatch):
     (101, "page_size must be between 1 and 100"),
 ])
 def test_run_module_validates_page_size_bounds(monkeypatch, page_size, message):
-    p = params()
-    p["page_size"] = page_size
-    payload = _expect_fail(monkeypatch, FakeModule(p))
+    payload = _expect_fail(monkeypatch, params(page_size=page_size))
     assert payload["msg"] == message
 
 
@@ -220,14 +191,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeConfigFiles(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(params())
-    fake._client = failing
-    monkeypatch.setattr(tse_config_file_catalog_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_config_file_catalog_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(**params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_config_file_catalog_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

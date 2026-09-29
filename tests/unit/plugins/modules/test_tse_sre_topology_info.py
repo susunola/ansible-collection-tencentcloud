@@ -5,18 +5,31 @@ loop, the nacos/zookeeper engine_type branch, and run_module() end to
 end: happy-path replica and interface pagination for both engine
 families, empty results, page_size validation and the
 sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fake items serialise the field the
+API really returns for each family: ``Name`` on ``NacosReplica`` /
+``ZookeeperReplica`` and ``Interface`` on ``NacosServerInterface`` /
+``ZookeeperServerInterface`` (neither model has a generic ``Value``).
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_sre_topology_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -36,12 +49,20 @@ def test_build_request_maps_pagination():
     assert value.Offset == 20 and value.Limit == 10
 
 
-class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+class FakeReplica:
+    def __init__(self, name):
+        self.name = name
 
     def _serialize(self, allow_none=True):
-        return {"Value": self.marker}
+        return {"Name": self.name}
+
+
+class FakeInterface:
+    def __init__(self, interface):
+        self.interface = interface
+
+    def _serialize(self, allow_none=True):
+        return {"Interface": self.interface}
 
 
 class FakeResponse:
@@ -74,82 +95,30 @@ class FakeClient:
         return self._pop("zk_interfaces", request)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_sre_topology_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_sre_topology_info.run_module()
-    return fake
-
-
-def _expect_fail(monkeypatch, fake):
-    monkeypatch.setattr(tse_sre_topology_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_sre_topology_info.run_module()
-    return excinfo.value.payload
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_sre_topology_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_fetches_nacos_topology(monkeypatch):
     client = FakeClient()
     client.pages["nacos_replicas"] = [
-        FakeResponse("Replicas", [FakeItem("r1"), FakeItem("r2")], 3, "req-nr-1"),
-        FakeResponse("Replicas", [FakeItem("r3")], 3, "req-nr-2"),
+        FakeResponse("Replicas", [FakeReplica("r1"), FakeReplica("r2")], 3, "req-nr-1"),
+        FakeResponse("Replicas", [FakeReplica("r3")], 3, "req-nr-2"),
     ]
     client.pages["nacos_interfaces"] = [
-        FakeResponse("Content", [FakeItem("i1"), FakeItem("i2")], 2, "req-ni-1")]
-    fake = _run(monkeypatch, client, instance_id="ins-1", engine_type="nacos", page_size=2)
-    payload = fake.exit_payload
+        FakeResponse("Content", [FakeInterface("i1"), FakeInterface("i2")], 2, "req-ni-1")]
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", instance_id="ins-1", engine_type="nacos", page_size=2)
+
+    payload = run(tse_sre_topology_info.run_module)
+
     assert payload["changed"] is False
-    assert [item["Value"] for item in payload["replicas"]] == ["r1", "r2", "r3"]
-    assert [item["Value"] for item in payload["interfaces"]] == ["i1", "i2"]
+    assert [item["Name"] for item in payload["replicas"]] == ["r1", "r2", "r3"]
+    assert [item["Interface"] for item in payload["interfaces"]] == ["i1", "i2"]
     assert payload["replica_count"] == 3 and payload["interface_count"] == 2
     assert payload["request_ids"] == {"replicas": "req-nr-2", "interfaces": "req-ni-1"}
     assert [request.Offset for request in client.requests["nacos_replicas"]] == [0, 2]
@@ -158,11 +127,14 @@ def test_run_module_fetches_nacos_topology(monkeypatch):
 
 def test_run_module_fetches_zookeeper_topology(monkeypatch):
     client = FakeClient()
-    client.pages["zk_replicas"] = [FakeResponse("Replicas", [FakeItem("r1")], 1, "req-zr-1")]
-    client.pages["zk_interfaces"] = [FakeResponse("Content", [FakeItem("i1")], 1, "req-zi-1")]
-    fake = _run(monkeypatch, client, instance_id="ins-1", engine_type="zookeeper", page_size=2)
-    payload = fake.exit_payload
-    assert [item["Value"] for item in payload["replicas"]] == ["r1"]
+    client.pages["zk_replicas"] = [FakeResponse("Replicas", [FakeReplica("r1")], 1, "req-zr-1")]
+    client.pages["zk_interfaces"] = [FakeResponse("Content", [FakeInterface("i1")], 1, "req-zi-1")]
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", instance_id="ins-1", engine_type="zookeeper", page_size=2)
+
+    payload = run(tse_sre_topology_info.run_module)
+
+    assert [item["Name"] for item in payload["replicas"]] == ["r1"]
     assert payload["request_ids"] == {"replicas": "req-zr-1", "interfaces": "req-zi-1"}
     assert client.requests["nacos_replicas"] == [] and client.requests["nacos_interfaces"] == []
     assert client.requests["zk_replicas"][0].InstanceId == "ins-1"
@@ -172,8 +144,11 @@ def test_run_module_empty_topology_reports_zero_counts(monkeypatch):
     client = FakeClient()
     client.pages["nacos_replicas"] = [FakeResponse("Replicas", [], 0, "req-nr-empty")]
     client.pages["nacos_interfaces"] = [FakeResponse("Content", [], 0, "req-ni-empty")]
-    fake = _run(monkeypatch, client, instance_id="ins-1", engine_type="nacos", page_size=2)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", instance_id="ins-1", engine_type="nacos", page_size=2)
+
+    payload = run(tse_sre_topology_info.run_module)
+
     assert payload["replicas"] == [] and payload["interfaces"] == []
     assert payload["replica_count"] == 0 and payload["interface_count"] == 0
 
@@ -183,9 +158,12 @@ def test_run_module_empty_topology_reports_zero_counts(monkeypatch):
     (101, "page_size must be between 1 and 100"),
 ])
 def test_run_module_validates_page_size_bounds(monkeypatch, page_size, message):
-    p = {"instance_id": "ins-1", "engine_type": "nacos", "page_size": page_size}
-    payload = _expect_fail(monkeypatch, FakeModule(p))
-    assert payload["msg"] == message
+    module_args(region="ap-guangzhou", instance_id="ins-1", engine_type="nacos", page_size=page_size)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_sre_topology_info.run_module)
+
+    assert failure.value.args[0]["msg"] == message
 
 
 class SdkError(Exception):
@@ -206,14 +184,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeNacosReplicas(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule({"instance_id": "ins-1", "engine_type": "nacos", "page_size": 2})
-    fake._client = failing
-    monkeypatch.setattr(tse_sre_topology_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_sre_topology_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", instance_id="ins-1", engine_type="nacos", page_size=2)
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_sre_topology_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

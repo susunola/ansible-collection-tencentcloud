@@ -65,11 +65,16 @@ access_address:
     - Engine client, console, environment, limiter and bandwidth endpoint metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    IntranetAddress: 10.0.0.8:8848
+    InternetAddress: 203.0.113.8:8848
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: request-1
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

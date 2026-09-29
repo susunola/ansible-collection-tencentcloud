@@ -5,18 +5,32 @@ name/version/protocol/brief filters), the single-call version request
 builder, the fetch_contracts helper loop, and run_module() end to end:
 happy-path contract pagination followed by the version lookup, empty
 results, page_size validation and the sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. ``fetch_contracts`` receives the module
+as a helper argument, so its test keeps a minimal stand-in that forwards
+``sdk_call``. The fake items serialise ``Name``, a real
+``GovernanceServiceContract`` / ``GovernanceServiceContractVersion`` field, so
+the payload is the shape the API returns.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_governance_service_contract_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -28,8 +42,8 @@ class FakeModels:
     DescribeGovernanceServiceContractVersionsRequest = FakeRequest
 
 
-def params():
-    return {
+def params(**overrides):
+    options = {
         "instance_id": "ins-1",
         "namespace": "prod",
         "service": "orders",
@@ -39,6 +53,8 @@ def params():
         "brief": False,
         "page_size": 2,
     }
+    options.update(overrides)
+    return options
 
 
 def test_contract_request_maps_service_and_filters():
@@ -57,11 +73,11 @@ def test_version_request_maps_service_identity():
 
 
 class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+    def __init__(self, name):
+        self.name = name
 
     def _serialize(self, allow_none=True):
-        return {"Name": self.marker}
+        return {"Name": self.name}
 
 
 class FakeContractsResponse:
@@ -93,67 +109,21 @@ class FakeClient:
         return self.versions_response
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
+class FakeModule(object):
+    """Minimal stand-in for the fetch_contracts helper, which needs sdk_call."""
 
     def sdk_call(self, operation, request=None):
         if request is not None:
             return operation(request)
         return operation()
 
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
 
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_governance_service_contract_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_governance_service_contract_info.run_module()
-    return fake
-
-
-def _expect_fail(monkeypatch, fake):
-    monkeypatch.setattr(tse_governance_service_contract_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_governance_service_contract_info.run_module()
-    return excinfo.value.payload
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_governance_service_contract_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_fetch_contracts_paginates():
@@ -161,10 +131,8 @@ def test_fetch_contracts_paginates():
         FakeContractsResponse([FakeItem("c1"), FakeItem("c2")], 3, "request-0"),
         FakeContractsResponse([FakeItem("c3")], 3, "request-2"),
     ])
-    fake = FakeModule(params())
-    fake._client = client
     contracts, total, request_id = tse_governance_service_contract_info.fetch_contracts(
-        fake, client, FakeModels, params())
+        FakeModule(), client, FakeModels, params())
     assert contracts == [{"Name": "c1"}, {"Name": "c2"}, {"Name": "c3"}]
     assert (total, request_id) == (3, "request-2")
     assert [request.Offset for request in client.contract_requests] == [0, 2]
@@ -176,8 +144,11 @@ def test_run_module_paginates_contracts_and_returns_versions(monkeypatch):
         FakeContractsResponse([FakeItem("c3")], 3, "req-2"),
     ])
     client.versions_response = FakeVersionsResponse([FakeItem("v1"), FakeItem("v2")], "req-versions")
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(tse_governance_service_contract_info.run_module)
+
     assert payload["changed"] is False
     assert [item["Name"] for item in payload["contracts"]] == ["c1", "c2", "c3"]
     assert [item["Name"] for item in payload["versions"]] == ["v1", "v2"]
@@ -190,8 +161,11 @@ def test_run_module_paginates_contracts_and_returns_versions(monkeypatch):
 def test_run_module_empty_page_stops_with_zero_total(monkeypatch):
     client = FakeClient([FakeContractsResponse([], 0, "req-empty")])
     client.versions_response = FakeVersionsResponse([], "req-versions-empty")
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(tse_governance_service_contract_info.run_module)
+
     assert payload["contracts"] == [] and payload["versions"] == []
     assert payload["total_count"] == 0
 
@@ -201,10 +175,13 @@ def test_run_module_empty_page_stops_with_zero_total(monkeypatch):
     (101, "page_size must be between 1 and 100"),
 ])
 def test_run_module_validates_page_size_bounds(monkeypatch, page_size, message):
-    p = params()
-    p["page_size"] = page_size
-    payload = _expect_fail(monkeypatch, FakeModule(p))
-    assert payload["msg"] == message
+    _patch_sdk(monkeypatch, FakeClient([]))
+    module_args(region="ap-guangzhou", **params(page_size=page_size))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_governance_service_contract_info.run_module)
+
+    assert failure.value.args[0]["msg"] == message
 
 
 class SdkError(Exception):
@@ -225,14 +202,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeGovernanceServiceContracts(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(params())
-    fake._client = failing
-    monkeypatch.setattr(tse_governance_service_contract_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_governance_service_contract_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_governance_service_contract_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

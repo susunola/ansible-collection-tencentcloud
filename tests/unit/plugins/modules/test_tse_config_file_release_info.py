@@ -5,18 +5,32 @@ identity plus release filters), the generic fetch_pages loop, and
 run_module() end to end: happy-path release and history pagination plus
 the single version lookup, empty results, page_size validation and the
 sdk_error_payload fail contract.
+
+The module subclasses ``TencentCloudModule`` and loads its models and
+client in its own ``_load()``, so the migration patches that helper and
+the base class's ``create_client``, and lets ``module_args()`` supply the
+credentials the base class validates. The fake item serialises ``Name``, a
+real field of ``ConfigFileRelease``, ``ConfigFileReleaseHistory`` and
+``ReleaseVersion`` (the API never returns ``Value``), because that payload
+is what ``add_return_samples.py`` captures as the module's documented
+sample.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_config_file_release_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -54,11 +68,11 @@ def test_audit_requests_map_release_identity():
 
 
 class FakeItem:
-    def __init__(self, marker):
-        self.marker = marker
+    def __init__(self, name):
+        self.name = name
 
     def _serialize(self, allow_none=True):
-        return {"Value": self.marker}
+        return {"Name": self.name}
 
 
 class FakeListResponse:
@@ -96,71 +110,30 @@ class FakeClient:
         return self.versions_response
 
 
-class ModuleExit(BaseException):
-    pass
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_config_file_release_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
+def _run(monkeypatch, client, **module_params):
+    _patch_sdk(monkeypatch, client)
+    module_args(**module_params)
+    return run(tse_config_file_release_info.run_module)
 
 
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
+def _expect_fail(monkeypatch, module_params):
+    _patch_sdk(monkeypatch, FakeClient())
+    module_args(**module_params)
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_config_file_release_info.run_module)
+    return failure.value.args[0]
 
 
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_config_file_release_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_config_file_release_info.run_module()
-    return fake
-
-
-def _expect_fail(monkeypatch, fake):
-    monkeypatch.setattr(tse_config_file_release_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_config_file_release_info.run_module()
-    return excinfo.value.payload
-
-
-def _response(field, markers, total, request_id):
-    return FakeListResponse(field, [FakeItem(marker) for marker in markers], total, request_id)
+def _response(field, names, total, request_id):
+    return FakeListResponse(field, [FakeItem(name) for name in names], total, request_id)
 
 
 def test_run_module_collects_releases_histories_and_versions(monkeypatch):
@@ -171,12 +144,13 @@ def test_run_module_collects_releases_histories_and_versions(monkeypatch):
     ]
     client.history_pages = [_response("ConfigFileReleaseHistories", ["h1", "h2"], 2, "req-hist-1")]
     client.versions_response = FakeVersionsResponse([FakeItem("v1")], "req-ver-1")
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+
+    payload = _run(monkeypatch, client, **params())
+
     assert payload["changed"] is False
-    assert [item["Value"] for item in payload["releases"]] == ["r1", "r2", "r3"]
-    assert [item["Value"] for item in payload["histories"]] == ["h1", "h2"]
-    assert [item["Value"] for item in payload["versions"]] == ["v1"]
+    assert [item["Name"] for item in payload["releases"]] == ["r1", "r2", "r3"]
+    assert [item["Name"] for item in payload["histories"]] == ["h1", "h2"]
+    assert [item["Name"] for item in payload["versions"]] == ["v1"]
     assert payload["release_count"] == 3
     assert payload["history_count"] == 2
     assert payload["request_ids"] == {"releases": "req-rel-2", "histories": "req-hist-1",
@@ -191,8 +165,9 @@ def test_run_module_empty_audit_trail_reports_zero_counts(monkeypatch):
     client.release_pages = [_response("Releases", [], 0, "req-rel-empty")]
     client.history_pages = [_response("ConfigFileReleaseHistories", [], 0, "req-hist-empty")]
     client.versions_response = FakeVersionsResponse([], "req-ver-empty")
-    fake = _run(monkeypatch, client, **params())
-    payload = fake.exit_payload
+
+    payload = _run(monkeypatch, client, **params())
+
     assert payload["releases"] == [] and payload["histories"] == []
     assert payload["versions"] == []
     assert payload["release_count"] == 0 and payload["history_count"] == 0
@@ -205,7 +180,7 @@ def test_run_module_empty_audit_trail_reports_zero_counts(monkeypatch):
 def test_run_module_validates_page_size_bounds(monkeypatch, page_size, message):
     p = params()
     p["page_size"] = page_size
-    payload = _expect_fail(monkeypatch, FakeModule(p))
+    payload = _expect_fail(monkeypatch, p)
     assert payload["msg"] == message
 
 
@@ -227,14 +202,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeConfigFileReleases(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule(params())
-    fake._client = failing
-    monkeypatch.setattr(tse_config_file_release_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_config_file_release_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(**params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_config_file_release_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

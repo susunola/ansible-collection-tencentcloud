@@ -50,17 +50,23 @@ instance_id:
     - Instance ID returned by Tencent Cloud.
   returned: always
   type: str
+  sample: ins-1
 tags:
   description:
     - Instance tag metadata.
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - TagKey: env
+      TagValue: prod
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-fallback
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

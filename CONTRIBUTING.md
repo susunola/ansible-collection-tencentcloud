@@ -136,8 +136,12 @@ Migrating one is five steps, verified on `vpc_info`, `subnet_info`,
 `dlc_inference_engine_info`, `dlc_model_artifact_info`, `dlc_model_version_info`,
 `dlc_ray_job_info`, `dlc_ray_job_list_info`, `dlc_notebook_session_info`,
 `tione_data_source_info`, `tione_notebook_info`, `tione_training_task_info`,
-`tione_model_service_info`, `tione_model_service_diagnostics_info` and
-`tione_training_model_version_info`:
+`tione_model_service_info`, `tione_model_service_diagnostics_info`,
+`tione_training_model_version_info`, the six `tse_config_file_*` / `tse_gateway_*`
+readers, `tse_governance_service_contract_info`, `tse_instance_tag_info`,
+`tse_sre_access_address_info`, `tse_sre_topology_info`,
+`dlc_notebook_session_log_info` and `dlc_notebook_statement_info` -- the whole
+census, now zero:
 
 1. import `AnsibleFailJson`, `module_args` and `run` from the harness;
 2. delete the private scaffolding (`ModuleExit`, `ModuleFail`, `FakeModule`,

@@ -5,18 +5,31 @@ run_module() end to end: happy path gateway detail, missing result
 falls back to an empty dict, and the sdk_error_payload fail contract.
 This module performs one un-paginated DescribeCloudNativeAPIGatewayInfoByIp
 call, so no paginator is exercised.
+
+The module subclasses ``TencentCloudModule`` and loads its models and
+client in its own ``_load()``, so the migration patches that helper and
+the base class's ``create_client``, and lets ``module_args()`` supply the
+credentials the base class validates. The fake result serialises
+``GatewayId``, a real ``DescribeInstanceInfoByIpResult`` field, because
+that payload is what ``add_return_samples.py`` captures as the module's
+documented sample.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_gateway_ip_lookup_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class FakeRequest:
@@ -33,11 +46,11 @@ def test_request_maps_public_ip():
 
 
 class FakeResult:
-    def __init__(self, marker):
-        self.marker = marker
+    def __init__(self, gateway_id):
+        self.gateway_id = gateway_id
 
     def _serialize(self, allow_none=True):
-        return {"GatewayId": self.marker}
+        return {"GatewayId": self.gateway_id}
 
 
 class FakeResponse:
@@ -56,66 +69,21 @@ class FakeClient:
         return self._response
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
-class FakeModule:
-    def __init__(self, params):
-        self.params = params
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self._client
-
-    def sdk_call(self, operation, request=None):
-        if request is not None:
-            return operation(request)
-        return operation()
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-
-def _inject_sdk(monkeypatch, client):
-    service = types.ModuleType("tencentcloud.tse.v20201207")
-    service.models = FakeModels
-    service.tse_client = types.SimpleNamespace(TseClient=lambda *args: object())
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse",
-                        types.ModuleType("tencentcloud.tse"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.tse.v20201207", service)
-
-
-def _run(monkeypatch, client, **params):
-    _inject_sdk(monkeypatch, client)
-    fake = FakeModule(params)
-    fake._client = client
-    monkeypatch.setattr(tse_gateway_ip_lookup_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleExit):
-        tse_gateway_ip_lookup_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(tse_gateway_ip_lookup_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(TseClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_returns_gateway_info(monkeypatch):
     client = FakeClient(FakeResponse(FakeResult("gateway-1"), "req-lookup"))
-    fake = _run(monkeypatch, client, public_ip="203.0.113.10")
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(public_ip="203.0.113.10")
+
+    payload = run(tse_gateway_ip_lookup_info.run_module)
+
     assert payload["changed"] is False
     assert payload["gateway_info"] == {"GatewayId": "gateway-1"}
     assert payload["request_id"] == "req-lookup"
@@ -124,8 +92,11 @@ def test_run_module_returns_gateway_info(monkeypatch):
 
 def test_run_module_missing_result_returns_empty_dict(monkeypatch):
     client = FakeClient(FakeResponse(None, "req-none"))
-    fake = _run(monkeypatch, client, public_ip="203.0.113.10")
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(public_ip="203.0.113.10")
+
+    payload = run(tse_gateway_ip_lookup_info.run_module)
+
     assert payload["gateway_info"] == {}
     assert payload["request_id"] == "req-none"
 
@@ -148,14 +119,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeCloudNativeAPIGatewayInfoByIp(self, request):
             raise SdkError("FailedOperation", "req-err")
 
-    failing = FailingClient()
-    _inject_sdk(monkeypatch, failing)
-    fake = FakeModule({"public_ip": "203.0.113.10"})
-    fake._client = failing
-    monkeypatch.setattr(tse_gateway_ip_lookup_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail) as excinfo:
-        tse_gateway_ip_lookup_info.run_module()
-    payload = excinfo.value.payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(public_ip="203.0.113.10")
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(tse_gateway_ip_lookup_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "FailedOperation"

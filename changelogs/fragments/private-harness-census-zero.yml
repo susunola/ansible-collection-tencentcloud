@@ -1,0 +1,20 @@
+---
+bugfixes:
+  - >-
+    tse_gateway_service_inventory_info - read the service name where the API
+    puts it. ``DescribeCNGWServicesWithRoutes`` returns
+    ``Result.ServiceList[].Service.Name``, but ``service_name()`` only looked at
+    a top-level ``Name``/``ServiceName``, so ``include_upstreams: true``
+    silently resolved zero upstreams and roles built on it reported no targets.
+    Found by making the unit-test fixture realistic during the harness
+    migration: the old fixture served a flat ``{"Name": ...}`` the API never
+    returns, which is why the defect stayed invisible.
+minor_changes:
+  - >-
+    tests - the shared-harness migration is complete: every hand-written module
+    test now drives its module through ``tests/unit/plugins/modules/harness.py``,
+    so all three of the collection's shrink-only censuses read zero (modules
+    with no test that runs them, modules whose tests build a private double,
+    modules no test references) and their baseline files are gone. The RETURN
+    sample census falls from 34 to 22 as the twelve migrated readers gained
+    captured samples.

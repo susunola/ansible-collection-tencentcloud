@@ -79,16 +79,21 @@ config_files:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Name: a
 total_count:
   description:
     - File count reported by Tencent Cloud.
   returned: always
   type: int
+  sample: 3
 request_id:
   description:
     - Request ID of the last API call.
   returned: always
   type: str
+  sample: req-empty
 '''
 
 import json

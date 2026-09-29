@@ -4,17 +4,32 @@ Covers the statement/result request builders, the statement lookup branch,
 SQL-result token pagination with inferred task ids, repeated-token and
 missing-task_id failures, parameter validation and the sdk_error_payload
 failure contract.
+
+The module subclasses ``TencentCloudModule``, so the migration patches the
+base class's ``create_client`` and the module's own ``_load`` (which is where
+it imports its models and client class), and lets ``module_args()`` supply the
+credentials the base class validates. The fake statement serialises ``TaskId``
+and ``State`` from ``NotebookSessionStatementInfo``, and the fake result page
+carries the real ``DescribeNotebookSessionStatementSqlResultResponse`` fields.
+``params()`` drops ``None`` overrides (``task_id=None``) so an absent option is
+omitted from the module args rather than passed as an explicit ``None``.
 """
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 import types
 
 import pytest
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_notebook_statement_info
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
+    module_args,
+    run,
+)
 
 
 class Object:
@@ -37,7 +52,7 @@ def params(**overrides):
         "data_field_cut_length": 2048,
     }
     options.update(overrides)
-    return options
+    return {key: value for key, value in options.items() if value is not None}
 
 
 def test_build_requests_keep_strong_identity():
@@ -105,16 +120,6 @@ class FakeClient:
         return self._result_pages.pop(0)
 
 
-class ModuleExit(BaseException):
-    pass
-
-
-class ModuleFail(BaseException):
-    def __init__(self, payload):
-        self.payload = payload
-        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
-
-
 class SDKError(Exception):
     def get_code(self):
         return "UnauthorizedOperation"
@@ -123,56 +128,21 @@ class SDKError(Exception):
         return "req-err"
 
 
-class FakeModule:
-    def __init__(self, params, client):
-        self.params = params
-        self.client = client
-        self.exit_payload = None
-        self.fail_payload = None
-
-    def exit_json(self, **kwargs):
-        self.exit_payload = kwargs
-        raise ModuleExit()
-
-    def fail_json(self, **kwargs):
-        self.fail_payload = kwargs
-        raise ModuleFail(kwargs)
-
-    def require_sdk(self):
-        pass
-
-    def create_client(self, client_class, endpoint):
-        return self.client
-
-    def sdk_call(self, operation, request=None, retry=True):
-        if request is None:
-            return operation()
-        return operation(request)
-
-
-def _inject_sdk(monkeypatch):
-    service = types.ModuleType("tencentcloud.dlc.v20210125")
-    service.models = FakeModels
-    service.dlc_client = types.SimpleNamespace(DlcClient=object)
-    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
-                        types.ModuleType("tencentcloud.dlc"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
-
-
-def _run(monkeypatch, client, expect_fail=False, **p):
-    _inject_sdk(monkeypatch)
-    fake = FakeModule(p, client)
-    monkeypatch.setattr(dlc_notebook_statement_info, "TencentCloudModule", lambda **kwargs: fake)
-    with pytest.raises(ModuleFail if expect_fail else ModuleExit):
-        dlc_notebook_statement_info.run_module()
-    return fake
+def _patch_sdk(monkeypatch, client):
+    """Hand the module its models/client class and the client itself."""
+    monkeypatch.setattr(dlc_notebook_statement_info, "_load", lambda: (
+        FakeModels, types.SimpleNamespace(DlcClient=lambda *args: client)))
+    monkeypatch.setattr(TencentCloudModule, "create_client",
+                        lambda self, client_class, endpoint: client)
 
 
 def test_run_module_returns_statement_without_results(monkeypatch):
     client = FakeClient(statement=StatementResponse(StatementItem("task-1")))
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params())
+
+    payload = run(dlc_notebook_statement_info.run_module)
+
     assert payload["changed"] is False
     assert payload["statement"] == {"TaskId": "task-1", "State": "ok"}
     assert payload["result_pages"] == []
@@ -182,13 +152,15 @@ def test_run_module_returns_statement_without_results(monkeypatch):
 
 
 def test_run_module_fetches_result_pages_with_inferred_task_id(monkeypatch):
-    p = params(task_id=None, include_sql_result=True)
     client = FakeClient(
         statement=StatementResponse(StatementItem("task-1")),
         result_pages=[ResultResponse("page-1", "n2"), ResultResponse("page-2", None)],
     )
-    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
-    payload = fake.exit_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params(task_id=None, include_sql_result=True))
+
+    payload = run(dlc_notebook_statement_info.run_module)
+
     assert [page["ResultSet"] for page in payload["result_pages"]] == ["page-1", "page-2"]
     assert payload["result_pages"][0]["ResultSchema"] == [{"Name": "id"}]
     assert payload["result_pages"][0]["NextToken"] == "n2"
@@ -197,36 +169,49 @@ def test_run_module_fetches_result_pages_with_inferred_task_id(monkeypatch):
 
 
 def test_run_module_fails_when_task_id_is_unavailable(monkeypatch):
-    p = params(task_id=None, include_sql_result=True)
     client = FakeClient(statement=StatementResponse(None))
-    payload = _run(monkeypatch, client, expect_fail=True,
-                   region="ap-guangzhou", **p).fail_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params(task_id=None, include_sql_result=True))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_statement_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "task_id is required to retrieve SQL results and was not returned by the statement"
     assert payload["statement"] is None
 
 
 def test_run_module_fails_on_repeated_continuation_token(monkeypatch):
-    p = params(include_sql_result=True)
     client = FakeClient(
         statement=StatementResponse(StatementItem("task-1")),
         result_pages=[ResultResponse("page-1", "n1"), ResultResponse("page-2", "n1")],
     )
-    payload = _run(monkeypatch, client, expect_fail=True,
-                   region="ap-guangzhou", **p).fail_payload
+    _patch_sdk(monkeypatch, client)
+    module_args(region="ap-guangzhou", **params(include_sql_result=True))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_statement_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "DLC Notebook SQL-result pagination repeated a continuation token"
     assert payload["task_id"] == "task-1"
     assert payload["next_token"] == "n1"
 
 
 def test_run_module_validates_max_results_and_cut_length(monkeypatch):
-    p = params(max_results=0)
-    payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **p).fail_payload
-    assert payload["msg"] == "max_results must be between 1 and 1000"
-    p = params(data_field_cut_length=0)
-    payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **p).fail_payload
-    assert payload["msg"] == "data_field_cut_length must be positive"
+    module_args(region="ap-guangzhou", **params(max_results=0))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_statement_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "max_results must be between 1 and 1000"
+
+    module_args(region="ap-guangzhou", **params(data_field_cut_length=0))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_statement_info.run_module)
+
+    assert failure.value.args[0]["msg"] == "data_field_cut_length must be positive"
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
@@ -234,8 +219,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
         def DescribeNotebookSessionStatement(self, request):
             raise SDKError("api exploded")
 
-    payload = _run(monkeypatch, FailingClient(), expect_fail=True,
-                   region="ap-guangzhou", **params()).fail_payload
+    _patch_sdk(monkeypatch, FailingClient())
+    module_args(region="ap-guangzhou", **params())
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        run(dlc_notebook_statement_info.run_module)
+
+    payload = failure.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error"] == "api exploded"
     assert payload["error_code"] == "UnauthorizedOperation"
