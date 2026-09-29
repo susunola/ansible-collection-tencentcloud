@@ -625,3 +625,27 @@ not the writer's problem at all.
 The recorder must not paper over the first case: a payload list is not a value,
 which is exactly what the sample gate caught when the writer tried to attach
 one.
+
+### Truthiness versus `is not None`: the sweep behind the diff fix
+
+Fixing `build_diff`'s falsy collapse raised the obvious question -- where else
+does a truth test decide whether a value is present? A sweep over
+``plugins/module_utils/`` found nine sites of the ``X if X else None`` shape and
+classified every one of them, because the answer is not "all of them are bugs":
+
+* **presence of a message, flag, collection or object** -- deliberate and
+  correct: an empty error string is no error (``base.py:93``), an
+  internet-facing flag (``inventory.py:339``), a pool id or module name
+  (``inventory.py:520``, ``inventory.py:784``), an SDK model that is either
+  there or not (``monitor.py:26``), a match list (``monitor.py:48``), optional
+  filter fragments in a log line (``resolver.py:290-292``), a profile
+  (``client.py:130``, ``cos.py:126``) and an empty filter set
+  (``resolver.py:287,294,358``).
+* **a resource value** -- the defect: ``False``, ``0`` and ``""`` are states a
+  resource can hold, and folding them into absence makes ``--diff`` and check
+  mode lie. That is what `build_diff` did, and it was the only site in
+  ``module_utils`` that treated a value this way.
+
+So the rule is about what is being tested, not about the syntax: truthiness
+answers "is there anything to say?", and it is wrong only where the question is
+"what is the value?".

@@ -1,0 +1,10 @@
+---
+minor_changes:
+  - >-
+    docs - record the sweep behind the diff fix. Nine ``X if X else None`` sites
+    in ``module_utils`` were classified one by one: they test the presence of a
+    message, flag, collection or object, where truthiness is the intended
+    question, and only ``build_diff`` tested a resource value, where it is not.
+    The rule is written down so the next reviewer does not have to redo the
+    sweep -- and so a future "fix" does not flatten nine correct sites into
+    ``is not None``.
