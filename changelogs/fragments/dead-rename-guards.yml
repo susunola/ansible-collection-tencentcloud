@@ -1,0 +1,10 @@
+---
+bugfixes:
+  - >-
+    waf_protect_group, tdmq_rocketmq_cluster - delete rename guards that could
+    never fire. Both looked for a changed name next to a missing id, but the
+    lookup had already matched the existing object on that very name, so the
+    comparison was false by construction and the guard only suggested a check
+    the module does not make. The documented behaviour -- a different name with
+    no id creates a new object -- is what the code does, and it keeps its tests;
+    the reachable guard (an id that was given but not found) stays.

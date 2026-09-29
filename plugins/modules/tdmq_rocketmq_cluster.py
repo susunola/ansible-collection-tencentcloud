@@ -191,8 +191,11 @@ def run_module():
         diff = maybe_diff(module, before, target)
         if not current and p.get("cluster_id"):
             module.fail_json(msg="RocketMQ cluster_id was not found; omit cluster_id to create a new cluster")
-        if current and before["ClusterName"] != target["ClusterName"] and not p.get("cluster_id"):
-            module.fail_json(msg="cluster_id is required to rename a RocketMQ cluster")
+        # A rename without a ``cluster_id`` is not detectable here: ``find``
+        # matched ``current`` on ``ClusterName == p["name"]``, so the two names
+        # are equal by construction. A task that asks for a different name and
+        # no id is asking for a *new* cluster, which is what the create below
+        # does.
         if not module.check_mode:
             if current:
                 module.sdk_call(client.ModifyRocketMQCluster, update_request(models, p, current["ClusterId"]))

@@ -202,8 +202,10 @@ def run_module():
         diff = maybe_diff(module, before, target)
         if not current and p.get("group_id") is not None:
             module.fail_json(msg="WAF group_id was not found; omit group_id to create a new protection group")
-        if current and before["Name"] != target["Name"] and p.get("group_id") is None:
-            module.fail_json(msg="group_id is required to rename a WAF protection group")
+        # A rename without a ``group_id`` is not detectable here: ``find``
+        # matched ``current`` on ``Name == p["name"]``, so the two names are
+        # equal by construction. A task that asks for a different name and no id
+        # is asking for a *new* group, which is what the create below does.
         if not module.check_mode:
             if current:
                 module.sdk_call(client.ModifyProtectGroup, update_request(models, p, current["ID"]))
