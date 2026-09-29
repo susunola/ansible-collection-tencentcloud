@@ -680,3 +680,28 @@ true positives to report -- the same reason the truthiness check was not built.
 They are recorded here as measurements so the next person does not have to
 re-derive them, and so a future regression is recognised as a change from a
 clean baseline rather than as an unknown.
+
+## Where every quality dimension stands (closing inventory)
+
+One place to audit the work, with the evidence next to each line rather than in
+sixty commit messages.
+
+| dimension | state | evidence |
+|---|---|---|
+| `RETURN` samples | 976 modules unsampled at the start, **2** now | `scripts/add_return_samples.py --check` re-derives all **510** samples; `scripts/quality_baselines/return_samples.txt` explains its own two (values too long for the 150-character budget) |
+| module test depth (P0-09) | **1,095 files, none under 80 lines** | `scripts/check_roadmap_status.py`; the roadmap chip is marked done in `docs/panorama.html` |
+| modules no test references / no test runs / private doubles | **0 / 0 / 0** | `scripts/check_quality_gates.py`; the three baseline files were deleted once the censuses hit zero |
+| SDK floor truthfulness and drift | gated | `scripts/check_sdk_floor.py`, `scripts/check_sdk_drift.py` |
+| secrets reaching a log | **0 unguarded, 0 interpolated** | `scripts/check_secret_handling.py` |
+| documented options nothing reads (plugins, modules) | **0 findings** | `scripts/check_plugin_options.py`, `scripts/check_module_options.py` |
+| role task files and role READMEs | gated | `scripts/check_examples.py` (role tasks), `role_doc_findings()` in `check_quality_gates.py` |
+| EXAMPLES consistency | **0 findings, measured** | the two measurements written up above |
+| `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
+| integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
+| thin option descriptions | **222, product knowledge** | measured and deliberately not automated |
+| forum drafts | unposted | no Discourse credentials in this environment |
+
+Three checks were measured and deliberately **not** written, each with the
+measurement recorded: the truthiness sweep (nine sites, all correct), the
+EXAMPLES consistency pair (clean), and anything derived from SDK model *values*
+(the generator emits structure, not invented values).

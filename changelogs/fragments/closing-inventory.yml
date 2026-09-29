@@ -1,0 +1,10 @@
+---
+minor_changes:
+  - >-
+    docs - add a closing inventory of every quality dimension with its evidence
+    beside it: what is closed (return samples 976 to 2, test depth, the three
+    zero censuses, secrets, option reads, role contracts, diff semantics), what
+    is an external dependency (135 integration targets, 8 undispatched gated
+    targets, 222 thin descriptions, the unposted forum drafts) and the three
+    checks that were measured and deliberately not written. One page to audit
+    instead of sixty commit messages.
