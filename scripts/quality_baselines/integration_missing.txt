@@ -5,6 +5,15 @@
 # the list must not have the finding at all.
 # a new core-subset write module needs an integration target under
 # tests/integration/targets/, or it does not belong in the core subset
+#
+# Why 135 and not zero -- an external dependency, not an unattempted task:
+# each entry is a core-subset write module whose integration target would have
+# to create, mutate and delete a real Tencent Cloud resource. Writing such a
+# target without an account to run it is guesswork, and a target that has never
+# been executed is worse than an honest absence: it claims coverage nobody has.
+# The 34 targets that do exist are dispatched by the nightly run; these 135 wait
+# for a credentialed environment, and the list may only shrink from here.
+
 alb_listener
 alb_load_balancer
 alb_target_group

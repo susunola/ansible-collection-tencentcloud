@@ -1,0 +1,9 @@
+---
+minor_changes:
+  - >-
+    docs - let the integration-target baseline explain its own number. Its 135
+    entries are core-subset write modules whose targets would have to create,
+    mutate and delete real Tencent Cloud resources; writing those without an
+    account to run them is guesswork, and an unexecuted target claims coverage
+    nobody has. Recorded as an external dependency rather than as unattempted
+    work, alongside the 34 targets that do exist and are dispatched nightly.
