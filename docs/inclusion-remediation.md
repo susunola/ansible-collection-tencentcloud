@@ -649,3 +649,18 @@ classified every one of them, because the answer is not "all of them are bugs":
 So the rule is about what is being tested, not about the syntax: truthiness
 answers "is there anything to say?", and it is wrong only where the question is
 "what is the value?".
+
+### Why there is no gate for that pattern
+
+The obvious follow-up to the sweep -- a check that flags ``X if X else None``
+-- was measured before it was written, and the measurement says no:
+
+* across all 1027 modules the shape occurs **zero** times, so such a gate would
+  have no true positives to find;
+* inside ``module_utils`` it occurs nine times, and every one of them is a
+  correct presence test (the table above).
+
+A gate whose only possible findings are nine false positives is the kind that
+gets switched off, and a switched-off gate protects nothing. The rule is
+written down instead, next to the fix it came from; if the shape ever appears in
+a module, the reviewer reading this section has the classification to judge it.

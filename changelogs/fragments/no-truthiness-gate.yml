@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - >-
+    docs - record why the truthiness pattern gets a rule instead of a gate. The
+    shape occurs zero times across the 1027 modules and nine times in
+    ``module_utils``, where every occurrence is a correct presence test, so a
+    check would have no true positives and nine false ones -- the kind that gets
+    switched off and then protects nothing.
