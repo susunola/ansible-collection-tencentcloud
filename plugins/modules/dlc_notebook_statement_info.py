@@ -86,35 +86,17 @@ statement:
     - Notebook statement metadata.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    TaskId: task-1
-    State: ok
 result_pages:
   description:
     - Ordered SQL-result pages with schema and statistics.
   returned: when include_sql_result
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - TaskId: task-1
-      ResultSet: page-1
-      ResultSchema:
-        - Name: id
-      NextToken: n2
-      OutputPath: cosn://out
-      UseTime: 1
-      AffectRows: 2
-      DataAmount: 3
-      UiUrl: ui
-      RequestId: req-res
 request_id:
   description:
     - Request ID from the statement lookup.
   returned: always
   type: str
-  sample: req-stmt
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

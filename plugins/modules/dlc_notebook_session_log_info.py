@@ -64,21 +64,16 @@ logs:
   returned: always
   type: list
   elements: str
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - a
 truncated:
   description:
     - Whether max_pages stopped a sequence of full pages.
   returned: always
   type: bool
-  sample: false
 request_id:
   description:
     - Request ID from the final page.
   returned: always
   type: str
-  sample: r-empty
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

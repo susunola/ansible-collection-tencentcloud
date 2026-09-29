@@ -67,51 +67,21 @@ services:
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Service:
-        ID: svc-2-id
-        Name: svc-2
-      RouteTotalCount: 1
-      Routes:
-        - Name: svc-2-route
 upstreams:
   description:
     - Upstream target data keyed by service name.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    svc-1:
-      UpstreamList:
-        - ID: upstream-1-id
-          Name: upstream-1
-    svc-2:
-      UpstreamList:
-        - ID: upstream-2-id
-          Name: upstream-2
-    svc-3:
-      UpstreamList:
-        - ID: upstream-3-id
-          Name: upstream-3
 total_count:
   description:
     - Service count reported by the API.
   returned: always
   type: int
-  sample: 3
 request_ids:
   description:
     - Request IDs for inventory and upstream queries.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    inventory: req-inv-2
-    upstreams:
-      svc-1: req-up-1
-      svc-2: req-up-2
-      svc-3: req-up-3
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

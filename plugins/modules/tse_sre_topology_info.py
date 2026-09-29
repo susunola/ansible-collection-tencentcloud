@@ -65,39 +65,27 @@ replicas:
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: r1
 interfaces:
   description:
     - Engine server interfaces.
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Interface: i1
 replica_count:
   description:
     - Replica count reported by the API.
   returned: always
   type: int
-  sample: 3
 interface_count:
   description:
     - Interface count reported by the API.
   returned: always
   type: int
-  sample: 2
 request_ids:
   description:
     - Request IDs of the last replica and interface API calls.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    replicas: req-nr-empty
-    interfaces: req-ni-empty
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -51,21 +51,16 @@ templates:
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: mysql
 total_count:
   description:
     - Template count reported by Tencent Cloud.
   returned: always
   type: int
-  sample: 2
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
-  sample: req-fallback
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

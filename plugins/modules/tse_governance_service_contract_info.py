@@ -85,33 +85,22 @@ contracts:
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: c1
 versions:
   description:
     - Contract versions available for the service.
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: v1
 total_count:
   description:
     - Contract count reported by the API.
   returned: always
   type: int
-  sample: 3
 request_ids:
   description:
     - Request IDs for contract and version queries.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    contracts: req-empty
-    versions: req-versions-empty
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

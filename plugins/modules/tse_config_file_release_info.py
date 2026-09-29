@@ -90,49 +90,33 @@ releases:
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: r1
 versions:
   description:
     - Available immutable release versions.
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: v1
 histories:
   description:
     - Publication and rollback history entries.
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Name: h1
 release_count:
   description:
     - Release count reported by the API.
   returned: always
   type: int
-  sample: 3
 history_count:
   description:
     - History count reported by the API.
   returned: always
   type: int
-  sample: 2
 request_ids:
   description:
     - Request IDs keyed by query type.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    releases: req-rel-empty
-    versions: req-ver-empty
-    histories: req-hist-empty
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

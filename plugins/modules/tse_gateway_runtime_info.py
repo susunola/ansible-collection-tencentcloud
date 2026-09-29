@@ -60,55 +60,33 @@ network_config:
     - Gateway or group network configuration.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    GatewayId: gateway-1
 ports:
   description:
     - Gateway protocol port configuration.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    GatewayInstancePortList:
-      - Scheme: HTTPS
-        PortList:
-          - 443
 public_addresses:
   description:
     - Public address configurations.
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - Vip: 203.0.113.10
 nodes:
   description:
     - Nodes in the selected gateway group.
   returned: always
   type: list
   elements: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    - NodeId: n1
 node_count:
   description:
     - Node count reported by the API.
   returned: always
   type: int
-  sample: 3
 request_ids:
   description:
     - Request IDs keyed by query type.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    network_config: req-config
-    ports: req-ports
-    public_addresses: req-address
-    nodes: req-node-2
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

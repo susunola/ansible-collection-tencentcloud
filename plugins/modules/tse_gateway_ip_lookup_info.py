@@ -50,15 +50,11 @@ gateway_info:
     - Gateway instance information associated with the IP.
   returned: always
   type: dict
-  sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
-    GatewayId: gateway-1
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
-  sample: req-lookup
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
