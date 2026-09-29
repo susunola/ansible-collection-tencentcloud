@@ -181,19 +181,25 @@ def _raw(value):
 def _canonical_raw(value):
     """Decode the API's base64-encoded RawValues and normalise for comparison.
 
-    Returns ``None`` when *value* cannot be decoded, signalling the caller
-    that the live value is unreadable and drift detection must be skipped
-    rather than falsely reporting *changed* on every run.
+    Returns ``None`` only when *value* is readable base64 but not readable
+    text, signalling the caller that the live value cannot be understood and
+    drift detection must be skipped rather than falsely reporting *changed* on
+    every run. A value that is not base64 at all is still compared: an addon
+    created outside Ansible can carry plain JSON (or plain text) there, and
+    skipping the comparison for those would silently ignore real drift.
     """
     if not value:
         return _values_json({})
     try:
         value = base64.b64decode(value, validate=True).decode("utf-8")
-    except (ValueError, UnicodeDecodeError):
-        # The API returned a RawValues that is not valid base64 or not
-        # decodable as UTF-8.  Return None so the caller skips the drift
-        # check instead of reporting changed on every run.
+    except UnicodeDecodeError:
+        # Valid base64 that is not UTF-8 text: nothing comparable here, so the
+        # caller skips the drift check instead of reporting changed on every
+        # run.
         return None
+    except (ValueError, TypeError):
+        # Not base64 at all -- compare it as the text it is.
+        pass
     return _values_json(value)
 
 

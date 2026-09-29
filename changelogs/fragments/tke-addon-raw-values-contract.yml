@@ -1,0 +1,11 @@
+---
+bugfixes:
+  - >-
+    tke_addon - compare RawValues that are not base64 instead of skipping them.
+    The idempotency fix that returns ``None`` for an undecodable live value also
+    caught plain JSON and plain text, which an addon created outside Ansible can
+    carry: those were silently excluded from the drift check, so real
+    differences were ignored. ``_canonical_raw`` now returns ``None`` only for
+    base64 that is not readable text -- the case the caller's skip is meant for
+    -- and compares everything else, which also makes the module agree with the
+    tests that pin both behaviours again.
