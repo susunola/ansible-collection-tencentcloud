@@ -32,8 +32,13 @@ SNAPSHOT = {
     "SnapshotName": "before-upgrade",
     "SnapshotState": "NORMAL",
     "LatestOperationState": "SUCCEEDED",
-    "InstanceId": "lhins-8b0a1c2d",
 }
+#: The API selects snapshots by ``instance-id``, but the ``Snapshot`` record it
+#: returns carries no ``InstanceId``: the v20200324 model has no such member and
+#: the module returns ``item._serialize(allow_none=True)``, which emits declared
+#: fields only. The fake therefore tracks ownership beside the store (see
+#: :class:`FakeSnapshotClient`).
+DEFAULT_INSTANCE = "lhins-8b0a1c2d"
 
 WRITE_OPS = (
     "CreateInstanceSnapshot",
@@ -64,11 +69,29 @@ def _params(**overrides):
 
 
 class FakeSnapshotClient(object):
-    """In-memory Lighthouse snapshot client that mutates a small store."""
+    """In-memory Lighthouse snapshot client that mutates a small store.
+
+    ``owners`` maps snapshot id to owning instance id. ``DescribeSnapshots``
+    filters on it, but the record it returns has no ``InstanceId`` field, so
+    the association is kept beside the store; a snapshot assigned to
+    ``client.snapshots`` defaults to the instance under test.
+    """
 
     def __init__(self, snapshots=None):
-        self.snapshots = [copy.deepcopy(s) for s in (snapshots or [])]
+        self.owners = {}
+        self._snapshots = []
+        self.snapshots = snapshots or []
         self.calls = []
+
+    @property
+    def snapshots(self):
+        return self._snapshots
+
+    @snapshots.setter
+    def snapshots(self, values):
+        self._snapshots = [copy.deepcopy(snapshot) for snapshot in values]
+        for snapshot in self._snapshots:
+            self.owners.setdefault(snapshot["SnapshotId"], DEFAULT_INSTANCE)
 
     def _record(self, name, request):
         self.calls.append((name, request))
@@ -84,7 +107,7 @@ class FakeSnapshotClient(object):
             by_instance = next((f.Values[0] for f in request.Filters if f.Name == "instance-id"), None)
             by_name = next((f.Values[0] for f in request.Filters if f.Name == "snapshot-name"), None)
             if by_instance:
-                snaps = [s for s in snaps if s["InstanceId"] == by_instance]
+                snaps = [s for s in snaps if self.owners.get(s["SnapshotId"]) == by_instance]
             if by_name:
                 snaps = [s for s in snaps if s["SnapshotName"] == by_name]
         offset = request.Offset or 0
@@ -104,9 +127,9 @@ class FakeSnapshotClient(object):
                 "SnapshotName": request.SnapshotName,
                 "SnapshotState": "NORMAL",
                 "LatestOperationState": "SUCCEEDED",
-                "InstanceId": request.InstanceId,
             }
         )
+        self.owners[snapshot_id] = request.InstanceId
         return SimpleNamespace(SnapshotId=snapshot_id)
 
     def ModifySnapshotAttribute(self, request):
@@ -120,6 +143,7 @@ class FakeSnapshotClient(object):
         self._record("DeleteSnapshots", request)
         removed = set(request.SnapshotIds)
         self.snapshots = [s for s in self.snapshots if s["SnapshotId"] not in removed]
+        self.owners = {key: value for key, value in self.owners.items() if key not in removed}
         return SimpleNamespace()
 
 
@@ -362,6 +386,24 @@ def test_present_creates_snapshot(client):
     assert result["snapshot"]["SnapshotState"] == "NORMAL"
 
 
+def test_snapshot_record_carries_no_instance_id(client):
+    """The v20200324 ``Snapshot`` model has no ``InstanceId`` member.
+
+    The lookup filters on ``instance-id``, but ``find`` returns
+    ``item._serialize(allow_none=True)``, which emits declared fields only, so
+    the record identifies the snapshot by its own id and name -- never by the
+    instance it was taken from.
+    """
+    client.snapshots = [_snapshot()]
+    module_args(state="present", instance_id="lhins-8b0a1c2d", name="before-upgrade")
+
+    result = run(lls.run_module)
+
+    assert result["changed"] is False
+    assert result["snapshot"].keys() == set(SNAPSHOT)
+    assert "InstanceId" not in result["snapshot"]
+
+
 def test_present_creates_without_wait(client):
     module_args(state="present", instance_id="lhins-8b0a1c2d", name="before-upgrade", wait=False)
     result = run(lls.run_module)
@@ -433,9 +475,9 @@ def test_present_wait_times_out_with_patched_clock(client, monkeypatch):
                 "SnapshotName": request.SnapshotName,
                 "SnapshotState": "CREATING",
                 "LatestOperationState": "SUCCEEDED",
-                "InstanceId": request.InstanceId,
             }
         )
+        client.owners[snapshot_id] = request.InstanceId
         return SimpleNamespace(SnapshotId=snapshot_id)
 
     client.CreateInstanceSnapshot = create_stays_pending

@@ -88,7 +88,6 @@ RETURN = r"""snapshot:
     SnapshotName: before-upgrade
     SnapshotState: NORMAL
     LatestOperationState: SUCCEEDED
-    InstanceId: lhins-8b0a1c2d
 """
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

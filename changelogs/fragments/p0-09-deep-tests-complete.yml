@@ -1,0 +1,28 @@
+---
+bugfixes:
+  - >-
+    tests - stop three test files from installing stub ``ansible`` modules into
+    ``sys.modules`` at import time. Any harness-importing file collected later in
+    the same pytest process died at collection ("No module named
+    'ansible.module_utils.common'; 'ansible.module_utils' is not a package"), so
+    the unit-test selection's result depended on filesystem order. The real
+    ``ansible.module_utils.basic`` is used now.
+  - >-
+    lighthouse_snapshot - the RETURN sample documented an ``InstanceId`` the
+    v20200324 ``Snapshot`` model cannot serialise, and the sibling test's fixture
+    invented it. The fixture now carries the four real model fields, a new test
+    pins the exact key set, and the impossible key is gone from the sample.
+  - >-
+    dnspod_line_group - delete a rename guard that could never fire (with no
+    ``line_group_id`` the lookup matches on the very name it would compare), so
+    the module no longer carries a promise it cannot keep; the documented
+    create-on-unknown-name behaviour and its test are unchanged.
+minor_changes:
+  - >-
+    tests - close the roadmap's P0-09 (shallow module tests): the last three
+    files under 80 lines are deepened from 41/65/75 lines to 420/357/509 and
+    from 8 tests to 58, covering config_delivery_info, config_recorder_info,
+    monitor_grafana_internet and monitor_grafana_notification_channel_lookup
+    through the shared harness. All 1095 module test files are now at or above
+    80 lines, the badge is marked done in docs/panorama.html, and the figure
+    guard states the new counts.
