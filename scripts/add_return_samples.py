@@ -262,10 +262,32 @@ class PayloadRecorder(object):
         files = self.module_files(item)
         self.current = sorted(files)[0] if len(files) == 1 else None
 
+    def calling_module(self):
+        """The module file whose code called ``exit_json``, if any.
+
+        The test's own imports are a poor guide: a file that covers two or
+        three modules (which is how the deepened suites are written) imports
+        more than one, and the recorder used to drop every payload in that case
+        -- 29 modules were executed by their tests yet never produced a sample
+        because of it. The frames know exactly which module is running.
+        """
+        frame = sys._getframe(1)
+        while frame is not None:
+            name = frame.f_globals.get("__name__", "")
+            if ".plugins.modules." in name:
+                module = sys.modules.get(name)
+                path = getattr(module, "__file__", None)
+                if path:
+                    return path
+            frame = frame.f_back
+        return None
+
     def record(self, payload):
-        """Keep *payload* for the current module, ignoring a repeat."""
-        if not self.current:
+        """Keep *payload* for the module that produced it, ignoring a repeat."""
+        source = self.calling_module() or self.current
+        if not source:
             return
+        self.current = source
         payload.setdefault("changed", False)
         kept = self.payloads[os.path.realpath(self.current)]
         if not kept or kept[-1] != payload:

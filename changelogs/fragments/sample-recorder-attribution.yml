@@ -1,0 +1,11 @@
+---
+minor_changes:
+  - >-
+    scripts - attribute a captured RETURN payload to the module that produced
+    it, not to the test file's imports. The recorder used the module a test
+    imported as the key, so a test covering two or three modules (which is how
+    the deepened suites are written) imported more than one and every payload
+    in that file was dropped. Following the calling frame instead lifts the
+    number of modules with a usable payload from 468 to 525 -- every
+    hand-written module -- which is what the remaining sample debt was waiting
+    on; the existing 448 samples still verify.
