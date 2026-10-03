@@ -232,6 +232,48 @@ def test_resolve_with_extra_match_alone_still_fails_on_ambiguity():
         raise AssertionError("expected an ambiguity failure")
 
 
+def test_resolve_all_builds_server_side_filters():
+    """The documented contract: id/name/extra filters narrow the request
+    server-side, and ``filter_records`` re-checks correctness below. The
+    re-check is why a mutant dropping this construction survived the whole
+    suite until this contract test."""
+    seen = []
+
+    def describe(filters):
+        seen.append(filters)
+        return []
+
+    resolver.resolve_all(
+        describe, id_value="vpc-1", name_value="prod",
+        id_filters=("vpc-id",), name_filters=("vpc-name",),
+        extra_filters={"zone": ["ap-guangzhou-3"]},
+    )
+    assert seen == [{"vpc-id": ["vpc-1"], "vpc-name": ["prod"],
+                     "zone": ["ap-guangzhou-3"]}]
+
+
+def test_resolve_all_without_selectors_sends_no_filters():
+    seen = []
+    resolver.resolve_all(lambda filters: seen.append(filters) or [])
+    assert seen == [None]
+
+
+def test_resolve_one_builds_server_side_filters():
+    seen = []
+
+    def describe(filters):
+        seen.append(filters)
+        return []
+
+    resolver.resolve_one(
+        FakeModule(), describe, resource="VPC", id_value="vpc-1",
+        name_value="prod", id_filters=("vpc-id",), name_filters=("vpc-name",),
+        extra_filters={"zone": ["ap-guangzhou-3"]},
+    )
+    assert seen == [{"vpc-id": ["vpc-1"], "vpc-name": ["prod"],
+                     "zone": ["ap-guangzhou-3"]}]
+
+
 def test_resolve_all_returns_every_match():
     describe = describe_of(FakeVpc("vpc-1", "prod-a"), FakeVpc("vpc-2", "prod-b"))
     found = resolver.resolve_all(

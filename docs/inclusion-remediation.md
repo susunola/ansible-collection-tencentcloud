@@ -950,6 +950,31 @@ error and recovers, and ``retry=False`` never retries. Re-running the
 wiring mutant kills exactly the new test and nothing else -- a closed gap
 with a named guard.
 
+A second module_utils batch brought a second survivor, and with it the
+spot-check's most instructive result so far:
+
+* ``compare_tags`` always reporting equal: **7 tests fail** -- tag drift is
+  pinned in every tag-bearing module;
+* ``is_idempotent_success`` always false: **2 tests fail** -- delete-not-
+  found is pinned;
+* ``resolve_one`` querying without its server-side filters: **1 test
+  fails** (the fuzzy-noise test), because ``filter_records`` re-checks
+  every match client-side -- the server-side filter is documented as a
+  narrowing optimisation, and the correctness net below catches its loss;
+* ``resolve_all`` querying without filters: **survived the whole suite**.
+  Same net, same documented contract -- but no test pinned the filter
+  *construction* at all (and ``resolve_all`` has no production caller; it
+  is a utility kept for its contract).
+
+Three contract tests in ``test_resolver.py`` now pin the documented
+behaviour -- ``resolve_all``/``resolve_one`` pass the id/name/extra filters
+to the describe callable, and pass ``None`` when there are no selectors --
+and re-running the surviving mutant kills exactly the new test. The lesson
+is recorded: when a mutant survives, first check whether it is *equivalent*
+(correctness re-checked elsewhere) before calling it a gap; here it was
+equivalent for every current caller, and the contract test exists so a
+future caller relying on server-side narrowing does not inherit silence.
+
 Two smaller censuses from the same round, both clean: unit tests carry **no
 real network imports** (the 544 naive ``requests.`` hits are variables named
 ``requests``, not the HTTP library -- the one ``from requests`` match is
@@ -981,7 +1006,7 @@ sixty commit messages.
 | test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
 | changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
 | reference integrity (fragments, plugins, versions, workflows, integration refs) | **0 findings, measured** (7 censuses) | the sweep written up above |
-| test-suite strength (mutation spot-check) | **64/64 module mutants + 3/3 module_utils mutants neutralised**; one wiring gap found and closed | the protocols written up above; the `sdk_call` retry wiring story is written up above |
+| test-suite strength (mutation spot-check) | **64/64 module mutants + 8/9 module_utils mutants neutralised**; two gaps found (`sdk_call` wiring, `resolve_all` filter contract) and closed with named tests | the protocols and both survivor stories written up above |
 | unit-test hermeticity / `__main__` guards | **0 network imports / 1,027 of 1,027** | same round, written up above |
 | dry-run assertion strength | **1 genuinely weak in 1,110, fixed** (+2 no-op tests strengthened) | the four-pass census written up above |
 | stale deprecations / contract coverage | **0 / 457 of 457** | same round, written up above |

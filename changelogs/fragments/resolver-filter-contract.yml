@@ -1,0 +1,18 @@
+---
+minor_changes:
+  - >-
+    tests - three contract tests in ``test_resolver.py`` now pin the
+    documented server-side filter construction of ``resolve_all`` and
+    ``resolve_one`` (id/name/extra filters reach the describe callable;
+    ``None`` when there are no selectors). Found by a second module_utils
+    mutation batch: ``compare_tags`` always-equal (7 tests fail) and
+    ``is_idempotent_success`` always-false (2 fail) were killed, but
+    ``resolve_all`` querying without filters survived the whole suite --
+    equivalent for every current caller because ``filter_records``
+    re-checks client-side, yet silent for any future caller relying on the
+    documented narrowing. Re-running the mutant now kills exactly the new
+    contract test.
+  - >-
+    docs - record the second mutation batch and the "check equivalence
+    before calling a survivor a gap" lesson in
+    ``docs/inclusion-remediation.md``.
