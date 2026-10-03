@@ -1,0 +1,15 @@
+---
+minor_changes:
+  - >-
+    docs - record a mutation spot-check of the unit suite: two mutation
+    classes (an inverted ``module.check_mode`` guard, an inverted
+    ``state == "absent"`` comparison) applied to two independent 16-module
+    samples in the harness layout were killed 32/32, every kill by assertion
+    failures, zero survivors -- the dry-run and delete-path tests pin
+    behaviour, not just coverage. The protocol note (a kill only counts when
+    tests *fail*; a collection error from a lost ``PYTHONPATH`` is not a
+    kill) is written down in ``docs/inclusion-remediation.md``.
+  - >-
+    docs - two more clean censuses: no ``deprecated`` entry is stale
+    (``removed_in`` at or below the galaxy version: 0), and all 457 write
+    modules carry an entry in the SDK contract suite's request-audit table.

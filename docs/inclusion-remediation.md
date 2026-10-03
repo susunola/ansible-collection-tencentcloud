@@ -849,6 +849,35 @@ deciding on gates:
 All recorded as measurements; the populations are clean and the one
 dimension that needed a gate already had it.
 
+### Mutation spot-check: the suite kills 32 out of 32
+
+A gate counts tests; it cannot tell whether the tests would notice the
+module doing the *wrong* thing. That is what mutation testing answers, so a
+spot-check ran two mutation classes against samples of the write modules, in
+the harness layout (the repository was never touched):
+
+* flip the first ``module.check_mode`` guard to its negation -- 457 write
+  modules carry the guard; a 16-module sample, evenly spaced across
+  products: **16/16 killed**, every one by assertion failures (2-7 red
+  tests each), zero survivors;
+* flip the first ``state == "absent"`` comparison -- 339 modules carry one;
+  a second independent 16-module sample: **16/16 killed** (6-13 red tests
+  each), zero survivors.
+
+32/32 means the dry-run and delete-path tests pin *behaviour*, not just
+coverage: invert the guard and the suite goes red everywhere. One
+methodology note for the next person: a first run of this spot-check
+reported "14/14 killed" that was worthless -- the subprocess had lost
+``PYTHONPATH``, every test file errored at collection, and an error is not
+an assertion. Kills were only counted when the summary line read
+``N failed``; anything else was classified separately.
+
+Two smaller censuses from the same round, both clean: no ``deprecated``
+entry has a ``removed_in`` version at or below the current galaxy version
+(**0 stale deprecations**), and all **457/457** write modules carry an
+entry in the SDK contract suite's request-audit table -- the contract
+coverage has no gaps.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -874,6 +903,8 @@ sixty commit messages.
 | test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
 | changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
 | reference integrity (fragments, plugins, versions, workflows, integration refs) | **0 findings, measured** (7 censuses) | the sweep written up above |
+| test-suite strength (mutation spot-check) | **32/32 mutants killed** by assertions, 0 survivors | the protocol written up above |
+| stale deprecations / contract coverage | **0 / 457 of 457** | same round, written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
 | thin option descriptions | **222, product knowledge** | measured and deliberately not automated |
