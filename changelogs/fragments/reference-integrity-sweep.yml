@@ -1,0 +1,13 @@
+---
+minor_changes:
+  - >-
+    docs - record the reference-integrity sweep: seven censuses of the places
+    where one file names another, all clean. No module extends a missing doc
+    fragment; every non-module plugin has a referencing test; all 18
+    ``version_added`` values are released versions plus the single
+    anticipatory ``1.5.0``; the suite's 38 warnings all come from the
+    TencentCloud SDK's own EMR models, not collection code; every
+    ``scripts/``/``tests/`` path a CI workflow names exists; and all 262
+    collection-module references in the integration targets resolve. The one
+    dimension that needed a gate -- ``RETURN`` keys in both directions --
+    already had one (``scripts/check_return_docs.py``).

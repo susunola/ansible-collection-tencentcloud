@@ -818,6 +818,37 @@ gate:
   read as fact in the release notes); the allowlist holds exactly one term
   (``no_log``) with its reason.
 
+### Reference integrity: seven more censuses, all clean
+
+A sweep of the places where one file names another, measured before
+deciding on gates:
+
+* ``extends_documentation_fragment`` naming a fragment file that does not
+  exist (docs would be silently incomplete): **0 findings** across all
+  1,027 modules;
+* a non-module plugin (``action``, ``callback``, ``connection``,
+  ``event_source``, ``filter``, ``inventory``, ``lookup``, ``plugin_utils``)
+  no test file references: **0 findings**;
+* ``version_added`` hygiene: **0 anomalies** -- 18 distinct values, every one
+  a released version except the single anticipatory ``1.5.0`` (116 modules,
+  the next release; galaxy and the changelog both sit at 1.4.0);
+* the test suite's 38 warnings: **all external** -- ``UserWarning``\ s raised
+  by the TencentCloud SDK's own EMR models when tests set those properties,
+  nothing raised by collection code;
+* CI workflow references to ``scripts/`` and ``tests/`` paths that do not
+  exist (a rename would break CI silently): **0 findings**;
+* integration target tasks invoking a collection module that does not exist:
+  **0 findings** across 262 module references (play ``tasks``/``handlers``
+  and ``block``/``rescue``/``always`` descended into, option dicts never
+  mistaken for tasks, ``ansible.builtin`` the only other namespace);
+* ``RETURN`` keys in both directions -- documented keys the module never
+  returns, returned keys nobody documented: **already gated** by
+  ``scripts/check_return_docs.py`` (verified while scoping this sweep; not
+  re-implemented).
+
+All recorded as measurements; the populations are clean and the one
+dimension that needed a gate already had it.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -842,6 +873,7 @@ sixty commit messages.
 | argspec internal consistency (7 dimensions) | **0 findings, measured** across 968 statically readable specs | the sweep written up above |
 | test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
 | changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
+| reference integrity (fragments, plugins, versions, workflows, integration refs) | **0 findings, measured** (7 censuses) | the sweep written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
 | thin option descriptions | **222, product knowledge** | measured and deliberately not automated |
