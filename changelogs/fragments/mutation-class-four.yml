@@ -1,0 +1,14 @@
+---
+minor_changes:
+  - >-
+    docs - record a fourth mutation class: flipping the create guard
+    (``if current is None:`` to ``if True:``) in a 16-module sample was
+    neutralised 16/16 -- 12 killed by assertion failures (idempotency and
+    call-count assertions), 4 by non-convergence (the module re-creates on
+    every poll and the waiter never settles, so the suite cannot pass).
+    The spot-check tally is 64/64 across four classes with zero survivors;
+    the protocol counts a timeout separately from an assertion kill.
+  - >-
+    docs - two more clean censuses: unit tests carry no real network
+    imports (the 544 naive ``requests.`` hits are variables named
+    ``requests``), and all 1,027 modules carry the ``__main__`` guard.

@@ -912,6 +912,27 @@ modules: emptying the ``items = response.X or []`` extraction in a 16-module
 sample of the 63 ``_info`` modules with that shape -- **16/16 killed** by
 assertion failures, zero survivors.
 
+A fourth class went after idempotency itself: the codebase's create guard is
+``if current is None:`` (214 sites), and flipping the first one in a module
+to ``if True:`` makes it *create always*. In a 16-module sample of the 116
+write modules carrying the guard, **12 were killed by assertion failures**
+(second-run-changed-False and call-count assertions going red) and **4 were
+killed by timeout** (dlc_data_engine, dlc_partition_queue, dlc_work_group,
+tione_notebook: the module re-creates on every poll, the waiter never
+converges, and the suite cannot pass). Zero survivors; the four hang-prone
+files were re-verified green after the restore. A timeout is a weaker signal
+than an assertion failure -- it costs 180 seconds instead of 0.2 -- so the
+protocol counts it separately, never as ``N failed``.
+
+Tally across the four classes: **64/64 mutants neutralised, 60 by
+assertions, 4 by non-convergence, 0 survivors**.
+
+Two smaller censuses from the same round, both clean: unit tests carry **no
+real network imports** (the 544 naive ``requests.`` hits are variables named
+``requests``, not the HTTP library -- the one ``from requests`` match is
+inside a docstring), and all **1,027/1,027** modules carry the
+``if __name__ == "__main__":`` guard.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -937,7 +958,8 @@ sixty commit messages.
 | test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
 | changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
 | reference integrity (fragments, plugins, versions, workflows, integration refs) | **0 findings, measured** (7 censuses) | the sweep written up above |
-| test-suite strength (mutation spot-check) | **48/48 mutants killed** by assertions across three classes (check_mode flip, absent flip, info items emptied), 0 survivors | the protocols written up above |
+| test-suite strength (mutation spot-check) | **64/64 mutants neutralised** across four classes (check_mode flip, absent flip, info items emptied, create-always), 0 survivors | the protocols written up above |
+| unit-test hermeticity / `__main__` guards | **0 network imports / 1,027 of 1,027** | same round, written up above |
 | dry-run assertion strength | **1 genuinely weak in 1,110, fixed** (+2 no-op tests strengthened) | the four-pass census written up above |
 | stale deprecations / contract coverage | **0 / 457 of 457** | same round, written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
