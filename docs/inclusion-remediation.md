@@ -673,13 +673,42 @@ across all 1027 modules before deciding whether to write one:
 * a `choices` option given a value outside its choices in an example (templated
   values skipped): **0 findings**;
 * an example task passing an option the module does not document: **0
-  findings**.
+  findings**;
+* the module a task invokes in an example -- across **1,639 task actions in
+  all 1027 modules** (parsed as YAML, play `tasks`/`handlers` and
+  `block`/`rescue`/`always` descended into, option dicts never mistaken for
+  tasks), every module's ``EXAMPLES`` invokes its own module, always by FQCN;
+  the single action name not in the collection is ``copy``, i.e.
+  ``ansible.builtin.copy``: **0 genuine findings**.
 
 Both are the state a reviewer would hope for, which means a check would have no
 true positives to report -- the same reason the truthiness check was not built.
 They are recorded here as measurements so the next person does not have to
 re-derive them, and so a future regression is recognised as a change from a
 clean baseline rather than as an unknown.
+
+### Assertion-less tests: 21 candidates, every one legitimate
+
+A census of all **12,521** unit-test functions looked for tests that never
+assert -- no ``assert`` statement, no ``pytest.raises`` guard, no ``assert_*``
+helper call in the body. It found **21** candidates across 18 files, and
+reading every body found no zombie:
+
+* eleven re-raise tests written as ``try: …; raise AssertionError('expected
+  exception'); except Boom: pass`` -- a hand-rolled ``pytest.raises`` for a
+  locally defined exception class;
+* seven tests whose assertion is that the call returns *without* raising --
+  ``_wait`` helpers that would call ``fail_json`` on timeout, validators run
+  against a fake module whose ``fail_json`` raises, and a callback armed with
+  ``AssertionError`` so the forbidden call fails the test from the inside;
+* one YAML-block test that fails via ``pytest.fail`` when a block is missing;
+* one parametrized dispatcher (``test_role_task_contract``) whose assertions
+  live in the ``_check_*`` helpers it calls.
+
+That is a false-positive rate of 21/21 for the naive detector, so no gate was
+written -- the same reasoning as the truthiness sweep. The census is recorded
+here so a future *genuine* zombie is recognised as a regression from a
+classified baseline.
 
 ## Where every quality dimension stands (closing inventory)
 
@@ -695,13 +724,15 @@ sixty commit messages.
 | secrets reaching a log | **0 unguarded, 0 interpolated** | `scripts/check_secret_handling.py` |
 | documented options nothing reads (plugins, modules) | **0 findings** | `scripts/check_plugin_options.py`, `scripts/check_module_options.py` |
 | role task files and role READMEs | gated | `scripts/check_examples.py` (role tasks), `role_doc_findings()` in `check_quality_gates.py` |
-| EXAMPLES consistency | **0 findings, measured** | the two measurements written up above |
+| EXAMPLES consistency | **0 findings, measured** (options, choices, and the invoked module name across 1,639 actions) | the three measurements written up above |
+| assertion-less ("zombie") tests | **21 candidates, 0 genuine** | the census written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
 | thin option descriptions | **222, product knowledge** | measured and deliberately not automated |
 | forum drafts | unposted | no Discourse credentials in this environment |
 
-Three checks were measured and deliberately **not** written, each with the
+Four checks were measured and deliberately **not** written, each with the
 measurement recorded: the truthiness sweep (nine sites, all correct), the
-EXAMPLES consistency pair (clean), and anything derived from SDK model *values*
-(the generator emits structure, not invented values).
+EXAMPLES consistency trio (clean), the assertion-less test census (21
+candidates, all legitimate patterns), and anything derived from SDK model
+*values* (the generator emits structure, not invented values).
