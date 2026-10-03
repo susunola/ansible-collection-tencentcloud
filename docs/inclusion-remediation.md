@@ -878,6 +878,40 @@ entry has a ``removed_in`` version at or below the current galaxy version
 entry in the SDK contract suite's request-audit table -- the contract
 coverage has no gaps.
 
+### Dry-run assertion strength: 1,110 tests, one genuinely weak
+
+The ``check_mode`` ratchet counts dry-run tests; it cannot tell whether a
+dry-run test would notice the module *writing anyway*. A census of all
+**1,110** dry-run tests asked which of them assert that no write happened --
+the fake client's call list, a negated write-op name, an unchanged state
+store, an absent output file, or a mock's ``assert_not_called``. Four
+detector passes were needed because the idiom varies per file (call-name
+lists, ``_names``/``_ops`` helpers, intermediate ``ops`` variables,
+``MagicMock`` side-effect stores, ``pytest.raises`` validators that fail
+before any write, and filesystem assertions):
+
+* 1,059 assert the no-write fact directly;
+* 12 pin a *validation* path that raises in check mode before any write
+  (immutable-drift failures -- correct, the write is unreachable);
+* 34 residue were read one by one: 18 assert through intermediate variables
+  (``ops = [c for c, _ in fake.calls]``) or state stores, 12 pin validators,
+  and **4** remained: two were strong via captured calls my classifier could
+  not see, and **two plus one** were genuinely thin:
+  ``test_cvm_instance_security_group::test_present_check_mode_bind_only``
+  asserted ``changed`` and the "Would bind" message but never that no bind
+  call was made, and the no-op dry-run tests of ``cdb_account_privilege`` and
+  ``cos_object_sync`` asserted ``changed is False`` with no write assertion.
+  All three now assert the no-write fact in their file's own idiom.
+
+No gate was written: the idiom diversity that took four detector passes is
+exactly what makes a naive gate cry wolf. The census and its fixes are
+recorded here.
+
+A third mutation class extended the spot-check to the generated read-only
+modules: emptying the ``items = response.X or []`` extraction in a 16-module
+sample of the 63 ``_info`` modules with that shape -- **16/16 killed** by
+assertion failures, zero survivors.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -903,7 +937,8 @@ sixty commit messages.
 | test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
 | changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
 | reference integrity (fragments, plugins, versions, workflows, integration refs) | **0 findings, measured** (7 censuses) | the sweep written up above |
-| test-suite strength (mutation spot-check) | **32/32 mutants killed** by assertions, 0 survivors | the protocol written up above |
+| test-suite strength (mutation spot-check) | **48/48 mutants killed** by assertions across three classes (check_mode flip, absent flip, info items emptied), 0 survivors | the protocols written up above |
+| dry-run assertion strength | **1 genuinely weak in 1,110, fixed** (+2 no-op tests strengthened) | the four-pass census written up above |
 | stale deprecations / contract coverage | **0 / 457 of 457** | same round, written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |

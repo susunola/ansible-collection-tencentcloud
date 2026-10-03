@@ -278,6 +278,9 @@ def test_present_check_mode_bind_only(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["msg"] == "Would bind ['sg-b']"
+    assert not any(
+        c[0] in ("AssociateSecurityGroups", "DisassociateSecurityGroups")
+        for c in fake.calls)
 
 
 def test_absent_noop_when_none_bound(monkeypatch):

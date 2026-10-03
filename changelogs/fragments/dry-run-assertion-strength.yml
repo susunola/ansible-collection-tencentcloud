@@ -1,0 +1,18 @@
+---
+bugfixes:
+  - >-
+    tests - ``test_cvm_instance_security_group::test_present_check_mode_bind_only``
+    asserted the "Would bind" prediction but never that no bind call was made;
+    it now asserts neither ``AssociateSecurityGroups`` nor
+    ``DisassociateSecurityGroups`` was called, in the file's own idiom. The
+    no-op dry-run tests of ``cdb_account_privilege`` and ``cos_object_sync``
+    gained the same kind of no-write assertion. Found by a four-pass census
+    of all 1,110 dry-run tests; these were the only genuinely thin ones.
+minor_changes:
+  - >-
+    docs - record the dry-run assertion-strength census (1,110 tests: 1,059
+    direct no-write assertions, 12 validator paths that raise before any
+    write, 34 read by hand, 3 fixed) and a third mutation class: emptying
+    the generated ``items = response.X or []`` extraction in a 16-module
+    sample of ``_info`` modules, 16/16 killed by assertion failures. The
+    mutation spot-check tally is now 48/48 across three classes.

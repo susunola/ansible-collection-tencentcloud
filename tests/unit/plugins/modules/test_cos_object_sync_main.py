@@ -234,6 +234,8 @@ def test_check_mode_unchanged_reports_false(client, tmp_path):
     )
     result = run(cos_object_sync.run_module)
     assert result["changed"] is False
+    client.put_object.assert_not_called()
+    client.delete_object.assert_not_called()
 
 
 def test_src_missing_fails(client, tmp_path):

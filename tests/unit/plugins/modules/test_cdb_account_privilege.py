@@ -383,6 +383,7 @@ def test_check_mode_noop_still_reports_changed_false(monkeypatch):
     _run_args(_ansible_check_mode=True, **FULL_PARAMS)
     result = run(mod.run_module)
     assert result["changed"] is False
+    assert not any(c[0] == "ModifyAccountPrivileges" for c in fake.calls)
 
 
 def test_sdk_error_is_reported(monkeypatch):
