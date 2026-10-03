@@ -1,0 +1,13 @@
+---
+minor_changes:
+  - >-
+    docs - record the argspec internal-consistency sweep. Seven structural
+    dimensions were measured across the 968 of 1027 modules whose argument
+    spec is statically readable: constraint references to unknown options,
+    documentation/argspec type drift, true secret options without ``no_log``,
+    list options without ``elements``, alias/name collisions, defaults
+    outside choices, and required options carrying defaults -- all clean, so
+    they are recorded as measurements rather than gates. The 24 naive
+    secret-name hits and the 6 naive default/choices hits are classified in
+    ``docs/inclusion-remediation.md`` so the next sweep does not re-derive
+    them.

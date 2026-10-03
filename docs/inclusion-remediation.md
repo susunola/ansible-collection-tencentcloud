@@ -760,6 +760,40 @@ file's own comments named all four), so references count only in files that
 mention the module's own stem, and the census file is excluded from its own
 corpus.
 
+### argspec internal consistency: seven dimensions, all clean
+
+The argument spec is the one structure that fails *at runtime, for every
+user* when it is wrong, and most of its consistency rules are nobody's gate
+(``validate-modules`` reads the documentation; the argspec itself is code).
+Seven dimensions were measured across every module whose spec is statically
+readable -- **968 of 1027** (the remaining 59 have no options of their own,
+an empty ``update({})`` over the shared base):
+
+* ``mutually_exclusive`` / ``required_one_of`` / ``required_together`` /
+  ``required_if`` / ``required_by`` naming an option that does not exist:
+  **0 findings**;
+* ``DOCUMENTATION`` type disagreeing with the argspec type on the module's
+  own options: **0 findings**;
+* an option whose value *is* a secret (``password``, ``secret_value``,
+  ``private_key``, ``secret_key`` and kin) without ``no_log: true``: **0
+  findings** -- the naive name match flags 24, all of them names, types or
+  flags (``secret_name``, ``rotate_password``, ``reveal_secret_value``,
+  ``client_token``), none of them a secret value;
+* a ``type: list`` option without ``elements``: **0 findings**;
+* an alias colliding with another option's name (an AnsibleModule hard
+  error): **0 findings**;
+* a ``default`` outside its ``choices``: **0 genuine findings** -- the six
+  naive hits are all ``type: list`` options whose default is a list of
+  allowed *element* values (``default: [OUTER]`` with
+  ``choices: [INNER, OUTER]`` is correct list semantics);
+* a ``required: true`` option carrying a ``default``: **0 findings**.
+
+All seven are recorded as measurements, not gates -- a gate whose only
+findings are false positives gets switched off, and these populations are
+clean. Roles carry no ``meta/argument_specs.yml`` at all (68/68), so that
+drift class does not exist; the README is the validated surface and it is
+already gated.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -781,6 +815,7 @@ sixty commit messages.
 | module/fragment option shadowing | **1, frozen** | `fragment_shadow_findings()` + `scripts/quality_baselines/fragment_shadowing.txt` (the `dlc_spark_job.role_arn` story is written up above) |
 | assertion-less ("zombie") tests | **21 candidates, 0 genuine** | the census written up above |
 | dead module helpers | **5 deleted, gated at 0**; 3 contract-only helpers classified and kept | `dead_helper_findings()` in `scripts/check_quality_gates.py`; the contract-only class is written up above |
+| argspec internal consistency (7 dimensions) | **0 findings, measured** across 968 statically readable specs | the sweep written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
 | thin option descriptions | **222, product knowledge** | measured and deliberately not automated |
