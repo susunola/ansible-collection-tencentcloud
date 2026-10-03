@@ -927,6 +927,29 @@ protocol counts it separately, never as ``N failed``.
 Tally across the four classes: **64/64 mutants neutralised, 60 by
 assertions, 4 by non-convergence, 0 survivors**.
 
+The fifth round of the spot-check went after the shared machinery in
+``module_utils`` -- one mutant, the whole suite, because every module
+depends on these:
+
+* ``build_diff`` returning ``None`` always ("never any drift"): **177 tests
+  fail** -- the diff contract is pinned everywhere;
+* ``Paginator.fetch_all`` stopping after the first page: **420 tests
+  fail** -- multi-page fixtures are widespread, pagination is not
+  undertested;
+* ``retry_on`` never retrying: **2 tests fail**, both in
+  ``test_retries.py`` -- the policy function is pinned directly, and that
+  is the right place for it.
+
+But the third one had a shadow: the *wiring* mutant -- ``base.sdk_call``
+calling ``invoke()`` directly instead of handing the call to ``retry_on``
+-- **survived the entire suite**. The policy was tested, the hand-off was
+not (module tests fake the client below the wiring, and the one module
+referencing throttling does not exercise it). Two wiring tests in
+``test_api_call_trail.py`` now pin it: the default path retries a throttled
+error and recovers, and ``retry=False`` never retries. Re-running the
+wiring mutant kills exactly the new test and nothing else -- a closed gap
+with a named guard.
+
 Two smaller censuses from the same round, both clean: unit tests carry **no
 real network imports** (the 544 naive ``requests.`` hits are variables named
 ``requests``, not the HTTP library -- the one ``from requests`` match is
@@ -958,7 +981,7 @@ sixty commit messages.
 | test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
 | changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
 | reference integrity (fragments, plugins, versions, workflows, integration refs) | **0 findings, measured** (7 censuses) | the sweep written up above |
-| test-suite strength (mutation spot-check) | **64/64 mutants neutralised** across four classes (check_mode flip, absent flip, info items emptied, create-always), 0 survivors | the protocols written up above |
+| test-suite strength (mutation spot-check) | **64/64 module mutants + 3/3 module_utils mutants neutralised**; one wiring gap found and closed | the protocols written up above; the `sdk_call` retry wiring story is written up above |
 | unit-test hermeticity / `__main__` guards | **0 network imports / 1,027 of 1,027** | same round, written up above |
 | dry-run assertion strength | **1 genuinely weak in 1,110, fixed** (+2 no-op tests strengthened) | the four-pass census written up above |
 | stale deprecations / contract coverage | **0 / 457 of 457** | same round, written up above |

@@ -1,0 +1,15 @@
+---
+minor_changes:
+  - >-
+    tests - two wiring tests in ``test_api_call_trail.py`` now pin the
+    ``sdk_call`` → ``retry_on`` hand-off: the default path retries a
+    throttled error and recovers, and ``retry=False`` never retries. Found
+    by a module_utils mutation round: ``build_diff`` returning nothing (177
+    tests fail) and single-page ``Paginator`` (420 fail) were killed
+    broadly, ``retry_on`` never retrying was killed by its two policy
+    tests -- but the wiring mutant (``sdk_call`` bypassing ``retry_on``)
+    survived the entire suite until these tests. Re-running it now kills
+    exactly the new test.
+  - >-
+    docs - record the module_utils mutation triad and the wiring-gap story
+    in ``docs/inclusion-remediation.md``.

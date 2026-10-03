@@ -74,6 +74,46 @@ def test_sdk_call_records_error_then_reraises():
     assert "nope" in record["error"]
 
 
+class _FakeThrottled(Exception):
+    def get_code(self):
+        return "RequestLimitExceeded"
+
+
+def test_sdk_call_retries_throttled_errors_by_default(monkeypatch):
+    """The wiring test: with ``retry`` left at its default, ``sdk_call`` must
+    hand the call to ``retry_on`` -- a regression that drops the hand-off
+    survives ``test_retries``, which exercises the policy function directly
+    but never the wiring."""
+    monkeypatch.setattr(
+        "ansible_collections.susunola.tencentcloud.plugins.module_utils."
+        "retries.time.sleep", lambda _seconds: None)
+    module = _make_module()
+    calls = []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) == 1:
+            raise _FakeThrottled("slow down")
+        return _FakeResponse()
+
+    result = module.sdk_call(flaky)
+    assert result.RequestId == "req-123"
+    assert len(calls) == 2
+
+
+def test_sdk_call_retry_false_never_retries():
+    module = _make_module()
+    calls = []
+
+    def flaky():
+        calls.append(1)
+        raise _FakeThrottled("slow down")
+
+    with pytest.raises(_FakeThrottled):
+        module.sdk_call(flaky, retry=False)
+    assert len(calls) == 1
+
+
 def test_exit_json_attaches_trail():
     module = _make_module()
     module.sdk_call(_ok_response, retry=False)
