@@ -794,6 +794,30 @@ clean. Roles carry no ``meta/argument_specs.yml`` at all (68/68), so that
 drift class does not exist; the README is the validated surface and it is
 already gated.
 
+### Test-suite hygiene and fragment truthfulness
+
+Four smaller censuses, three recorded as measurements and one that became a
+gate:
+
+* **shadowed duplicate definitions** in test files -- a second ``def`` with
+  the same name silently discards the first, losing tests without a trace.
+  Naive census: 1 hit (``FakeSnapshotClient.snapshots``), which is a
+  ``@property`` + setter pair, the correct pattern. Refined census
+  (property/setter/deleter excluded): **0 genuine findings**;
+* ``time.sleep`` in tests: **0 genuine findings** -- the single match
+  *patches sleep out* of a waiter test, which is the correct pattern;
+* warning suppression: **no** ``filterwarnings``, ``catch_warnings`` or
+  pytest ini filters anywhere -- the suite's warnings run unsuppressed and
+  visible;
+* **changelog fragment subjects** -- the part of an entry before the first
+  `` - `` names what the entry is about, and a snake_case token there must
+  resolve to a module, role, script or plugin of the collection. Measured:
+  all 88 fragments resolve. This one became a gate in
+  ``scripts/check_changelog_fragments.py`` because the failure mode already
+  happened once (a fragment named modules from an earlier, wrong census and
+  read as fact in the release notes); the allowlist holds exactly one term
+  (``no_log``) with its reason.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -816,6 +840,8 @@ sixty commit messages.
 | assertion-less ("zombie") tests | **21 candidates, 0 genuine** | the census written up above |
 | dead module helpers | **5 deleted, gated at 0**; 3 contract-only helpers classified and kept | `dead_helper_findings()` in `scripts/check_quality_gates.py`; the contract-only class is written up above |
 | argspec internal consistency (7 dimensions) | **0 findings, measured** across 968 statically readable specs | the sweep written up above |
+| test-suite hygiene (duplicates, sleeps, warning filters) | **0 genuine findings, measured** | the census written up above |
+| changelog fragment subjects resolve to real names | **gated** | `scripts/check_changelog_fragments.py` subject check (the wrong-module fragment failure mode) |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
 | thin option descriptions | **222, product knowledge** | measured and deliberately not automated |

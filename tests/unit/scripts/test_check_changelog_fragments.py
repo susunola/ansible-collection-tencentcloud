@@ -121,3 +121,39 @@ def test_main_without_check_reports_the_census(tree, fragments, capsys):
     write(tree, "typo.yml", "---\nbugfix:\n  - a thing\n")
     assert fragments.main([]) == 0
     assert "1 fragment(s), 1 problem(s)" in capsys.readouterr().out
+
+
+def test_a_subject_naming_a_real_module_passes(tree, fragments):
+    write(tree, "ok.yml", "---\nbugfixes:\n  - cdb_instance - fixed a thing.\n")
+    assert fragments.findings() == []
+
+
+def test_a_subject_naming_a_ghost_is_reported(tree, fragments):
+    """The failure mode this is for: a fragment naming modules from a wrong
+    census reads as fact in the release notes."""
+    write(tree, "ghost.yml",
+          "---\nbugfixes:\n  - cdb_ghost_module - fixed a thing.\n")
+    found = fragments.findings()
+    assert len(found) == 1
+    assert "cdb_ghost_module" in found[0][1]
+
+
+def test_a_module_named_only_in_the_body_is_not_checked(tree, fragments):
+    """The subject is the claim; prose after the dash stays prose."""
+    write(tree, "prose.yml",
+          "---\nbugfixes:\n  - cdb_instance - see also made_up_name here.\n")
+    assert fragments.findings() == []
+
+
+def test_an_allowlisted_subject_passes(tree, fragments):
+    write(tree, "nolog.yml",
+          "---\nminor_changes:\n  - no_log - marked secret options.\n")
+    assert fragments.findings() == []
+
+
+def test_a_script_or_role_subject_passes(tree, fragments):
+    write(tree, "multi.yml",
+          "---\nminor_changes:\n"
+          "  - check_quality_gates - new ratchet.\n"
+          "  - tc_alb_application_entry - documented a variable.\n")
+    assert fragments.findings() == []

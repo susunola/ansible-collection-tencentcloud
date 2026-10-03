@@ -1,0 +1,15 @@
+---
+minor_changes:
+  - >-
+    scripts/check_changelog_fragments.py - a fragment entry's subject (the
+    part before the first `` - ``) must now name something real: every
+    snake_case token there is resolved against the collection's modules,
+    roles, scripts and plugins, with a one-term allowlist (``no_log``). The
+    failure mode already happened once -- a fragment named modules from an
+    earlier, wrong census and would have read as fact in the release notes.
+    All 88 current fragments resolve.
+  - >-
+    docs - record the test-suite hygiene census: no shadowed duplicate test
+    definitions (the one naive hit is a ``@property``/setter pair), no real
+    ``time.sleep`` in tests (the one match patches sleep out of a waiter
+    test), and no warning-suppression anywhere in the suite.
