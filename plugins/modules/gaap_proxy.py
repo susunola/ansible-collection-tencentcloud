@@ -207,10 +207,6 @@ def build_describe_request(models, proxy_id, name, offset=0):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def _serialize(item):
     return item._serialize(allow_none=True)
 

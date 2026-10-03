@@ -33,6 +33,7 @@ Usage
 from __future__ import absolute_import, division, print_function
 
 import argparse
+import ast
 import collections
 import glob
 import os
@@ -134,6 +135,15 @@ DELETE_EXAMPLE_RATCHET = 0
 # module at all. Un-shadowing it needs a deprecation cycle, so the one site
 # is frozen as a baseline; no new shadow may appear.
 FRAGMENT_SHADOW_RATCHET = 1
+
+# Top-level helpers a module defines but nothing calls -- not the module
+# itself, not its tests, not the contract suite. Four identical dead
+# ``_first`` one-liners (cfs_file_system, ckafka_topic, gaap_proxy,
+# ssm_parameter) were the first census; helpers referenced only by the
+# contract suite (sqlserver_instance's modify-path builders, tke_cluster_
+# endpoint's build_status) are alive by definition and are recorded in
+# docs/inclusion-remediation.md instead.
+DEAD_HELPER_RATCHET = 0
 
 # Two of the families above are stock counts of *existing* debt -- samples to
 # author (976) and integration targets that need a cloud account (135). A
@@ -463,6 +473,57 @@ def fragment_shadow_findings():
                     found.append("%s :: %s (%s declares %s, module declares %s)"
                                  % (os.path.basename(path)[:-3], option,
                                     stem, frag_type, own_type))
+    return sorted(found)
+
+
+def _word_re(name):
+    return re.compile(r"\b%s\b" % re.escape(name))
+
+
+def dead_helper_findings():
+    """Top-level module helpers that nothing in the repository calls.
+
+    A helper whose name appears only at its own ``def`` is dead code. The
+    reference search is deliberately scoped: a file can only reach another
+    module's helper when it names that module (an import, the contract
+    suite's plugin lists, a test's ``import_plugin``), so references count
+    only in files that mention the module's own stem -- otherwise a same-
+    named local helper in an unrelated module would rescue every dead one
+    (``_first`` exists as a local in a dozen modules). Helpers referenced
+    only by tests or the contract suite stay alive by definition.
+    """
+    word_sets = {}
+    self_path = os.path.abspath(__file__)
+    for base in ("tests", "scripts", "plugins"):
+        pattern = os.path.join(REPO_ROOT, base, "**", "*.py")
+        for path in sorted(glob.glob(pattern, recursive=True)):
+            if os.path.abspath(path) == self_path:
+                continue  # this census must not rescue its own examples
+            with open(path, encoding="utf-8") as handle:
+                word_sets[path] = set(re.findall(r"\w+", handle.read()))
+    found = []
+    for path in module_paths():
+        stem = os.path.basename(path)[:-3]
+        with open(path, encoding="utf-8") as handle:
+            source = handle.read()
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:
+            continue
+        referencing = [words for other, words in word_sets.items()
+                       if other != path and stem in words]
+        for node in tree.body:
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            name = node.name
+            if name in ("main", "run_module"):
+                continue
+            own = source.replace("def %s" % name, "", 1)
+            if _word_re(name).search(own):
+                continue
+            if any(name in words for words in referencing):
+                continue
+            found.append("%s :: %s" % (stem, name))
     return sorted(found)
 
 
@@ -892,6 +953,7 @@ def main(argv=None):
     samples = return_sample_findings()
     sample_types = return_sample_type_findings()
     shadows = fragment_shadow_findings()
+    dead_helpers = dead_helper_findings()
     deletes = delete_example_findings()
     skeletons = skeleton_test_findings()
     check_mode_tests = check_mode_test_findings()
@@ -956,6 +1018,10 @@ def main(argv=None):
         for name in shadows:
             print("   %s" % name)
         print()
+        print("top-level module helpers nothing calls: %d" % len(dead_helpers))
+        for name in dead_helpers:
+            print("   %s" % name)
+        print()
         print("write modules that accept state=absent with no delete example: %d"
               % len(deletes))
         for name in deletes:
@@ -1008,6 +1074,11 @@ def main(argv=None):
             "module options shadowing a fragment option with another type: "
             "%d, ratchet is %d (the ratchet only goes down)"
             % (len(shadows), FRAGMENT_SHADOW_RATCHET))
+    if dead_helpers:
+        problems.append(
+            "top-level module helpers nothing calls: %d, ratchet is %d "
+            "(the ratchet only goes down)"
+            % (len(dead_helpers), DEAD_HELPER_RATCHET))
     if len(check_mode_tests) > CHECK_MODE_TEST_RATCHET:
         problems.append(
             "write modules claiming check_mode: full with no dry-run test: %d, "
@@ -1054,6 +1125,8 @@ def main(argv=None):
           "(ratchet %d, baseline %d)"
           % (len(shadows), FRAGMENT_SHADOW_RATCHET,
              len(read_baseline(BASELINE_FRAGMENT_SHADOWING) or [])))
+    print("ok: %d top-level module helper(s) are dead code (ratchet %d)"
+          % (len(dead_helpers), DEAD_HELPER_RATCHET))
     print("ok: %d write module(s) accept state=absent with no delete example "
           "(ratchet %d)" % (len(deletes), DELETE_EXAMPLE_RATCHET))
     print("ok: %d unit-test file(s) are still generator skeletons (ratchet %d)"

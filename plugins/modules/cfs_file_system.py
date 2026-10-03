@@ -200,10 +200,6 @@ def build_describe_request(models, file_system_id, name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def _fs_name(item):
     """Read the display name out of a serialized file system.
 

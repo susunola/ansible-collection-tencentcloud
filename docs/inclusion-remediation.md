@@ -732,6 +732,34 @@ written -- the same reasoning as the truthiness sweep. The census is recorded
 here so a future *genuine* zombie is recognised as a regression from a
 classified baseline.
 
+### Dead helpers: five deleted, three contract-only ones kept on purpose
+
+A census of top-level helpers in every module asked which are called by
+anything -- the module itself, its tests, the contract suite. It found five
+that nothing reaches: four identical ``_first`` one-liners (``cfs_file_
+system``, ``ckafka_topic``, ``gaap_proxy``, ``ssm_parameter``) and
+``module_utils/client.py``'s ``sdk_version()``, whose docstring still claimed
+``base.exit_json`` called it -- that caller is gone. All five were deleted,
+and the census became the ``dead_helper_findings()`` ratchet (0) in
+``scripts/check_quality_gates.py``.
+
+The census also surfaced a class worth recording rather than deleting:
+``sqlserver_instance.security_groups_request``/``renew_request`` and
+``tke_cluster_endpoint.build_status`` are *called by the contract suite*
+(which audits their request shapes) but not wired into the modules' run
+paths -- post-create security-group and auto-renew reconciliation, and
+endpoint-status polling, are scopes the modules do not reconcile today.
+Wiring them changes module behaviour, so it stays a product decision; the
+gate keeps the helpers alive by definition because the contract suite names
+them.
+
+The detector's precision rules were earned the hard way: a plain repo-wide
+text search rescues any dead helper whose name coincidentally appears
+elsewhere (``_first`` exists as a *local* in a dozen modules, and the census
+file's own comments named all four), so references count only in files that
+mention the module's own stem, and the census file is excluded from its own
+corpus.
+
 ## Where every quality dimension stands (closing inventory)
 
 One place to audit the work, with the evidence next to each line rather than in
@@ -752,6 +780,7 @@ sixty commit messages.
 | `RETURN` sample type vs declared type | **1 found, fixed, gated** | `return_sample_type_findings()` in `scripts/check_quality_gates.py` (`ssl_certificate.deploy_record_id` was `str`, the SDK sends an int) |
 | module/fragment option shadowing | **1, frozen** | `fragment_shadow_findings()` + `scripts/quality_baselines/fragment_shadowing.txt` (the `dlc_spark_job.role_arn` story is written up above) |
 | assertion-less ("zombie") tests | **21 candidates, 0 genuine** | the census written up above |
+| dead module helpers | **5 deleted, gated at 0**; 3 contract-only helpers classified and kept | `dead_helper_findings()` in `scripts/check_quality_gates.py`; the contract-only class is written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
 | thin option descriptions | **222, product knowledge** | measured and deliberately not automated |

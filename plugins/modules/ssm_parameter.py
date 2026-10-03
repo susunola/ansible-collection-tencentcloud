@@ -179,10 +179,6 @@ def _load_ssm():
     return models, ssm_client
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_secret(module, client, models, secret_name):
     """Return the matching secret metadata dict or None."""
     try:

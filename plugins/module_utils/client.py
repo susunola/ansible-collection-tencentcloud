@@ -231,17 +231,3 @@ def create_client(module, client_class, default_endpoint):
         module.params["region"],
         create_client_profile(module, default_endpoint),
     )
-
-
-def sdk_version():
-    """Return the installed SDK version or ``None`` when unavailable.
-
-    Intentionally silent: this is a best-effort probe called during audit
-    output assembly (``base.exit_json``), where raising or warning would
-    disrupt normal module output for a purely informational field.
-    """
-    try:
-        from tencentcloud import __version__
-        return __version__
-    except Exception:
-        return None

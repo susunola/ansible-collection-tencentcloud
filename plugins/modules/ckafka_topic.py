@@ -191,10 +191,6 @@ def _load_ckafka():
     return models, ckafka_client
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def _tags(models, values):
     """Build the API's tag list from the ``tags`` dict.
 

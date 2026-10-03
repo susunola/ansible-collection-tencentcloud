@@ -1,0 +1,21 @@
+---
+minor_changes:
+  - >-
+    dead code - removed four identical unused ``_first`` helpers
+    (cfs_file_system, ckafka_topic, gaap_proxy, ssm_parameter) and the
+    unreferenced ``sdk_version()`` in ``module_utils/client.py`` (its caller
+    in ``base.exit_json`` no longer exists; the docstring was stale).
+  - >-
+    scripts/check_quality_gates.py - new ``dead_helper_findings()`` ratchet:
+    a top-level module helper nothing calls is dead code. References count
+    only in files that name the module (its tests, the contract suite), so a
+    same-named local in an unrelated module cannot rescue a dead helper, and
+    the census file itself is excluded from its own corpus. Helpers exercised
+    only by the contract suite stay alive by definition.
+  - >-
+    docs - record the contract-only helper class found by the census:
+    ``sqlserver_instance.security_groups_request``/``renew_request`` and
+    ``tke_cluster_endpoint.build_status`` are audited by the contract suite
+    but not wired into the modules' run paths (post-create security-group and
+    auto-renew reconciliation, endpoint-status polling); wiring them is a
+    behaviour change and stays a product decision.

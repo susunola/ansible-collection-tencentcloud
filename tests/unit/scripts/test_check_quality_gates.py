@@ -314,3 +314,49 @@ def test_a_different_type_is_reported_as_a_shadow(gates, tmp_path, monkeypatch):
 def test_committed_tree_has_only_the_grandfathered_shadow(gates):
     assert gates.fragment_shadow_findings() == [
         "dlc_spark_job :: role_arn (credentials declares str, module declares int)"]
+
+
+def _dead_helper_tree(gates, tmp_path, monkeypatch):
+    """A throwaway repo layout; returns the modules directory."""
+    modules = tmp_path / "plugins" / "modules"
+    modules.mkdir(parents=True)
+    (tmp_path / "tests").mkdir()
+    monkeypatch.setattr(gates, "REPO_ROOT", str(tmp_path))
+    monkeypatch.setattr(gates, "MODULES_DIR", str(modules))
+    return modules
+
+
+def test_a_helper_nothing_calls_is_reported(gates, tmp_path, monkeypatch):
+    modules = _dead_helper_tree(gates, tmp_path, monkeypatch)
+    (modules / "fake_module.py").write_text(
+        "def _unused():\n    return 1\n\n\ndef main():\n    pass\n",
+        encoding="utf-8")
+    assert gates.dead_helper_findings() == ["fake_module :: _unused"]
+
+
+def test_a_helper_referenced_by_its_own_test_is_alive(gates, tmp_path,
+                                                      monkeypatch):
+    modules = _dead_helper_tree(gates, tmp_path, monkeypatch)
+    (modules / "fake_module.py").write_text(
+        "def _helper():\n    return 1\n", encoding="utf-8")
+    (tmp_path / "tests" / "test_fake.py").write_text(
+        "import fake_module\nfake_module._helper()\n", encoding="utf-8")
+    assert gates.dead_helper_findings() == []
+
+
+def test_a_same_named_local_elsewhere_does_not_rescue(gates, tmp_path,
+                                                      monkeypatch):
+    """Only a file naming the module can reach its helpers -- the dozen
+    unrelated ``_first`` locals in the tree must not rescue a dead one."""
+    modules = _dead_helper_tree(gates, tmp_path, monkeypatch)
+    (modules / "fake_module.py").write_text(
+        "def _first(collection):\n    return collection[0]\n", encoding="utf-8")
+    (modules / "other_module.py").write_text(
+        "def run():\n    _first = min\n    return _first([1])\n\n\n"
+        "run()\n",
+        encoding="utf-8")
+    assert gates.dead_helper_findings() == ["fake_module :: _first"]
+
+
+def test_committed_tree_has_no_dead_helpers(gates):
+    assert gates.dead_helper_findings() == []
