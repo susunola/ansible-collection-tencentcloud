@@ -1,0 +1,35 @@
+---
+bugfixes:
+  - >-
+    ssl_certificate - the ``deploy_record_id`` return value was documented as
+    a string, but the SDK's deploy record ID is an integer and the module
+    passes it through unchanged; the documentation now says ``int``.
+  - >-
+    cdwdoris_instance, scf_alias, scf_version, vod_class - examples passed
+    string options unquoted (``product_version: 2.1`` parses as a float,
+    ``function_version: 2`` as an int); the values are now quoted so the
+    copy-paste passes the documented type.
+  - >-
+    config_remediation_info - the example passed the placeholder string
+    ``example`` for the list option ``rule_ids``; it now passes a list with
+    the ``cr-xxxxxxxx`` shape the sibling module documents.
+  - >-
+    trtc_call_info - the example's ``comm_id: 1400000000_218695_1590065777``
+    was YAML digit grouping, which parses to one huge integer and loses the
+    underscores the API expects; the value is now quoted.
+minor_changes:
+  - >-
+    scripts/check_module_examples.py - new ``types`` rule: a scalar in an
+    example must match the type the option declares (templated values
+    skipped, quoted scalars accepted where the argspec casts them, module
+    documentation wins over fragment types exactly like the runtime argspec).
+    Its first run found the eight example fixes above plus
+    ``dlc_spark_job.role_arn``.
+  - >-
+    scripts/check_quality_gates.py - two new ratchets:
+    ``return_sample_type_findings()`` (a RETURN ``sample`` must not
+    contradict its declared ``type``; caught ``ssl_certificate``) and
+    ``fragment_shadow_findings()`` (a module re-declaring a fragment option
+    with a different type shadows the shared feature; the one grandfathered
+    site, ``dlc_spark_job.role_arn`` shadowing the assume-role ARN, is frozen
+    in ``scripts/quality_baselines/fragment_shadowing.txt``).

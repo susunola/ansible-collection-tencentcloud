@@ -95,6 +95,14 @@ IDEMPOTENCY_RATCHET = 0
 # wrapped under the line pep8 allows.
 RETURN_SAMPLE_RATCHET = 2
 
+# RETURN entries whose ``sample`` contradicts the declared ``type`` -- a dict
+# documented as a list, an integer documented as a string. The sample is what
+# the module actually produced under test, so a mismatch is always the
+# documentation lying about the module. The first census found exactly one
+# (``ssl_certificate.deploy_record_id``, an SDK integer documented as
+# ``str``); none may come back.
+RETURN_SAMPLE_TYPE_RATCHET = 0
+
 # Write modules that claim ``check_mode: full`` with no dry-run test. The
 # claim is user-facing and load-bearing: a user runs --check expecting no
 # write. All 457 have one today.
@@ -115,6 +123,18 @@ SKELETON_TEST_RATCHET = 0
 # delete call rather than from the create example that turns it on.
 DELETE_EXAMPLE_RATCHET = 0
 
+# Module options that re-declare a doc-fragment option with a *different*
+# type. Same-type re-declaration is how a module overrides a fragment default
+# or description (108 sites today, harmless). A different type means the
+# module silently shadows the fragment feature: ``dlc_spark_job`` declares
+# ``role_arn: int`` (the DLC data-access role) over the credentials fragment's
+# ``role_arn: str`` (the STS assume-role ARN), and because
+# ``TencentCloudModule`` lets the module's own spec ``update()`` over
+# ``base_argument_spec()``, the assume-role option cannot be used with that
+# module at all. Un-shadowing it needs a deprecation cycle, so the one site
+# is frozen as a baseline; no new shadow may appear.
+FRAGMENT_SHADOW_RATCHET = 1
+
 # Two of the families above are stock counts of *existing* debt -- samples to
 # author (976) and integration targets that need a cloud account (135). A
 # stock ceiling cannot tell "fixed three, broke three" apart from "fixed
@@ -131,6 +151,7 @@ BASELINE_INTEGRATION_MISSING = "integration_missing"
 BASELINE_UNTESTED_MODULES = "untested_modules"
 BASELINE_PRIVATE_HARNESS = "private_harness"
 BASELINE_UNTESTED_MAIN_PATH = "untested_main_path"
+BASELINE_FRAGMENT_SHADOWING = "fragment_shadowing"
 
 _BASELINE_GUIDANCE = {
     BASELINE_RETURN_SAMPLES:
@@ -152,6 +173,10 @@ _BASELINE_GUIDANCE = {
         "a module test drives its module through "
         "tests/unit/plugins/modules/harness.py, not a private double, so the "
         "payload is observable and the conventions live in one place",
+    BASELINE_FRAGMENT_SHADOWING:
+        "a module that re-declares a fragment option keeps the fragment's "
+        "type, so the shared feature (assume-role, waiter, endpoint) stays "
+        "usable; dlc_spark_job is the one grandfathered shadow",
 }
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
@@ -330,6 +355,114 @@ def return_sample_findings():
         if not match or "sample:" in match.group(2):
             continue
         found.append(os.path.basename(path)[:-3])
+    return sorted(found)
+
+
+_SAMPLE_TYPE_MAP = {
+    "dict": dict,
+    "list": list,
+    "str": str,
+    "path": str,
+    "json": str,
+    "jsonarg": str,
+    "int": int,
+    "bool": bool,
+    "float": (int, float),
+}
+
+
+def _sample_type_mismatches(entries, trail, name, found):
+    for key, spec in (entries or {}).items():
+        if not isinstance(spec, dict):
+            continue
+        here = "%s.%s" % (trail, key) if trail else key
+        declared = spec.get("type")
+        if "sample" in spec and declared in _SAMPLE_TYPE_MAP:
+            sample = spec["sample"]
+            expected = _SAMPLE_TYPE_MAP[declared]
+            matches = isinstance(sample, expected)
+            if matches and declared in ("int", "float") and isinstance(sample, bool):
+                matches = False  # bool is an int subclass, but never a valid id
+            if not matches:
+                found.append("%s :: %s (declared %s, sample is %s)"
+                             % (name, here, declared,
+                                type(sample).__name__))
+        _sample_type_mismatches(spec.get("contains"), here, name, found)
+
+
+def return_sample_type_findings():
+    """RETURN entries whose sample contradicts the declared type."""
+    found = []
+    for path in module_paths():
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        match = re.search(r"RETURN = r?(['\"]{3})(.*?)\1", text, re.S)
+        if not match or "sample:" not in match.group(2):
+            continue
+        try:
+            doc = yaml.safe_load(match.group(2))
+        except yaml.YAMLError:
+            continue  # validate-modules owns YAML validity
+        if not isinstance(doc, dict):
+            continue
+        _sample_type_mismatches(doc, "", os.path.basename(path)[:-3], found)
+    return sorted(found)
+
+
+_DOC_FRAGMENTS_DIR = os.path.join(REPO_ROOT, "plugins", "doc_fragments")
+
+
+def _documentation_of(path):
+    """The parsed DOCUMENTATION mapping of one module or fragment file."""
+    with open(path, encoding="utf-8") as handle:
+        match = _DOC_RE.search(handle.read())
+    if not match:
+        return None
+    try:
+        doc = yaml.safe_load(match.group(2))
+    except yaml.YAMLError:
+        return None
+    return doc if isinstance(doc, dict) else None
+
+
+def fragment_shadow_findings():
+    """Module options re-declaring a fragment option with a different type.
+
+    Same-type re-declaration only overrides a default or a description; a
+    different type means the module's own option silently shadows the shared
+    feature the fragment provides (the runtime lets the module's argument
+    spec ``update()`` over ``base_argument_spec()``).
+    """
+    fragment_types = {}
+    for path in sorted(glob.glob(os.path.join(_DOC_FRAGMENTS_DIR, "*.py"))):
+        stem = os.path.basename(path)[:-3]
+        doc = _documentation_of(path)
+        if isinstance(doc, dict):
+            fragment_types[stem] = {
+                key: spec.get("type")
+                for key, spec in (doc.get("options") or {}).items()
+                if isinstance(spec, dict)
+            }
+    found = []
+    for path in module_paths():
+        doc = _documentation_of(path)
+        if not isinstance(doc, dict):
+            continue
+        own = doc.get("options") or {}
+        fragments = doc.get("extends_documentation_fragment") or []
+        if isinstance(fragments, str):
+            fragments = [fragments]
+        for fragment in fragments:
+            stem = fragment.rsplit(".", 1)[-1]
+            for option, frag_type in fragment_types.get(stem, {}).items():
+                spec = own.get(option)
+                if not isinstance(spec, dict):
+                    continue
+                own_type = spec.get("type")
+                if own_type != frag_type:
+                    found.append("%s :: %s (%s declares %s, module declares %s)"
+                                 % (os.path.basename(path)[:-3], option,
+                                    stem, frag_type, own_type))
     return sorted(found)
 
 
@@ -757,6 +890,8 @@ def main(argv=None):
     gated, missing = integration_findings()
     idempotency = idempotency_findings()
     samples = return_sample_findings()
+    sample_types = return_sample_type_findings()
+    shadows = fragment_shadow_findings()
     deletes = delete_example_findings()
     skeletons = skeleton_test_findings()
     check_mode_tests = check_mode_test_findings()
@@ -771,7 +906,8 @@ def main(argv=None):
                     "integration_missing": missing,
                     "untested_modules": untested,
                     "private_harness": private_harness,
-                    "untested_main_path": untested_main_path}[args.write_baseline]
+                    "untested_main_path": untested_main_path,
+                    "fragment_shadowing": shadows}[args.write_baseline]
         return write_baseline(args.write_baseline, findings)
 
     if args.show:
@@ -805,6 +941,20 @@ def main(argv=None):
         print("   baseline %s: %s"
               % (BASELINE_RETURN_SAMPLES,
                  "missing" if frozen is None else len(frozen)))
+        print()
+        print("RETURN samples contradicting the declared type: %d"
+              % len(sample_types))
+        for name in sample_types:
+            print("   %s" % name)
+        print()
+        print("module options shadowing a fragment option with another type: %d"
+              % len(shadows))
+        frozen = read_baseline(BASELINE_FRAGMENT_SHADOWING)
+        print("   baseline %s: %s"
+              % (BASELINE_FRAGMENT_SHADOWING,
+                 "missing" if frozen is None else len(frozen)))
+        for name in shadows:
+            print("   %s" % name)
         print()
         print("write modules that accept state=absent with no delete example: %d"
               % len(deletes))
@@ -847,6 +997,17 @@ def main(argv=None):
         problems.append(
             "modules whose RETURN carries no sample: %d, ratchet is %d "
             "(the ratchet only goes down)" % (len(samples), RETURN_SAMPLE_RATCHET))
+    if sample_types:
+        problems.append(
+            "RETURN samples contradicting the declared type: %d, ratchet is %d "
+            "(the ratchet only goes down)"
+            % (len(sample_types), RETURN_SAMPLE_TYPE_RATCHET))
+    problems.extend(baseline_problems(BASELINE_FRAGMENT_SHADOWING, shadows))
+    if len(shadows) > FRAGMENT_SHADOW_RATCHET:
+        problems.append(
+            "module options shadowing a fragment option with another type: "
+            "%d, ratchet is %d (the ratchet only goes down)"
+            % (len(shadows), FRAGMENT_SHADOW_RATCHET))
     if len(check_mode_tests) > CHECK_MODE_TEST_RATCHET:
         problems.append(
             "write modules claiming check_mode: full with no dry-run test: %d, "
@@ -887,6 +1048,12 @@ def main(argv=None):
           "baseline %d)"
           % (len(samples), RETURN_SAMPLE_RATCHET,
              len(read_baseline(BASELINE_RETURN_SAMPLES) or [])))
+    print("ok: %d RETURN sample(s) contradict the declared type (ratchet %d)"
+          % (len(sample_types), RETURN_SAMPLE_TYPE_RATCHET))
+    print("ok: %d module option(s) shadow a fragment option with another type "
+          "(ratchet %d, baseline %d)"
+          % (len(shadows), FRAGMENT_SHADOW_RATCHET,
+             len(read_baseline(BASELINE_FRAGMENT_SHADOWING) or [])))
     print("ok: %d write module(s) accept state=absent with no delete example "
           "(ratchet %d)" % (len(deletes), DELETE_EXAMPLE_RATCHET))
     print("ok: %d unit-test file(s) are still generator skeletons (ratchet %d)"

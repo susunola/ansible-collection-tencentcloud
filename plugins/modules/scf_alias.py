@@ -105,7 +105,7 @@ EXAMPLES = r'''
     state: present
     function_name: my-func
     name: prod
-    function_version: 2
+    function_version: "2"
     description: Production traffic
 
 - name: Move the alias to version 3
@@ -114,7 +114,7 @@ EXAMPLES = r'''
     state: present
     function_name: my-func
     name: prod
-    function_version: 3
+    function_version: "3"
 
 - name: Delete the alias
   susunola.tencentcloud.scf_alias:

@@ -88,7 +88,7 @@ EXAMPLES = r'''
 - name: Create a nested media class
   susunola.tencentcloud.vod_class:
     region: ap-guangzhou
-    class_name: 2026
+    class_name: "2026"
     parent_id: 12345
 
 - name: Remove a media class

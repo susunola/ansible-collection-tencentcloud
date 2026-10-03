@@ -45,7 +45,8 @@ EXAMPLES = r'''
 - name: List remediations
   susunola.tencentcloud.config_remediation_info:
     region: ap-guangzhou
-    rule_ids: example
+    rule_ids:
+      - cr-xxxxxxxx
 '''
 
 RETURN = r'''

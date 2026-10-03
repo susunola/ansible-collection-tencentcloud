@@ -53,10 +53,11 @@ def tree(tmp_path, checker):
     check_examples.DOC_FRAGMENTS_DIR = saved_shared_fragments
 
 
-def write_module(tree, name, body, options=(), fragments=()):
+def write_module(tree, name, body, options=(), fragments=(), types=None):
     """Create a module file whose EXAMPLES block is *body*.
 
-    *options* takes either a name or a ``(name, required)`` pair.
+    *options* takes either a name or a ``(name, required)`` pair; *types*
+    overrides the ``str`` default for the named options.
     """
     lines = ["DOCUMENTATION = r'''", "module: %s" % name, "options:"]
     for entry in options:
@@ -64,7 +65,8 @@ def write_module(tree, name, body, options=(), fragments=()):
             option, required = entry, False
         else:
             option, required = entry
-        lines += ["  %s:" % option, "    description: x", "    type: str"]
+        lines += ["  %s:" % option, "    description: x",
+                  "    type: %s" % (types or {}).get(option, "str")]
         if required:
             lines += ["    required: true"]
     if fragments:
@@ -143,6 +145,75 @@ def test_required_option_from_a_fragment_is_honoured(tree, checker):
 """, fragments=["credentials"])
     problems = checker.check_module(tree / "plugins" / "modules" / "demo_info.py")
     assert any("without secret_id" in item for item in problems)
+
+
+def test_a_scalar_contradicting_the_declared_type_is_reported(tree, checker):
+    """product_version: 2.1 unquoted is a float, not the documented string."""
+    write_module(tree, "cdwdoris_instance", """\
+- name: Create an instance
+  susunola.tencentcloud.cdwdoris_instance:
+    product_version: 2.1
+""", options=["product_version"])
+    problems = checker.check_module(tree / "plugins" / "modules" / "cdwdoris_instance.py")
+    assert any("product_version" in item and "float" in item for item in problems)
+
+
+def test_yaml_digit_grouping_is_not_the_documented_string(tree, checker):
+    """1400000000_218695_1590065777 unquoted is one huge int; the API expects
+    the underscores, so the example must quote the value."""
+    write_module(tree, "trtc_call_info", """\
+- name: List call details
+  susunola.tencentcloud.trtc_call_info:
+    comm_id: 1400000000_218695_1590065777
+""", options=["comm_id"])
+    problems = checker.check_module(tree / "plugins" / "modules" / "trtc_call_info.py")
+    assert any("comm_id" in item and "int" in item for item in problems)
+
+
+def test_quoted_scalars_for_numeric_options_are_accepted(tree, checker):
+    """The argument spec casts "2" to int; quoting is the fix, not a finding."""
+    write_module(tree, "scf_version", """\
+- name: Publish a version
+  susunola.tencentcloud.scf_version:
+    version: "2"
+""", options=["version"], types={"version": "int"})
+    problems = checker.check_module(tree / "plugins" / "modules" / "scf_version.py")
+    assert not any("version" in item for item in problems)
+
+
+def test_a_bool_is_not_accepted_as_an_int(tree, checker):
+    """bool subclasses int in Python, but an id documented as int is no flag."""
+    write_module(tree, "demo_module", """\
+- name: Demo
+  susunola.tencentcloud.demo_module:
+    count: true
+""", options=["count"], types={"count": "int"})
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_module.py")
+    assert any("count" in item and "boolean" in item for item in problems)
+
+
+def test_templated_values_are_not_type_checked(tree, checker):
+    write_module(tree, "demo_module", """\
+- name: Demo
+  susunola.tencentcloud.demo_module:
+    count: "{{ wanted_count }}"
+""", options=["count"], types={"count": "int"})
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_module.py")
+    assert not any("count" in item for item in problems)
+
+
+def test_module_documentation_wins_over_a_fragment_type(tree, checker):
+    """dlc_spark_job declares role_arn: int over the credentials fragment's
+    role_arn: str; the runtime lets the module's own spec win, so the example
+    is judged against the module's type."""
+    write_fragment(tree, "credentials", options=[("role_arn", False)])
+    write_module(tree, "dlc_spark_job", """\
+- name: Submit a job
+  susunola.tencentcloud.dlc_spark_job:
+    role_arn: 100000000001
+""", options=["role_arn"], fragments=["credentials"], types={"role_arn": "int"})
+    problems = checker.check_module(tree / "plugins" / "modules" / "dlc_spark_job.py")
+    assert not any("role_arn" in item for item in problems)
 
 
 def test_undeclared_option_is_reported(tree, checker):

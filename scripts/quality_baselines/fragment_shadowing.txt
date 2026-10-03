@@ -1,0 +1,9 @@
+# Frozen findings for the 'fragment_shadowing' family of scripts/check_quality_gates.py.
+# One module name per line.
+# This list may only shrink: a baselined module that no longer has the
+# finding must be delisted (the gate names it), and a module that is not on
+# the list must not have the finding at all.
+# a module that re-declares a fragment option keeps the fragment's type, so
+# the shared feature (assume-role, waiter, endpoint) stays usable;
+# dlc_spark_job is the one grandfathered shadow
+dlc_spark_job :: role_arn (credentials declares str, module declares int)

@@ -168,7 +168,7 @@ certificate:
 deploy_record_id:
   description: ID of the deployment record when O(deploy_instances) was used.
   returned: when deployed
-  type: str
+  type: int
   sample: 12345
 '''
 

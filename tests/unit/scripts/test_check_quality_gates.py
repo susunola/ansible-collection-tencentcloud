@@ -214,3 +214,103 @@ def test_a_role_without_a_readme_is_reported(gates, role_tree):
 def test_committed_role_readmes_are_consistent(gates):
     """The repository's own 68 roles must pass, not just the fixture's."""
     assert gates.role_doc_findings() == []
+
+
+def _module_with_return(tmp_path, body):
+    module = tmp_path / "fake_module.py"
+    module.write_text('RETURN = r"""\n%s\n"""\n' % body, encoding="utf-8")
+    return str(module)
+
+
+def test_sample_type_census_flags_a_contradiction(gates, tmp_path, monkeypatch):
+    """A sample that contradicts the declared type is the doc lying."""
+    path = _module_with_return(tmp_path,
+                               "good:\n"
+                               "  type: int\n"
+                               "  sample: 7\n"
+                               "bad:\n"
+                               "  type: str\n"
+                               "  sample: 7\n"
+                               "nested:\n"
+                               "  type: dict\n"
+                               "  contains:\n"
+                               "    inner:\n"
+                               "      type: list\n"
+                               "      sample: not-a-list")
+    monkeypatch.setattr(gates, "module_paths", lambda: [path])
+    findings = gates.return_sample_type_findings()
+    assert len(findings) == 2
+    assert any("fake_module :: bad " in f for f in findings)
+    assert any("fake_module :: nested.inner " in f for f in findings)
+
+
+def test_sample_type_census_rejects_a_bool_posing_as_an_int(gates, tmp_path,
+                                                            monkeypatch):
+    """bool subclasses int in Python; an id documented as int is not a flag."""
+    path = _module_with_return(tmp_path,
+                               "flag:\n"
+                               "  type: int\n"
+                               "  sample: true")
+    monkeypatch.setattr(gates, "module_paths", lambda: [path])
+    assert len(gates.return_sample_type_findings()) == 1
+
+
+def test_sample_type_census_ignores_untyped_and_raw_entries(gates, tmp_path,
+                                                            monkeypatch):
+    path = _module_with_return(tmp_path,
+                               "anything:\n"
+                               "  type: raw\n"
+                               "  sample: 7\n"
+                               "untyped:\n"
+                               "  sample: 7")
+    monkeypatch.setattr(gates, "module_paths", lambda: [path])
+    assert gates.return_sample_type_findings() == []
+
+
+def test_committed_return_samples_match_their_declared_types(gates):
+    """The repository's own RETURN blocks must pass, not just the fixture's."""
+    assert gates.return_sample_type_findings() == []
+
+
+def _shadow_tree(gates, tmp_path, monkeypatch, frag_type, own_type):
+    """One fragment and one module re-declaring its option; returns findings."""
+    fragments = tmp_path / "doc_fragments"
+    fragments.mkdir()
+    (fragments / "shared.py").write_text(
+        "class ModuleDocFragment(object):\n"
+        "    DOCUMENTATION = r'''\n"
+        "options:\n"
+        "  role_arn:\n"
+        "    description: x\n"
+        "    type: %s\n"
+        "'''\n" % frag_type, encoding="utf-8")
+    module = tmp_path / "fake_module.py"
+    module.write_text(
+        "DOCUMENTATION = r'''\n"
+        "module: fake_module\n"
+        "options:\n"
+        "  role_arn:\n"
+        "    description: x\n"
+        "    type: %s\n"
+        "extends_documentation_fragment:\n"
+        "  - susunola.tencentcloud.shared\n"
+        "'''\n" % own_type, encoding="utf-8")
+    monkeypatch.setattr(gates, "_DOC_FRAGMENTS_DIR", str(fragments))
+    monkeypatch.setattr(gates, "module_paths", lambda: [str(module)])
+    return gates.fragment_shadow_findings()
+
+
+def test_same_type_redeclaration_is_not_a_shadow(gates, tmp_path, monkeypatch):
+    """Re-declaring to override a default or description is legitimate."""
+    assert _shadow_tree(gates, tmp_path, monkeypatch, "str", "str") == []
+
+
+def test_a_different_type_is_reported_as_a_shadow(gates, tmp_path, monkeypatch):
+    findings = _shadow_tree(gates, tmp_path, monkeypatch, "str", "int")
+    assert findings == [
+        "fake_module :: role_arn (shared declares str, module declares int)"]
+
+
+def test_committed_tree_has_only_the_grandfathered_shadow(gates):
+    assert gates.fragment_shadow_findings() == [
+        "dlc_spark_job :: role_arn (credentials declares str, module declares int)"]

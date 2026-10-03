@@ -6471,7 +6471,8 @@ SPECS = [
 - name: List remediations
   susunola.tencentcloud.config_remediation_info:
     region: ap-guangzhou
-    rule_ids: example
+    rule_ids:
+      - cr-xxxxxxxx
 """,
     },
 
@@ -8167,7 +8168,7 @@ REQUIRED_EXAMPLE_OVERRIDES = {
 - name: List call details
   susunola.tencentcloud.trtc_call_info:
     region: ap-guangzhou
-    comm_id: 1400000000_218695_1590065777
+    comm_id: "1400000000_218695_1590065777"
     sdk_app_id: 1400000000
     start_time: 1700000000
     end_time: 1700003600

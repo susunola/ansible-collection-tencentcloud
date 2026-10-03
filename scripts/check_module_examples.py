@@ -37,6 +37,10 @@ What it checks, per example task
   of its doc fragments (``options``),
 * every option the module marks ``required`` is passed, so the example can be
   run as written (``required``),
+* every scalar passed matches the type the option declares -- an unquoted
+  ``2.1`` is a float, not the documented string, and an unquoted
+  ``1400000000_218695_1590065777`` is YAML digit grouping that collapses the
+  underscores the API expects (``types``),
 * every example calls the module it documents (``self``).
 
 ``cdb_audit_rule`` is why the ``required`` check is not a style preference: the
@@ -127,6 +131,79 @@ def _required_options(name, cache=None):
     return required
 
 
+def _option_specs(name, cache=None):
+    """Return the option spec mapping of *name*, doc fragments included.
+
+    The module's own ``DOCUMENTATION`` is applied *last* so it wins any name
+    the shared fragments also declare -- the same precedence as the runtime,
+    where ``TencentCloudModule`` starts from ``base_argument_spec()`` and then
+    lets the module's own argument spec ``update()`` over it (a module-local
+    ``role_arn: int`` shadows the credentials fragment's assume-role
+    ``role_arn: str``).
+    """
+    cache = {} if cache is None else cache
+    if name in cache:
+        return cache[name]
+    specs = {}
+    doc = _load_documentation(MODULES_DIR / (name + ".py"))
+    sources = []
+    if doc is not None:
+        fragments = doc.get("extends_documentation_fragment") or []
+        if isinstance(fragments, str):
+            fragments = [fragments]
+        for fragment in fragments:
+            sources.append(_load_documentation(
+                DOC_FRAGMENTS_DIR / (fragment.rsplit(".", 1)[-1] + ".py")))
+    sources.append(doc)
+    for source in sources:
+        if isinstance(source, dict):
+            for option, spec in (source.get("options") or {}).items():
+                if isinstance(spec, dict):
+                    specs[str(option)] = spec
+    cache[name] = specs
+    return specs
+
+
+_DECLARED_TYPE = {
+    "dict": dict,
+    "list": list,
+    "str": str,
+    "path": str,
+    "json": str,
+    "jsonarg": str,
+    "int": int,
+    "bool": bool,
+    "float": (int, float),
+}
+
+
+def _type_problem(declared, value):
+    """Why *value* cannot be what the option declares, or None.
+
+    Quoted scalars are accepted for ``int``/``float``/``bool`` because the
+    argument spec casts them; everything else is a copy-paste that passes the
+    wrong type -- or, worse, the right digits with YAML digit grouping eaten
+    (``1400000000_218695_1590065777`` is one huge int, not the documented
+    ``SdkAppId_RoomId_CreateTime`` string).
+    """
+    expected = _DECLARED_TYPE.get(declared)
+    if expected is None:
+        return None
+    if isinstance(value, str):
+        if "{{" in value:
+            return None  # templated: the runtime decides the type
+        if declared in ("int", "float", "bool"):
+            return None  # a quoted scalar is cast by the argument spec
+    if declared in ("int", "float") and isinstance(value, bool):
+        return "is a boolean, which %s does not accept" % declared
+    if declared == "bool" and value in (0, 1) and not isinstance(value, bool):
+        return None  # 0/1 are accepted booleans in every argspec
+    if not isinstance(value, expected):
+        return "is %s, but the option is declared %s" % (
+            type(value).__name__, declared)
+    return None
+
+
 def _example_tasks(raw):
     """Return the tasks a module's ``EXAMPLES`` string describes.
 
@@ -182,7 +259,7 @@ def _module_call(task):
 
 def check_module(path, cache=None):
     """Return the problems found in one module's ``EXAMPLES`` block."""
-    cache = {"options": {}, "required": {}} if cache is None else cache
+    cache = {"options": {}, "required": {}, "specs": {}} if cache is None else cache
     problems = []
     name = path.stem
     raw = _string_assignment(path.read_text(encoding="utf-8"), "EXAMPLES")
@@ -216,12 +293,20 @@ def check_module(path, cache=None):
             calls_self = True
 
         declared = module_options(target, cache["options"])
+        specs = _option_specs(target, cache["specs"])
         for key in sorted(params):
             if key in ANSIBLE_KEYWORDS:
                 continue
             if declared and key not in declared:
                 problems.append("task %r passes %s to %s, which does not declare that option"
                                 % (label, key, target))
+                continue
+            spec = specs.get(key)
+            if spec is not None:
+                why = _type_problem(spec.get("type"), params[key])
+                if why is not None:
+                    problems.append("task %r passes %s to %s: value %s"
+                                    % (label, key, target, why))
         required = _required_options(target, cache["required"])
         for key in sorted(required - set(params)):
             problems.append("task %r calls %s without %s, which it marks required"
@@ -234,7 +319,7 @@ def check_module(path, cache=None):
 
 def check():
     """Return {module name: [problem, ...]} for every module with a problem."""
-    cache = {"options": {}, "required": {}}
+    cache = {"options": {}, "required": {}, "specs": {}}
     found = {}
     for path in module_paths():
         problems = check_module(path, cache)

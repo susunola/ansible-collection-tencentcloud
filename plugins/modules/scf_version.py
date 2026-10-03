@@ -105,7 +105,7 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: present
     function_name: my-func
-    version: 2
+    version: "2"
     description: Deployed by ansible
 
 - name: Delete version 2
@@ -113,7 +113,7 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: absent
     function_name: my-func
-    version: 2
+    version: "2"
 '''
 
 RETURN = r'''

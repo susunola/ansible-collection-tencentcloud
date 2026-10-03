@@ -673,19 +673,41 @@ across all 1027 modules before deciding whether to write one:
 * a `choices` option given a value outside its choices in an example (templated
   values skipped): **0 findings**;
 * an example task passing an option the module does not document: **0
-  findings**;
-* the module a task invokes in an example -- across **1,639 task actions in
-  all 1027 modules** (parsed as YAML, play `tasks`/`handlers` and
-  `block`/`rescue`/`always` descended into, option dicts never mistaken for
-  tasks), every module's ``EXAMPLES`` invokes its own module, always by FQCN;
-  the single action name not in the collection is ``copy``, i.e.
-  ``ansible.builtin.copy``: **0 genuine findings**.
+  findings**.
 
 Both are the state a reviewer would hope for, which means a check would have no
 true positives to report -- the same reason the truthiness check was not built.
 They are recorded here as measurements so the next person does not have to
 re-derive them, and so a future regression is recognised as a change from a
 clean baseline rather than as an unknown.
+
+(The third obvious dimension -- does an example call its own module, by FQCN,
+and only modules that exist -- turned out to be **already gated** by
+`scripts/check_module_examples.py`; re-measuring it across 1,639 task actions
+found the gate green, with `ansible.builtin.copy` the single legitimate
+non-collection action.)
+
+Two more EXAMPLES dimensions were measured later, and these two did **not**
+stay measurements:
+
+* a scalar whose YAML type contradicts the option's declared type (unquoted
+  `2.1` is a float, not the version string; unquoted
+  `1400000000_218695_1590065777` is YAML digit grouping that eats the
+  underscores the API expects): **8 findings in 6 modules**, all fixed by
+  quoting or by listing the value, and the check added to
+  `scripts/check_module_examples.py` as its `types` rule -- its detector
+  immediately found a ninth (`dlc_spark_job.role_arn`) that the ad-hoc
+  measurement had missed, which is why the gate and not the notebook is the
+  source of truth;
+* a module re-declaring a doc-fragment option with a *different* type: **1
+  finding** (`dlc_spark_job.role_arn: int` shadows the credentials fragment's
+  assume-role `role_arn: str`; the runtime lets the module's own spec win, so
+  that module cannot be used with an assumed role until the option is renamed
+  through a deprecation cycle). Same-type re-declaration is how a module
+  overrides a fragment default or description -- 108 sites, harmless. The one
+  real shadow is frozen in
+  `scripts/quality_baselines/fragment_shadowing.txt` and no new one may
+  appear.
 
 ### Assertion-less tests: 21 candidates, every one legitimate
 
@@ -724,7 +746,11 @@ sixty commit messages.
 | secrets reaching a log | **0 unguarded, 0 interpolated** | `scripts/check_secret_handling.py` |
 | documented options nothing reads (plugins, modules) | **0 findings** | `scripts/check_plugin_options.py`, `scripts/check_module_options.py` |
 | role task files and role READMEs | gated | `scripts/check_examples.py` (role tasks), `role_doc_findings()` in `check_quality_gates.py` |
-| EXAMPLES consistency | **0 findings, measured** (options, choices, and the invoked module name across 1,639 actions) | the three measurements written up above |
+| EXAMPLES consistency (options, choices) | **0 findings, measured** | the measurements written up above |
+| EXAMPLES module references (exists, FQCN, self-call) | **gated** | `scripts/check_module_examples.py` (it caught a shipped typo: `tse_governance_aliase_info`) |
+| EXAMPLES value types vs declared types | **8+1 found, fixed, gated** | the `types` rule in `scripts/check_module_examples.py`; the YAML digit-grouping case is written up above |
+| `RETURN` sample type vs declared type | **1 found, fixed, gated** | `return_sample_type_findings()` in `scripts/check_quality_gates.py` (`ssl_certificate.deploy_record_id` was `str`, the SDK sends an int) |
+| module/fragment option shadowing | **1, frozen** | `fragment_shadow_findings()` + `scripts/quality_baselines/fragment_shadowing.txt` (the `dlc_spark_job.role_arn` story is written up above) |
 | assertion-less ("zombie") tests | **21 candidates, 0 genuine** | the census written up above |
 | `--diff` falsy semantics | fixed, with the pattern classified | `module_utils/comparison.py`, its unit test, and the classification above |
 | integration targets / undispatched gated targets | **135 / 8, account-dependent** | `scripts/quality_baselines/integration_missing.txt` explains its own number |
@@ -733,6 +759,6 @@ sixty commit messages.
 
 Four checks were measured and deliberately **not** written, each with the
 measurement recorded: the truthiness sweep (nine sites, all correct), the
-EXAMPLES consistency trio (clean), the assertion-less test census (21
+EXAMPLES options/choices pair (clean), the assertion-less test census (21
 candidates, all legitimate patterns), and anything derived from SDK model
 *values* (the generator emits structure, not invented values).

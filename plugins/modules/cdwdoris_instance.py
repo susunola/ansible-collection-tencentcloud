@@ -149,7 +149,7 @@ EXAMPLES = r"""
     be_spec: {SpecName: S_8_32_H, Count: 3, DiskSize: 500}
     vpc_id: vpc-xxxxxxxx
     subnet_id: subnet-xxxxxxxx
-    product_version: 2.1
+    product_version: "2.1"
     charge_properties: {ChargeType: POSTPAID_BY_HOUR}
     admin_password: "{{ vault_doris_password }}"
 

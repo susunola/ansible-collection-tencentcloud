@@ -61,7 +61,7 @@ EXAMPLES = r'''
 - name: List call details
   susunola.tencentcloud.trtc_call_info:
     region: ap-guangzhou
-    comm_id: 1400000000_218695_1590065777
+    comm_id: "1400000000_218695_1590065777"
     sdk_app_id: 1400000000
     start_time: 1700000000
     end_time: 1700003600
