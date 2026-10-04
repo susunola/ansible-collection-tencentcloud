@@ -21,7 +21,7 @@ module needs cannot live in `plugin_utils`.
 | --- | --- | --- | --- |
 | **1 · Module base** | `base.py` | `TencentCloudModule`: shared argument spec (retry / waiter / tag params), check-mode and exit scaffolding every write module inherits | `client`, `retries` |
 | | `client.py` | Tencent Cloud SDK 3.0 client factory: credential resolution, region normalization, endpoint override, TCCLI profile reading | — |
-| | `tencentcloud.py` | **Legacy shim** re-exporting `client` / `errors` / `paging` for pre-refactor modules; new code must not import it | `client`, `errors`, `paging` |
+| | `tencentcloud.py` | The generated `_info` modules' read path (`read_sdk_call`, `paginate_read`) together with the compatibility helpers the pre-refactor modules import (`sdk_call`, `serialize_sdk_object`, `tencentcloud_argument_spec`). New **write** code must not import it | `client`, `errors`, `paging`, `retries` |
 | **2 · Error and lifecycle semantics** | `errors.py` | Exception hierarchy (auth / not-found / timeout / parameter failures) | — |
 | | `retries.py` | `retry_on` decorator: exponential backoff with jitter for transient SDK failures | `errors` |
 | | `waiters.py` | Poll loops that block until a resource reaches a desired state | `errors`, `polling` |
@@ -30,7 +30,7 @@ module needs cannot live in `plugin_utils`.
 | **3 · Resolution and comparison** | `resolver.py` | Uniform resource-reference resolution (name / id / filters → real resource id) | `tagging` |
 | | `tagging.py` | Tag normalization, tag merging and tag-diff computation | — |
 | | `comparison.py` | Expected-vs-actual structure comparison (idempotency decisions) | — |
-| | `paging.py` | `Paginator` (offset/limit walk) plus the `paginate()` module wrapper | — |
+| | `paging.py` | `Paginator` (offset/limit walk) and `PaginationError`, plus the `paginate()` module wrapper | — |
 | | `inventory.py` | Unified multi-product inventory query layer: source registry, standardised `tc_*` host fields, cross-product de-duplication, cache keying | `client`, `paging` |
 | **4 · Product-private helpers** | `monitor.py` | Monitor-specific shared computation | — |
 | | `cos.py` | COS client wrapper (S3-style API, not API 3.0) | `client` |
@@ -112,7 +112,7 @@ Same graph as a flat table:
 | `cos_bucket_read.py` | `cos` | 3 |
 | `inventory.py` | `client`, `paging` | 2 |
 | `lifecycle.py` | `base`, `errors` | 3 |
-| `tencentcloud.py` | `client`, `errors`, `paging` | 4 (shim) |
+| `tencentcloud.py` | `client`, `errors`, `paging`, `retries` | 4 (read path + compat) |
 | `plugin_utils/profile.py` | `module_utils.client` | consumer |
 | `plugin_utils/paging.py` | `module_utils.paging` | consumer |
 | `plugin_utils/polling.py` | `module_utils.polling` | consumer |
@@ -136,9 +136,15 @@ Same graph as a flat table:
    Product-specific logic that no other product will reuse goes to group 4
    (`monitor.py` / `cos.py` / `tdmysql.py`) or, better, stays inside the
    module.
-3. **Never import the legacy shim** (`tencentcloud.py`) from new code — use
-   `base.py` / `client.py` directly. The shim exists only so pre-refactor
-   modules keep working and is deleted once nothing imports it.
+3. **`tencentcloud.py` is not a shim to delete — but do not add to it.**
+   Its compatibility helpers (`sdk_call`, `serialize_sdk_object`,
+   `tencentcloud_argument_spec`) exist so pre-refactor modules keep working,
+   and a write module must import `base.py` / `client.py` directly instead.
+   It does hold one thing the collection still needs: the read path every
+   generated `_info` module calls (`read_sdk_call`, `paginate_read`), because
+   the generator emits that import for all 502 of them. New write code does
+   not import this file; new *shared read* helpers belong in `paging.py` or a
+   dedicated module, reached from here rather than added here.
 4. **Generated modules import module_utils by full FQCN**, e.g.
    `from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule`.
 5. **Every new file needs a module docstring** stating its group and its

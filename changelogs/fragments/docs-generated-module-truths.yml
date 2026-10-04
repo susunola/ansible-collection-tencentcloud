@@ -1,0 +1,23 @@
+bugfixes:
+  - >-
+    docs - correct two statements about the generated ``_info`` modules that
+    were not true of them. ``docs/development.md`` said their DOCUMENTATION
+    carries the shared ``retries``/``waiter_*``/``user_agent`` parameters;
+    ``tencentcloud_argument_spec()`` defines none of those, so no generated
+    module declares or documents one, and a read-only module has no
+    asynchronous state to wait on. The section now states what the modules
+    do declare and describes the retry they actually take: a fixed policy
+    through ``read_sdk_call`` / ``paginate_read``, with ``error_class`` on an
+    exhausted budget, kept separate from the non-retrying ``sdk_call`` that
+    write modules use.
+  - >-
+    module_utils - ``plugins/module_utils/README.md`` described
+    ``tencentcloud.py`` as a legacy shim to be deleted once nothing imports
+    it, and told new code never to import it. Both stopped being true: the
+    generator emits ``from ...module_utils.tencentcloud import read_sdk_call``
+    for all 502 generated ``_info`` modules, so the file is the collection's
+    read path. The description, the dependency table and the placement rule
+    now say so, while keeping the original point that a new write module
+    imports ``base.py`` / ``client.py`` rather than this file. The same
+    section listed ``paging.py`` without ``PaginationError``, which the
+    inventory plugins catch.

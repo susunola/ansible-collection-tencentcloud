@@ -8,8 +8,10 @@
   `plugins/module_utils/base.py`, which pre-wires the shared argument spec
   (credentials, retry/waiter parameters), `require_sdk`, `create_credential`,
   `create_client` and `sdk_call` (with the shared retry policy).
-  `plugins/module_utils/tencentcloud.py` is a preserved shim for the older
-  discovery modules; new code imports from the dedicated modules
+  `plugins/module_utils/tencentcloud.py` keeps the compatibility helpers the
+  older discovery modules import, and it is also where the generated `_info`
+  modules' read path lives (`read_sdk_call`, `paginate_read`); new write code
+  imports the pieces it needs from the dedicated modules instead
   (`client.py`, `base.py`, `comparison.py`, `errors.py`, `paging.py`,
   `retries.py`, `tagging.py`, `waiters.py`).
 - API responses use the Tencent Cloud SDK field names. Do not silently rename
@@ -132,10 +134,18 @@
 - The generated `DOCUMENTATION` mirrors the hand-written module conventions:
   identity options are `required: true` and written unconditionally to the
   request, optional fields are guarded with `if params[...] is not None`,
-  nested API objects map to `type: dict` with a comment asking the
-  developer to model their sub-options, and the shared
-  `retries`/`waiter_*`/`user_agent` parameters are documented so
-  validate-modules accepts the module.
+  and nested API objects map to `type: dict` with a comment asking the
+  developer to model their sub-options.
+- A generated module declares the `credentials`, `region`, `connection` and
+  `timeout` fragments and nothing else. It has no `retries`, `waiter_*` or
+  `user_agent` option — `tencentcloud_argument_spec()` does not carry them,
+  and a read-only module has no asynchronous state to wait on. Its retry
+  policy is fixed rather than exposed: every read goes through
+  `read_sdk_call`, or `paginate_read` when the module pages, which retry
+  throttling and transient failures `READ_RETRIES` times and report an
+  exhausted budget with an `error_class` bucket. That is deliberately
+  separate from `sdk_call`, which does not retry because it also serves
+  write modules, where a retried write is not obviously a single write.
 
 ## Non-API-3.0 services
 
