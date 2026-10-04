@@ -19,12 +19,32 @@ ansible-test's ``import`` test allows module-side code to import only
 ``plugins.module_utils``. ``plugin_utils.paging`` re-exports it for the
 controller-side inventory plugins. See ``plugins/plugin_utils/README.md``.
 
+An API that does not honour ``Offset`` is reported, not papered over:
+``PaginationError`` is raised when a page is served twice, because the
+duplicated rows it would otherwise contribute are indistinguishable from a
+correct reply. Hand-written callers already guarded this individually — see
+the repeated-token check in ``modules/alb_load_balancer.py`` — and doing it
+here is what makes the generated modules inherit the guard.
+
 Layering: imports nothing else from the collection.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+
+class PaginationError(Exception):
+    """A list API's paging behaviour cannot be reconciled with its own reply.
+
+    Raised instead of returning a result the caller cannot trust. The two
+    shapes it covers both fail silently if left alone: an API that ignores
+    ``Offset`` makes the walk re-read one page until the reported total is
+    reached, so the result carries duplicate rows, and an empty page under an
+    unreached total makes the walk never terminate. Neither is distinguishable
+    from a correct reply by looking at the returned items alone, which is why
+    this is an exception and not a truncated list.
+    """
 
 
 class Paginator(object):
@@ -53,18 +73,39 @@ class Paginator(object):
         Termination is driven by the API's reported total (when available) or
         by a short page, never by a mutable total overwritten per round.
         ``request_id`` is left set to the last response's RequestId.
+
+        :raises PaginationError: when the API re-serves a page it already
+            served. A repeated non-empty page means ``Offset`` was ignored,
+            and appending it again would hand the caller a result whose
+            duplicates are invisible; the walk stops and says so instead.
         """
         items = []
         total_count = None
         offset = 0
+        previous = None
         while True:
             response = self.call_api(self.build_request(offset, self.page_size))
             self.request_id = getattr(response, "RequestId", None)
             batch = self.items_of(response) or []
+            # Only a *non-empty* repeat is a signal: an empty page legitimately
+            # follows an empty page when a filtered list has no matches, and it
+            # terminates on the check below.
+            if batch and batch == previous:
+                raise PaginationError(
+                    "list API returned the same %d item(s) again at offset %d; "
+                    "it is ignoring Offset, so continuing would repeat them in "
+                    "the result" % (len(batch), offset))
+            previous = batch
             items.extend(batch)
             reported_total = self.total_of(response)
             if total_count is None and reported_total is not None:
                 total_count = reported_total
+            # An empty page ends the walk under either rule. Without this an
+            # API that reports TotalCount and then serves nothing would be
+            # asked for the same offset forever, because offset only advances
+            # by the size of the page it just returned.
+            if not batch:
+                break
             if total_count is not None:
                 if len(items) >= total_count:
                     break
@@ -74,7 +115,7 @@ class Paginator(object):
         return items, total_count if total_count is not None else len(items)
 
 
-__all__ = ["Paginator", "paginate"]
+__all__ = ["Paginator", "PaginationError", "paginate"]
 
 
 def paginate(module, page_size, build_request, call_api, items_of, total_of):
@@ -82,6 +123,19 @@ def paginate(module, page_size, build_request, call_api, items_of, total_of):
 
     Uses the module's client (which already applies the retry policy) and
     returns ``(items, total_count)``.
+
+    ``PaginationError`` is turned into a module failure rather than allowed to
+    escape: the 555 generated ``_info`` modules reach this helper, and a raw
+    traceback would report an unhandled exception instead of the API behaviour
+    that caused it. ``module`` is only used on that path, so callers that
+    never expect a malformed list may pass ``None``.
     """
     paginator = Paginator(page_size, build_request, call_api, items_of, total_of)
-    return paginator.fetch_all()
+    try:
+        return paginator.fetch_all()
+    except PaginationError as exc:
+        module.fail_json(
+            msg="Tencent Cloud list API returned an unusable page sequence",
+            error=str(exc),
+            request_id=paginator.request_id,
+        )

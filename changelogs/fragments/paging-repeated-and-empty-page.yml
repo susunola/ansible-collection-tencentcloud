@@ -1,0 +1,19 @@
+bugfixes:
+  - >-
+    paging - treat two consecutive identical pages as a failure instead of
+    appending them. The shared ``Paginator`` advanced ``offset`` by the size of
+    the page it had just been handed, so a list API that ignored ``Offset``
+    re-served the same page until the reported ``TotalCount`` was reached, and
+    the accumulated result carried those rows twice. Nothing in the returned
+    items distinguishes that from a correct reply, so the walk now raises
+    ``PaginationError``; ``paginate()`` turns it into a module failure carrying
+    the API's ``RequestId``. Hand-written callers already guarded this one at a
+    time - ``alb_load_balancer`` fails on a repeated ``NextToken`` - and the
+    555 generated ``_info`` modules that route through ``paginate()`` inherit
+    the guard from here.
+  - >-
+    paging - end the walk on an empty page even when the API reported a larger
+    ``TotalCount``. ``offset`` only advanced by the size of the page just
+    returned, so an empty page under an unreached total was requested forever.
+    A list API that reports a total it never serves hung the module instead of
+    returning the items it had already produced.

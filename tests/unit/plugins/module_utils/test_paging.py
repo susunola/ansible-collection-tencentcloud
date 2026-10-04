@@ -17,6 +17,8 @@ __metaclass__ = type
 
 from importlib import import_module
 
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import paging
 
 
@@ -158,3 +160,74 @@ def test_paginate_wrapper_walks_every_page():
     )
     assert items == [1, 2, 3, 4, 5]
     assert total == 5
+
+
+def test_repeated_page_is_reported_not_duplicated():
+    """An API that ignores Offset must not silently duplicate its rows.
+
+    The walk cannot tell "one page" from "the same page forever", so returning
+    the accumulated items would hand back duplicates that look like real data.
+    """
+    def call_api(request):
+        return FakeResponse([1, 2, 3], 9)
+
+    p = paging.Paginator(3, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    with pytest.raises(paging.PaginationError) as excinfo:
+        p.fetch_all()
+    assert "ignoring Offset" in str(excinfo.value)
+    # The offset that was being requested when the repeat was seen.
+    assert "offset 3" in str(excinfo.value)
+
+
+def test_empty_page_under_unreached_total_terminates():
+    """TotalCount above the items served must not spin forever.
+
+    ``offset`` only advances by the size of the page just returned, so an empty
+    page that still satisfies ``len(items) < total_count`` is a loop that never
+    ends unless the empty page is allowed to stop the walk.
+    """
+    rounds = [[1, 2, 3], []]
+
+    def call_api(request):
+        return FakeResponse(rounds[request["offset"] // 3], 6)
+
+    p = paging.Paginator(3, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    items, total = p.fetch_all()
+    assert items == [1, 2, 3]
+    assert total == 6
+
+
+def test_distinct_pages_are_not_mistaken_for_a_repeat():
+    """The repeat guard keys on page content, not on the page being full."""
+    rounds = [[1, 2, 3], [4, 5, 6]]
+
+    def call_api(request):
+        return FakeResponse(rounds[request["offset"] // 3], 6)
+
+    p = paging.Paginator(3, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    items, total = p.fetch_all()
+    assert items == [1, 2, 3, 4, 5, 6]
+
+
+def test_paginate_wrapper_reports_a_repeated_page_as_a_module_failure():
+    """The generated modules call ``paginate``, so it must fail cleanly."""
+    class FakeModule(object):
+        def __init__(self):
+            self.payload = None
+
+        def fail_json(self, **kwargs):
+            self.payload = kwargs
+            raise AssertionError("fail_json was called")
+
+    module = FakeModule()
+
+    def call_api(request):
+        return FakeResponse([1], 4)
+
+    with pytest.raises(AssertionError):
+        paging.paginate(module, 1, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    assert module.payload["msg"] == "Tencent Cloud list API returned an unusable page sequence"
+    assert "ignoring Offset" in module.payload["error"]
+    # The request id of the page that triggered the failure is surfaced, so the
+    # user can pull the call out of cloud audit logs.
+    assert module.payload["request_id"] == "req-1"

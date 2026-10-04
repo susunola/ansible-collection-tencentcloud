@@ -20,7 +20,13 @@ def test_paginator_is_the_module_utils_class():
     assert plugin_paging.Paginator is module_paging.Paginator
 
 
+def test_pagination_error_is_the_module_utils_class():
+    """Inventory plugins page through this path, so they must be able to catch
+    the failure the walk raises instead of seeing it as an unknown exception."""
+    assert plugin_paging.PaginationError is module_paging.PaginationError
+
+
 def test_the_module_flavoured_wrapper_is_not_reexported():
     """``paginate()`` is module-only; the controller-side shim stays narrow."""
     assert not hasattr(plugin_paging, "paginate")
-    assert plugin_paging.__all__ == ["Paginator"]
+    assert plugin_paging.__all__ == ["Paginator", "PaginationError"]
