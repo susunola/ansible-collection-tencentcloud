@@ -495,7 +495,10 @@ def main(argv=None, out=None, err=None):
         payload = {
             "version": state["version"],
             "collection": "%s.%s" % (state["namespace"], state["name"]),
-            "ready": not failures,
+            # A check left out with --ignore is not a check that passed, so
+            # `ready` means no failure *and* nothing deliberately skipped.
+            "ready": not failures and not args.ignore,
+            "ignored": list(args.ignore),
             "results": [{"check": name, "status": status, "detail": detail}
                         for name, status, detail in results],
         }
@@ -523,6 +526,17 @@ def main(argv=None, out=None, err=None):
     if failures:
         err.write("\nrelease check failed: %s\n" % ", ".join(failures))
         return 1
+    if args.ignore:
+        # An explicitly skipped check is not a passed one. Saying "ready to tag"
+        # here would report a release as verified on the strength of the checks
+        # that were left out, which is the failure this script exists to
+        # prevent. Checks that skip because the context does not apply
+        # (tag-matches without --tag) or are opt-in (fragment-lint) are not
+        # this: the documented release path accounts for both.
+        out.write("\nrelease check passed the checks it ran, but skipped: %s\n"
+                  "  that is not a readiness verdict; run without --ignore for one\n"
+                  % ", ".join(args.ignore))
+        return 0
     out.write("\nrelease check OK: %s is ready to tag\n" % state["version"])
     return 0
 

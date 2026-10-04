@@ -1,0 +1,43 @@
+minor_changes:
+  - >-
+    check_quality_gates - the census of hand-written modules no unit test
+    references now reads import statements instead of searching the
+    concatenated text of every test file. The old rule was satisfied by
+    accident: any test that mentioned ``vpc`` -- as a fixture key, a sample
+    value, part of ``vpc_id`` -- kept ``vpc_info``'s entry alive, so for a
+    short module name it could not fail. It now recognises the three
+    spellings the tests actually use: ``from ...plugins.modules import
+    <name>``, ``import ...plugins.modules.<name>`` and
+    ``importlib.import_module("...plugins.modules.<name>")``.
+  - >-
+    check_quality_gates - the three baselines that had no stock ceiling now
+    have one, so none of them is a place where a hard failure can be frozen
+    without limit. ``untested_modules``, ``private_harness`` and
+    ``untested_main_path`` had been paid down to zero, which left their
+    baseline files as the only thing that could hold debt -- and
+    ``--write-baseline`` records whatever the census finds with nothing
+    capping the total. With a ceiling of zero they are hard rules: a new
+    finding has to be fixed rather than recorded, and re-opening one is a
+    reviewed edit to the gate rather than a command.
+  - >-
+    check_quality_gates - new census and shrink-only baseline for hand-written
+    ``_info`` modules that still read through the non-retrying ``sdk_call``.
+    The 502 generated ones moved when the generator did, but 53 hand-written
+    ones kept the old call, and nothing said so: their throttling failures
+    looked identical to the migrated modules' successes. The count is now
+    printed on every gate run and the list may only shrink, so a new ``_info``
+    module that reaches for ``sdk_call`` fails on its own rather than joining
+    an invisible pile.
+  - >-
+    release_check - "ready to tag" is no longer printed when checks were left
+    out with ``--ignore``. The line reported a release as verified on the
+    strength of the checks that were skipped, which is the failure this guard
+    exists to prevent, and ``--json`` now sets ``ready`` false and lists the
+    ignored names so a consumer sees the same thing. A check that skips
+    because the context does not apply (``tag-matches`` without ``--tag``) or
+    is opt-in (``fragment-lint``) is unaffected: the documented release path
+    accounts for both.
+  - >-
+    check_quality_gates - removed ``integration_gates()``, which no caller,
+    test or workflow referenced. Its output was reproducible from
+    ``_gated_targets()`` and the target files, and it had drifted from them.

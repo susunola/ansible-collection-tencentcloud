@@ -161,7 +161,28 @@ BASELINE_INTEGRATION_MISSING = "integration_missing"
 BASELINE_UNTESTED_MODULES = "untested_modules"
 BASELINE_PRIVATE_HARNESS = "private_harness"
 BASELINE_UNTESTED_MAIN_PATH = "untested_main_path"
+BASELINE_LEGACY_READ_CALL = "legacy_read_call"
 BASELINE_FRAGMENT_SHADOWING = "fragment_shadowing"
+
+# Three of the families above carry a baseline but had no stock ceiling: their
+# debt had been paid down to zero, so the file was the only thing that could
+# hold any of it. That left one place where a hard failure could still be
+# frozen without limit -- ``--write-baseline`` records whatever the census
+# finds, and nothing capped the total, so a single command could have turned
+# any number of failures into "debt". Each has a ceiling of zero now, which
+# makes them hard rules: a new finding has to be fixed rather than recorded,
+# and re-opening one is a reviewed edit to this file, not a command.
+UNTESTED_MODULES_CEILING = 0
+PRIVATE_HARNESS_CEILING = 0
+UNTESTED_MAIN_PATH_CEILING = 0
+
+# Hand-written ``_info`` modules still reading through the non-retrying
+# ``sdk_call``. The 502 generated ones moved wholesale when the generator did;
+# these 53 are hand-written, each with its own request builders and pagination,
+# so the move is a per-module review rather than a regeneration. Frozen as a
+# shrink-only list so the debt is visible and the number cannot grow: a new
+# ``_info`` module that reaches for ``sdk_call`` fails on its own.
+LEGACY_READ_CALL_CEILING = 53
 
 _BASELINE_GUIDANCE = {
     BASELINE_RETURN_SAMPLES:
@@ -187,6 +208,11 @@ _BASELINE_GUIDANCE = {
         "a module that re-declares a fragment option keeps the fragment's "
         "type, so the shared feature (assume-role, waiter, endpoint) stays "
         "usable; dlc_spark_job is the one grandfathered shadow",
+    BASELINE_LEGACY_READ_CALL:
+        "a new ``_info`` module reads through ``read_sdk_call`` (or "
+        "``paginate_read`` when it pages), not the non-retrying ``sdk_call``, "
+        "so throttling is retried instead of failing the run; a baselined "
+        "module that migrates is delisted here",
 }
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
@@ -295,22 +321,6 @@ def integration_findings():
             continue
         (gated if module_targets.get(name) else missing).append(name)
     return sorted(gated), sorted(missing)
-
-
-def integration_gates():
-    """Map each gated target to the environment variables it waits on."""
-    gates = {}
-    for target in sorted({t for modules in _gated_targets().values() for t in modules}):
-        directory = os.path.join(REPO_ROOT, "tests", "integration", "targets", target)
-        found = set()
-        for root, _dirs, files in os.walk(directory):
-            for name in files:
-                if not name.endswith((".yml", ".yaml")):
-                    continue
-                with open(os.path.join(root, name), encoding="utf-8") as handle:
-                    found.update(re.findall(r"TENCENTCLOUD_[A-Z0-9_]+", handle.read()))
-        gates[target] = sorted(found)
-    return gates
 
 
 def _gated_targets():
@@ -893,8 +903,56 @@ def private_harness_findings():
     return problems
 
 
+MODULES_PACKAGE = "ansible_collections.susunola.tencentcloud.plugins.modules"
+
+
+def _modules_named_by_tests():
+    """Module names the unit tests name in an import, not in passing.
+
+    The census used to ask ``name in blob`` over the concatenated text of every
+    test file. That is satisfied by accident: any test that mentions ``vpc`` --
+    as a fixture key, a sample value, part of ``vpc_id`` -- kept ``vpc_info``'s
+    entry alive, so for a short module name the rule could not fail. Reading
+    the import statements is what "referenced by a test" actually means.
+
+    Three spellings are recognised, because tests use all three:
+    ``from ...plugins.modules import <name>``,
+    ``import ...plugins.modules.<name>``, and
+    ``importlib.import_module("...plugins.modules.<name>")``.
+    """
+    referenced = set()
+    paths = sorted(glob.glob(os.path.join(REPO_ROOT, "tests", "unit", "**", "*.py"),
+                             recursive=True))
+    for path in paths:
+        with open(path, encoding="utf-8") as handle:
+            source = handle.read()
+        try:
+            tree = ast.parse(source, filename=path)
+        except SyntaxError:
+            # A file pytest cannot import either; leaving it out can only make
+            # this census stricter, never laxer.
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                if node.module == MODULES_PACKAGE:
+                    referenced.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name.startswith(MODULES_PACKAGE + "."):
+                        referenced.add(alias.name[len(MODULES_PACKAGE) + 1:])
+            elif isinstance(node, ast.Call):
+                func = node.func
+                if not (isinstance(func, ast.Attribute) and func.attr == "import_module"):
+                    continue
+                for arg in node.args:
+                    if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                        if arg.value.startswith(MODULES_PACKAGE + "."):
+                            referenced.add(arg.value[len(MODULES_PACKAGE) + 1:])
+    return referenced
+
+
 def untested_module_findings():
-    """Hand-written modules that no test file references.
+    """Hand-written modules that no test file imports.
 
     The collection ships a unit test per module and says so; two modules were
     referenced by no test file and no integration target at all --
@@ -905,12 +963,7 @@ def untested_module_findings():
     tests are generated beside them and ``generate_info_modules.py --check``
     keeps the pair in step.
     """
-    blob = []
-    for path in sorted(glob.glob(os.path.join(REPO_ROOT, "tests", "unit", "**", "*.py"),
-                                 recursive=True)):
-        with open(path, encoding="utf-8") as handle:
-            blob.append(handle.read())
-    referenced = "\n".join(blob)
+    referenced = _modules_named_by_tests()
 
     problems = []
     for path in module_paths():
@@ -922,8 +975,36 @@ def untested_module_findings():
         if name in referenced:
             continue
         problems.append(
-            "plugins/modules/%s.py: no file under tests/unit/ references it, so "
+            "plugins/modules/%s.py: no file under tests/unit/ imports it, so "
             "nothing executes or checks this module" % name)
+    return problems
+
+
+def legacy_read_call_findings():
+    """Hand-written ``_info`` modules still calling the non-retrying wrapper.
+
+    ``sdk_call`` does not retry, which is right for a write module and wrong
+    for a read. Tencent Cloud throttles as a matter of course, so a module on
+    this list fails the first time it meets ``RequestLimitExceeded`` while
+    every module that reads through ``read_sdk_call`` recovers from it. The
+    generated ``_info`` modules moved when the generator did; these are
+    hand-written, each with its own request builders and pagination, so each
+    needs a look rather than a regeneration. Frozen as a shrink-only list.
+    """
+    problems = []
+    for path in module_paths():
+        name = os.path.basename(path)[:-3]
+        if not name.endswith("_info"):
+            continue
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        if GENERATED_MARKER in text:
+            continue
+        if "read_sdk_call" in text:
+            continue
+        if not re.search(r"\bsdk_call\b", text):
+            continue
+        problems.append(name)
     return problems
 
 
@@ -962,6 +1043,7 @@ def main(argv=None):
     untested = untested_module_findings()
     private_harness = private_harness_findings()
     untested_main_path = untested_main_path_findings()
+    legacy_read_call = legacy_read_call_findings()
 
     if args.write_baseline:
         findings = {"return_samples": samples,
@@ -969,6 +1051,7 @@ def main(argv=None):
                     "untested_modules": untested,
                     "private_harness": private_harness,
                     "untested_main_path": untested_main_path,
+                    "legacy_read_call": legacy_read_call,
                     "fragment_shadowing": shadows}[args.write_baseline]
         return write_baseline(args.write_baseline, findings)
 
@@ -1054,6 +1137,30 @@ def main(argv=None):
             % (len(missing), INTEGRATION_MISSING_RATCHET))
     problems.extend(role_meta)
     problems.extend(role_docs)
+    if len(untested) > UNTESTED_MODULES_CEILING:
+        problems.append(
+            "hand-written modules no unit test references: %d, ceiling is %d "
+            "(a module nothing executes is a module nobody can tell works; "
+            "write the test rather than freezing the finding)"
+            % (len(untested), UNTESTED_MODULES_CEILING))
+    if len(private_harness) > PRIVATE_HARNESS_CEILING:
+        problems.append(
+            "module tests building a private double: %d, ceiling is %d (use "
+            "tests/unit/plugins/modules/harness.py so the payload stays "
+            "observable outside the test file)"
+            % (len(private_harness), PRIVATE_HARNESS_CEILING))
+    if len(untested_main_path) > UNTESTED_MAIN_PATH_CEILING:
+        problems.append(
+            "module tests that never execute run_module: %d, ceiling is %d "
+            "(a test that only imports the module proves it parses and "
+            "nothing else)" % (len(untested_main_path), UNTESTED_MAIN_PATH_CEILING))
+    if len(legacy_read_call) > LEGACY_READ_CALL_CEILING:
+        problems.append(
+            "hand-written _info modules reading through the non-retrying "
+            "sdk_call: %d, ceiling is %d (read through read_sdk_call, or "
+            "paginate_read when the module pages)"
+            % (len(legacy_read_call), LEGACY_READ_CALL_CEILING))
+    problems.extend(baseline_problems(BASELINE_LEGACY_READ_CALL, legacy_read_call))
     problems.extend(baseline_problems(BASELINE_UNTESTED_MODULES, untested))
     problems.extend(baseline_problems(BASELINE_PRIVATE_HARNESS, private_harness))
     problems.extend(baseline_problems(BASELINE_UNTESTED_MAIN_PATH, untested_main_path))
@@ -1138,16 +1245,21 @@ def main(argv=None):
     print("ok: all %d role README(s) name only variables the role offers"
           % len(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))))
     print("ok: %d hand-written module(s) have no test that runs them "
-          "(baseline %d)"
-          % (len(untested_main_path),
+          "(ceiling %d, baseline %d)"
+          % (len(untested_main_path), UNTESTED_MAIN_PATH_CEILING,
              len(read_baseline(BASELINE_UNTESTED_MAIN_PATH) or [])))
-    print("ok: %d module test(s) build a private double (baseline %d)"
-          % (len(private_harness),
+    print("ok: %d module test(s) build a private double (ceiling %d, "
+          "baseline %d)"
+          % (len(private_harness), PRIVATE_HARNESS_CEILING,
              len(read_baseline(BASELINE_PRIVATE_HARNESS) or [])))
     print("ok: %d hand-written module(s) are referenced by no unit test "
-          "(baseline %d)"
-          % (len(untested),
+          "(ceiling %d, baseline %d)"
+          % (len(untested), UNTESTED_MODULES_CEILING,
              len(read_baseline(BASELINE_UNTESTED_MODULES) or [])))
+    print("ok: %d hand-written _info module(s) still read through the "
+          "non-retrying sdk_call (ceiling %d, baseline %d)"
+          % (len(legacy_read_call), LEGACY_READ_CALL_CEILING,
+             len(read_baseline(BASELINE_LEGACY_READ_CALL) or [])))
     return 0
 
 

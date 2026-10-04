@@ -276,3 +276,48 @@ def test_json_output_reports_readiness(guard, monkeypatch, tmp_path):
     assert payload["ready"] is True
     assert payload["version"] == "9.9.9"
     assert {item["check"] for item in payload["results"]} == set(guard.CHECK_NAMES)
+
+
+def _synthetic_repository(guard, monkeypatch, tmp_path, version="9.9.9"):
+    """A repository whose only moving parts are the ones under test.
+
+    Same reasoning as ``test_json_output_reports_readiness``: the real
+    fragments directory and changelog would make the outcome depend on where
+    the repository sits in its release cycle.
+    """
+    fragments = tmp_path / "fragments"
+    fragments.mkdir()
+    (fragments / "synthetic.yml").write_text(
+        "minor_changes:\n  - synthetic fragment for the readiness test.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        guard, "build_state",
+        lambda tag=None: make_state(guard, version=version,
+                                    local=("v1.2.0",), remote=("v1.2.0",)))
+    monkeypatch.setattr(guard, "FRAGMENTS_DIR", fragments)
+    monkeypatch.setattr(guard, "run", lambda *a, **k: (0, "", ""))
+
+
+def test_an_ignored_check_is_not_reported_as_ready(guard, monkeypatch, tmp_path):
+    """--ignore weakens the verdict, and both outputs have to say so.
+
+    Reporting "ready to tag" on the strength of the checks that were left out
+    is the failure this guard exists to prevent, so a run with --ignore may
+    pass but must not claim readiness.
+    """
+    _synthetic_repository(guard, monkeypatch, tmp_path)
+
+    out = io.StringIO()
+    assert guard.main(["--check", "--ignore", "version-bumped"],
+                      out=out, err=io.StringIO()) == 0
+    text = out.getvalue()
+    assert "ready to tag" not in text
+    assert "version-bumped" in text
+
+    out = io.StringIO()
+    assert guard.main(["--json", "--ignore", "version-bumped"],
+                      out=out, err=io.StringIO()) == 0
+    payload = json.loads(out.getvalue())
+    assert payload["ready"] is False
+    assert payload["ignored"] == ["version-bumped"]
