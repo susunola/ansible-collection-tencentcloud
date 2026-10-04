@@ -29,6 +29,13 @@ class FakeResponse(object):
         self.RequestId = request_id
 
 
+class _Opaque(object):
+    """An item whose content cannot be reduced to a comparable form."""
+
+    def _serialize(self, allow_none=True):
+        raise RuntimeError("cannot serialise")
+
+
 def _paginator_rounds(rounds, page_size=10):
     """Build a paginator whose API returns one round per call."""
     calls = []
@@ -207,6 +214,46 @@ def test_distinct_pages_are_not_mistaken_for_a_repeat():
     p = paging.Paginator(3, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
     items, total = p.fetch_all()
     assert items == [1, 2, 3, 4, 5, 6]
+
+
+def test_repeated_page_of_model_objects_is_reported():
+    """The guard must compare content: responses never reuse item objects.
+
+    Each API response deserialises its own model instances, so comparing the
+    raw items would compare identities, never match, and let the duplicates
+    through -- the exact shape the guard exists for.
+    """
+    class _Item(object):
+        def __init__(self, marker):
+            self.marker = marker
+
+        def _serialize(self, allow_none=True):
+            return {"Marker": self.marker}
+
+    def call_api(request):
+        return FakeResponse([_Item("a"), _Item("b")], 8)
+
+    p = paging.Paginator(2, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    with pytest.raises(paging.PaginationError):
+        p.fetch_all()
+
+
+def test_an_unserialisable_page_does_not_invent_a_repeat():
+    """A page that cannot be reduced to a comparable form is skipped, not guessed.
+
+    Under the reported-total rule a full page cannot end the walk, so the walk
+    would spin on a page whose content it cannot reduce. Nothing raises: the
+    check is skipped and the API's own totals and short pages still decide.
+    """
+    batches = [[_Opaque(), _Opaque()], [_Opaque()]]
+
+    def call_api(request):
+        return FakeResponse(batches.pop(0), None)
+
+    p = paging.Paginator(2, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    items, total = p.fetch_all()
+    assert len(items) == 3
+    assert total == 3
 
 
 def test_paginate_wrapper_reports_a_repeated_page_as_a_module_failure():

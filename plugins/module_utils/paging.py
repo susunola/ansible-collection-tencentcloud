@@ -47,6 +47,32 @@ class PaginationError(Exception):
     """
 
 
+def _page_signature(batch):
+    """Return a comparable form of one page, or None when there is none.
+
+    Two responses never carry the same *objects*: every item is deserialised
+    again, so ``batch == previous`` on the raw items would compare identities
+    and never match. Serialising first makes the comparison about content,
+    which is the only thing a repeated page can share. Items that carry no
+    ``_serialize`` (already plain values in tests and inventory code) compare
+    as they are.
+
+    ``None`` means the page could not be reduced to a comparable form; the
+    caller skips the check for that round instead of guessing.
+    """
+    signature = []
+    for item in batch:
+        serializer = getattr(item, "_serialize", None)
+        if not callable(serializer):
+            signature.append(item)
+            continue
+        try:
+            signature.append(serializer(allow_none=True))
+        except Exception:
+            return None
+    return signature
+
+
 class Paginator(object):
     """Iterate over a paged Tencent Cloud list API.
 
@@ -90,12 +116,13 @@ class Paginator(object):
             # Only a *non-empty* repeat is a signal: an empty page legitimately
             # follows an empty page when a filtered list has no matches, and it
             # terminates on the check below.
-            if batch and batch == previous:
+            signature = _page_signature(batch)
+            if batch and signature is not None and signature == previous:
                 raise PaginationError(
                     "list API returned the same %d item(s) again at offset %d; "
                     "it is ignoring Offset, so continuing would repeat them in "
                     "the result" % (len(batch), offset))
-            previous = batch
+            previous = signature
             items.extend(batch)
             reported_total = self.total_of(response)
             if total_count is None and reported_total is not None:
