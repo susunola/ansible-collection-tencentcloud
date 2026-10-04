@@ -72,7 +72,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -102,18 +102,29 @@ def run_module():
     )
     we_chat_bills = []
     next_token = None
+    seen_tokens = set()
     total_count = None
     while True:
         request = build_request(
             models,
             next_token,
             None)
-        response = sdk_call(module, client.GetWeChatBillDetails, request)
+        response = read_sdk_call(module, client.GetWeChatBillDetails, request)
         batch = response.WeChatBillDetails or []
         we_chat_bills.extend(serialize_sdk_object(item) for item in batch)
         next_token = response.NextCursor
         if not response.HasNextPage or not next_token:
             break
+        # Only a token the API has already served is a signal here: the loop
+        # feeds it back as the next request's cursor, so a token that repeats
+        # asks for the same page forever and the module never returns.
+        if next_token in seen_tokens:
+            module.fail_json(
+                msg="Tencent Cloud list API returned a repeated continuation token",
+                token=next_token,
+                request_id=getattr(response, "RequestId", None),
+            )
+        seen_tokens.add(next_token)
     if total_count is None:
         total_count = len(we_chat_bills)
     request_id = getattr(response, "RequestId", None)

@@ -112,7 +112,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -148,7 +148,7 @@ def run_module():
         create_client_profile(module, "tione.tencentcloudapi.com"),
     )
     request = build_request(models, module.params["service_group_id"], module.params["ti_project_id"], 0, 0)
-    response = sdk_call(module, client.DescribeModelServiceGroup, request)
+    response = read_sdk_call(module, client.DescribeModelServiceGroup, request)
     items = (response.ServiceGroup.Services if response.ServiceGroup is not None else None) or []
     model_services = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, model_services=model_services,

@@ -86,7 +86,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -134,7 +134,7 @@ def run_module():
                             module.params["is_simplified"],
                             0,
                             0)
-    response = sdk_call(module, client.DescribeAclRule, request)
+    response = read_sdk_call(module, client.DescribeAclRule, request)
     items = (response.Result.AclRuleList if response.Result is not None else None) or []
     acl_rules = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, acl_rules=acl_rules,

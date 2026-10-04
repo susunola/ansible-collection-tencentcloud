@@ -68,6 +68,32 @@ class FakeModule:
         raise ModuleFail(kwargs)
 
 
+class SdkError(Exception):
+    """The SDK exception shape the shared call wrapper catches.
+
+    ``read_sdk_call`` resolves ``TencentCloudSDKException`` through its own
+    module global, so ``_point_wrapper_at_sdk_error`` binds that name here and
+    a fake client can raise something the real wrapper classifies and reports.
+    """
+
+    def __init__(self, code, message, request_id):
+        super(SdkError, self).__init__(message)
+        self._code = code
+        self._request_id = request_id
+
+    def get_code(self):
+        return self._code
+
+    def get_request_id(self):
+        return self._request_id
+
+
+def _point_wrapper_at_sdk_error(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as wrapper
+
+    monkeypatch.setattr(wrapper, "TencentCloudSDKException", SdkError)
+
+
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.cdb.v20170320")
     service.models = FakeModels
@@ -89,6 +115,27 @@ def _run(monkeypatch, client, **params):
     return fake
 
 
+def test_run_module_calls_the_shared_read_helper():
+    """Pin the shared retrying helper, not a copy of it.
+
+    The module_utils unit tests prove ``read_sdk_call`` retries throttling and
+    transient failures and reports an exhausted budget with an error class.
+    This asserts the module calls that helper, which is the half those tests
+    cannot see: a module left on the non-retrying ``sdk_call`` would pass them
+    and still fail the first time Tencent Cloud throttled it.
+    """
+    helper = cdb_parameter_template_info.read_sdk_call
+    # Provenance rather than object identity: another unit test executes the
+    # shared module a second time, which rebinds its functions while a module
+    # that did ``from ... import read_sdk_call`` keeps the object it was
+    # given. What has to hold is that this is the shared implementation and
+    # not a copy defined here, and __module__ says so whatever the order the
+    # suite ran in.
+    assert helper.__module__ == (
+        "ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud")
+    assert helper.__name__ == "read_sdk_call"
+
+
 def test_run_module_returns_full_list(monkeypatch):
     client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")])])
     fake = _run(monkeypatch, client, region="ap-guangzhou")
@@ -101,32 +148,29 @@ def test_run_module_returns_full_list(monkeypatch):
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+    """The shared wrapper's failure contract, exercised rather than restated.
+
+    The wrapper is not replaced here: the client raises the SDK error and the
+    real read path classifies it, so the payload asserted below is the one the
+    shared helper produces. A hand-written double used to stand in for it,
+    which could not notice the helper changing.
+    """
     class FailingClient:
         def DescribeParamTemplates(self, request):
-            raise RuntimeError("api exploded")
-
-    def failing_sdk_call(module, function, request):
-        # Mirrors the real sdk_call failure contract pinned in
-        # tests/unit/plugins/module_utils/test_tencentcloud.py.
-        try:
-            return function(request)
-        except RuntimeError as exc:
-            module.fail_json(
-                msg="Tencent Cloud API request failed",
-                error=str(exc),
-                error_code="UnauthorizedOperation",
-                request_id="req-err",
-            )
+            raise SdkError("UnauthorizedOperation", "api exploded", "req-err")
 
     _inject_sdk(monkeypatch, FailingClient())
     fake = FakeModule({"region": "ap-guangzhou"})
     monkeypatch.setattr(cdb_parameter_template_info, "AnsibleModule", lambda **kwargs: fake)
     monkeypatch.setattr(cdb_parameter_template_info, "create_credential", lambda module: object())
     monkeypatch.setattr(cdb_parameter_template_info, "create_client_profile", lambda module, endpoint: object())
-    monkeypatch.setattr(cdb_parameter_template_info, "sdk_call", failing_sdk_call)
+    _point_wrapper_at_sdk_error(monkeypatch)
     with pytest.raises(ModuleFail) as excinfo:
         cdb_parameter_template_info.run_module()
     payload = excinfo.value.payload
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"
+    # The bucket the shared wrapper derives from the code, which is what tells
+    # a report apart from a throttling problem without parsing the message.
+    assert payload["error_class"] == "unauthorized"

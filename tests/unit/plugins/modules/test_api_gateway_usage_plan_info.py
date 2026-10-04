@@ -86,6 +86,32 @@ class FakeModule:
         raise ModuleFail(kwargs)
 
 
+class SdkError(Exception):
+    """The SDK exception shape the shared call wrapper catches.
+
+    ``read_sdk_call`` resolves ``TencentCloudSDKException`` through its own
+    module global, so ``_point_wrapper_at_sdk_error`` binds that name here and
+    a fake client can raise something the real wrapper classifies and reports.
+    """
+
+    def __init__(self, code, message, request_id):
+        super(SdkError, self).__init__(message)
+        self._code = code
+        self._request_id = request_id
+
+    def get_code(self):
+        return self._code
+
+    def get_request_id(self):
+        return self._request_id
+
+
+def _point_wrapper_at_sdk_error(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as wrapper
+
+    monkeypatch.setattr(wrapper, "TencentCloudSDKException", SdkError)
+
+
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.apigateway.v20180808")
     service.models = FakeModels
@@ -107,6 +133,26 @@ def _run(monkeypatch, client, **params):
     return fake
 
 
+def test_run_module_calls_the_shared_read_helper():
+    """Pin the shared paginating read, not a copy of it.
+
+    ``paginate_read`` owns the page loop: it retries each page through
+    ``read_sdk_call`` and turns an unusable page sequence into a failure. The
+    module_utils unit tests prove that; this asserts the module calls it rather
+    than walking the pages itself with the non-retrying ``sdk_call``.
+    """
+    helper = api_gateway_usage_plan_info.paginate_read
+    # Provenance rather than object identity: another unit test executes the
+    # shared module a second time, which rebinds its functions while a module
+    # that did ``from ... import paginate_read`` keeps the object it was
+    # given. What has to hold is that this is the shared implementation and
+    # not a copy defined here, and __module__ says so whatever the order the
+    # suite ran in.
+    assert helper.__module__ == (
+        "ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud")
+    assert helper.__name__ == "paginate_read"
+
+
 def test_run_module_paginates_until_total_count(monkeypatch):
     client = FakeClient([
         FakeResponse([FakeItem("a"), FakeItem("b")], 3),
@@ -122,23 +168,46 @@ def test_run_module_paginates_until_total_count(monkeypatch):
     assert [request.Offset for request in client.requests] == [0, 2]
 
 
+def test_run_module_reports_a_repeated_page(monkeypatch):
+    """A list API that ignores Offset must fail, not repeat its rows.
+
+    The shared paginator raises when a page comes back twice, and
+    ``paginate_read`` turns that into a module failure. Without the guard the
+    same rows would be collected twice and handed back as two pages' worth of
+    data, with nothing in the result to say so.
+    """
+    client = FakeClient([
+        FakeResponse([FakeItem("a"), FakeItem("b")], 9),
+        FakeResponse([FakeItem("a"), FakeItem("b")], 9),
+    ])
+    _inject_sdk(monkeypatch, client)
+    fake = FakeModule({
+        "region": "ap-guangzhou",
+        "filters": {},
+        "page_size": 2,
+    })
+    monkeypatch.setattr(api_gateway_usage_plan_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(api_gateway_usage_plan_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(api_gateway_usage_plan_info, "create_client_profile", lambda module, endpoint: object())
+    with pytest.raises(ModuleFail) as excinfo:
+        api_gateway_usage_plan_info.run_module()
+    payload = excinfo.value.payload
+    assert payload["msg"] == "Tencent Cloud list API returned an unusable page sequence"
+    assert "ignoring Offset" in payload["error"]
+    assert payload["request_id"] == "req-page"
+
+
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+    """The shared wrapper's failure contract, exercised rather than restated.
+
+    The wrapper is not replaced here: the client raises the SDK error and the
+    real read path classifies it, so the payload asserted below is the one the
+    shared helper produces. A hand-written double used to stand in for it,
+    which could not notice the helper changing.
+    """
     class FailingClient:
         def DescribeUsagePlansStatus(self, request):
-            raise RuntimeError("api exploded")
-
-    def failing_sdk_call(module, function, request):
-        # Mirrors the real sdk_call failure contract pinned in
-        # tests/unit/plugins/module_utils/test_tencentcloud.py.
-        try:
-            return function(request)
-        except RuntimeError as exc:
-            module.fail_json(
-                msg="Tencent Cloud API request failed",
-                error=str(exc),
-                error_code="UnauthorizedOperation",
-                request_id="req-err",
-            )
+            raise SdkError("UnauthorizedOperation", "api exploded", "req-err")
 
     _inject_sdk(monkeypatch, FailingClient())
     # Same parameter set as the happy-path run so int/page modules find
@@ -151,10 +220,13 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     monkeypatch.setattr(api_gateway_usage_plan_info, "AnsibleModule", lambda **kwargs: fake)
     monkeypatch.setattr(api_gateway_usage_plan_info, "create_credential", lambda module: object())
     monkeypatch.setattr(api_gateway_usage_plan_info, "create_client_profile", lambda module, endpoint: object())
-    monkeypatch.setattr(api_gateway_usage_plan_info, "sdk_call", failing_sdk_call)
+    _point_wrapper_at_sdk_error(monkeypatch)
     with pytest.raises(ModuleFail) as excinfo:
         api_gateway_usage_plan_info.run_module()
     payload = excinfo.value.payload
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"
+    # The bucket the shared wrapper derives from the code, which is what tells
+    # a report apart from a throttling problem without parsing the message.
+    assert payload["error_class"] == "unauthorized"

@@ -1,0 +1,49 @@
+minor_changes:
+  - >-
+    generate_info_modules - the 502 generated ``_info`` modules now reach the
+    API through ``read_sdk_call`` (a token, list or single-page module) or
+    ``paginate_read`` (an offset-paginated one) instead of the non-retrying
+    ``sdk_call``. Tencent Cloud throttles (``RequestLimitExceeded``) and
+    serves transient 5xx / ``ServiceUnavailable`` failures as a matter of
+    course, and every one of these modules failed on the first occurrence
+    while the 510 modules built on ``TencentCloudModule`` retried it. A read
+    cannot be applied twice, which is the one reason ``sdk_call`` withholds
+    the retry it deliberately keeps for write modules, so the read path may
+    take it: ``read_sdk_call`` retries throttling and transient errors with
+    the same policy ``base_argument_spec`` exposes, and reports an exhausted
+    budget with an ``error_class`` bucket from ``module_utils.errors`` so a
+    report says whether the failure was throttling or a permission problem.
+    ``paginate_read`` applies that per page and owns the page loop, so a
+    paginated module no longer assembles a ``Paginator`` itself.
+  - >-
+    generate_info_modules - the generated tests moved with the modules. The
+    failure test no longer substitutes a hand-written double for the shared
+    call wrapper: the fake client raises the SDK exception and the real helper
+    classifies it, so the asserted payload is the one the shared code
+    produces. A hand-written copy could not notice the helper changing, and
+    the retry added here is exactly the kind of change it was blind to. Each
+    generated test also pins that its module calls the shared read helper
+    rather than a local copy.
+bugfixes:
+  - >-
+    paging - the repeated-page guard compares page content rather than item
+    identity. Two responses never carry the same objects, because every item is
+    deserialised again, so ``batch == previous`` on the raw items compared
+    identities and could never match: the guard did not fire for the SDK models
+    it exists for, and the duplicates it was written to stop went through. The
+    comparison now reduces each page with ``_serialize`` first, and a page that
+    cannot be reduced is skipped rather than guessed at.
+  - >-
+    generate_info_modules - a cursor-paginated module now fails on a
+    continuation token the API serves twice. The token is fed back as the next
+    request's cursor, so a repeated one asks for the same page for good and
+    the module never returned. ``alb_load_balancer`` already failed closed on
+    a repeated ``NextToken``; the same guard now covers every generated
+    cursor-paginated module through the shared code.
+  - >-
+    tencentcloud - a paged read reports an unusable page sequence instead of
+    letting ``PaginationError`` escape as a traceback. The generated modules
+    call ``paginate_read``, and the legacy ``paginate`` helper in this module
+    delegated to a second ``Paginator`` of its own rather than to
+    ``module_utils.paging``; it now delegates, so both paths surface the same
+    failure.

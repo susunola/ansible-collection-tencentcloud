@@ -76,7 +76,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -115,7 +115,7 @@ def run_module():
         create_client_profile(module, "chdfs.tencentcloudapi.com"),
     )
     request = build_request(models, module.params["file_system_id"], module.params["access_group_id"], module.params["owner_uin"], 0, 0)
-    response = sdk_call(module, client.DescribeMountPoints, request)
+    response = read_sdk_call(module, client.DescribeMountPoints, request)
     items = response.MountPoints or []
     mount_points = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, mount_points=mount_points,

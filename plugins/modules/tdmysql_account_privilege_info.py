@@ -78,7 +78,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -139,7 +139,7 @@ def run_module():
         module.params["col_name"],
         0,
         0)
-    response = sdk_call(module, client.DescribeUserPrivileges, request)
+    response = read_sdk_call(module, client.DescribeUserPrivileges, request)
     user_privilege = serialize_sdk_object(response)
     user_privilege.pop("RequestId", None)
     module.exit_json(changed=False, user_privilege=user_privilege,

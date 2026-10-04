@@ -38,7 +38,7 @@ one error per module (881 of them the first time it was tried).
 | File | Re-exports | Consumers today |
 | --- | --- | --- |
 | `profile.py` | `load_profile` from `module_utils.client` | the `resource_id` / `ssm_parameter` / `sts_caller_identity` lookups, the CVM / CLB / COS / SG / TKE inventory plugins, the `tat` connection plugin |
-| `paging.py` | `Paginator` from `module_utils.paging` | the CVM / CLB / SG / TKE inventory plugins |
+| `paging.py` | `Paginator`, `PaginationError` from `module_utils.paging` | the CVM / CLB / SG / TKE inventory plugins |
 | `polling.py` | `PollOutcome`, `poll_until` from `module_utils.polling` | the `tc_wait` action plugin |
 | `tags.py` | `merge_tags` from `module_utils.tagging` | the `tag_merge` filter plugin |
 | `inventory.py` | the shared inventory layer from `module_utils.inventory` (`SourceSpec`, `SOURCE_SPECS`, `collect_source`, `merge_entries`, `build_cache_key`, ...) | the `tc_inventory` inventory plugin |
@@ -77,8 +77,9 @@ graph TD
    directories.
 2. **Implement in `module_utils`, re-export here** when modules need the
    helper too (which is the common case: `load_profile` is used by
-   `module_utils.client` itself, `Paginator` by every generated `_info`
-   module, `poll_until` by `module_utils.waiters`). Add a file here only when
+   `module_utils.client` itself, `Paginator` by the inventory plugins and by
+   the shared `paginate_read` that every paginated generated `_info` module
+   calls, `poll_until` by `module_utils.waiters`). Add a file here only when
    a controller-side plugin needs it.
    The reverse case — a helper only a controller-side plugin consumes — still
    goes in `module_utils`. `merge_tags` is the worked example: its only

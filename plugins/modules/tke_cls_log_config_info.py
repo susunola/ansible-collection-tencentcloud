@@ -68,7 +68,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -113,7 +113,7 @@ def run_module():
         module.params["log_config_names"],
         0,
         0)
-    response = sdk_call(module, client.DescribeLogConfigs, request)
+    response = read_sdk_call(module, client.DescribeLogConfigs, request)
     log_config = serialize_sdk_object(response)
     log_config.pop("RequestId", None)
     module.exit_json(changed=False, log_config=log_config,

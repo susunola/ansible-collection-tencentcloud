@@ -2361,11 +2361,18 @@ def _smoke_run_module(monkeypatch, spec, params):
     """Run a generated info module's ``run_module`` end to end (mocked SDK).
 
     Every network boundary is stubbed: the client class constructor is
-    replaced with ``_StubClient``, ``sdk_call`` returns the spec-driven fake
+    replaced with ``_StubClient``, the read path returns the spec-driven fake
     response, and ``AnsibleModule`` is replaced by ``_SmokeModule`` so the
     argument assembly, request construction and pagination logic run without
     exiting the process. ``serialize_sdk_object`` is neutralised because the
     fake response is not a real SDK model.
+
+    Which name carries the read path depends on the module's shape, and both
+    are stubbed at the point the module resolves them. A token, list or
+    single-page module calls ``read_sdk_call`` from its own namespace. An
+    offset-paginated module calls ``paginate_read`` from its own namespace,
+    but that helper resolves ``read_sdk_call`` from the ``tencentcloud``
+    module, so patching there leaves the real page loop in the run.
     """
     mod = _import_plugin(spec["module"])
     # Import the service package first: the client submodule below resolves
@@ -2378,7 +2385,17 @@ def _smoke_run_module(monkeypatch, spec, params):
     monkeypatch.setattr(mod, "AnsibleModule", lambda **kwargs: fake)
     monkeypatch.setattr(mod, "create_credential", lambda module: None)
     monkeypatch.setattr(mod, "create_client_profile", lambda module, endpoint: None)
-    monkeypatch.setattr(mod, "sdk_call", lambda module, function, request: _smoke_response(spec))
+    if hasattr(mod, "paginate_read"):
+        # Imported here rather than at module scope: this file must stay
+        # importable (and skippable) on a machine without ansible-core, and
+        # the collection's module_utils imports it eagerly.
+        from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as wrapper
+
+        monkeypatch.setattr(
+            wrapper, "read_sdk_call",
+            lambda module, function, request, *args, **kwargs: _smoke_response(spec))
+    else:
+        monkeypatch.setattr(mod, "read_sdk_call", lambda module, function, request: _smoke_response(spec))
     monkeypatch.setattr(mod, "serialize_sdk_object", lambda value: {})
     mod.run_module()
     return fake

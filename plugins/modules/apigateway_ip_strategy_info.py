@@ -96,7 +96,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -137,7 +137,7 @@ def run_module():
         create_client_profile(module, "apigateway.tencentcloudapi.com"),
     )
     request = build_request(models, module.params["service_id"], module.params["filters"], 0, 0)
-    response = sdk_call(module, client.DescribeIPStrategysStatus, request)
+    response = read_sdk_call(module, client.DescribeIPStrategysStatus, request)
     items = (response.Result.StrategySet if response.Result is not None else None) or []
     ip_strategies = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, ip_strategies=ip_strategies,

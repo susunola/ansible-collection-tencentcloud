@@ -80,7 +80,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -116,7 +116,7 @@ def run_module():
         create_client_profile(module, "cvm.tencentcloudapi.com"),
     )
     request = build_request(models, module.params["instance_ids"], module.params["action_timer_ids"], 0, 0)
-    response = sdk_call(module, client.DescribeInstancesActionTimer, request)
+    response = read_sdk_call(module, client.DescribeInstancesActionTimer, request)
     items = response.ActionTimers or []
     action_timers = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, action_timers=action_timers,

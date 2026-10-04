@@ -73,7 +73,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -110,6 +110,7 @@ def run_module():
     )
     access_groups = []
     next_token = None
+    seen_tokens = set()
     total_count = None
     while True:
         request = build_request(
@@ -118,12 +119,22 @@ def run_module():
             module.params["owner_uin"],
             next_token,
             None)
-        response = sdk_call(module, client.DescribeAccessGroups, request)
+        response = read_sdk_call(module, client.DescribeAccessGroups, request)
         batch = response.AccessGroups or []
         access_groups.extend(serialize_sdk_object(item) for item in batch)
         next_token = response.NextAccessGroupIdMarker
         if response.IsOver or not next_token:
             break
+        # Only a token the API has already served is a signal here: the loop
+        # feeds it back as the next request's cursor, so a token that repeats
+        # asks for the same page forever and the module never returns.
+        if next_token in seen_tokens:
+            module.fail_json(
+                msg="Tencent Cloud list API returned a repeated continuation token",
+                token=next_token,
+                request_id=getattr(response, "RequestId", None),
+            )
+        seen_tokens.add(next_token)
     if total_count is None:
         total_count = len(access_groups)
     request_id = getattr(response, "RequestId", None)

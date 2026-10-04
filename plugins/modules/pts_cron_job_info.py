@@ -88,9 +88,8 @@ request_id:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -123,17 +122,17 @@ def run_module():
         create_credential(module), module.params["region"],
         create_client_profile(module, "pts.tencentcloudapi.com"),
     )
-    paginator = Paginator(
+    item_set, total_count, request_id = paginate_read(
+        module,
         module.params["page_size"],
         lambda offset, limit: build_request(models, module.params["cron_job_ids"], offset, limit),
-        lambda request: sdk_call(module, client.DescribeCronJobs, request),
+        client.DescribeCronJobs,
         lambda response: response.CronJobSet,
         lambda response: response.Total,
     )
-    item_set, total_count = paginator.fetch_all()
     cron_jobs = [serialize_sdk_object(item) for item in item_set]
     module.exit_json(changed=False, cron_jobs=cron_jobs,
-                     total_count=total_count, request_id=paginator.request_id)
+                     total_count=total_count, request_id=request_id)
 
 
 def main():

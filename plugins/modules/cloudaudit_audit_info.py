@@ -65,7 +65,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -94,7 +94,7 @@ def run_module():
         create_client_profile(module, "cloudaudit.tencentcloudapi.com"),
     )
     request = build_request(models, 0, 0)
-    response = sdk_call(module, client.ListAudits, request)
+    response = read_sdk_call(module, client.ListAudits, request)
     items = response.AuditSummarys or []
     audits = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, audits=audits,

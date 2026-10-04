@@ -74,9 +74,8 @@ request_id:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -116,22 +115,22 @@ def run_module():
     key_ids = module.params["key_ids"]
     if key_ids:
         request = build_describe_request(models, key_ids)
-        response = sdk_call(module, client.DescribeKeys, request)
+        response = read_sdk_call(module, client.DescribeKeys, request)
         items = response.KeyMetadatas or []
         kms_keys = [serialize_sdk_object(item) for item in items]
         module.exit_json(changed=False, kms_keys=kms_keys,
                          total_count=len(kms_keys), request_id=response.RequestId)
-    paginator = Paginator(
+    item_set, total_count, request_id = paginate_read(
+        module,
         module.params["page_size"],
         lambda offset, limit: build_list_request(models, offset, limit),
-        lambda request: sdk_call(module, client.ListKeys, request),
+        client.ListKeys,
         lambda response: response.Keys,
         lambda response: response.TotalCount,
     )
-    item_set, total_count = paginator.fetch_all()
     kms_keys = [serialize_sdk_object(item) for item in item_set]
     module.exit_json(changed=False, kms_keys=kms_keys,
-                     total_count=total_count, request_id=paginator.request_id)
+                     total_count=total_count, request_id=request_id)
 
 
 def main():

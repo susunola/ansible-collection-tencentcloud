@@ -83,9 +83,8 @@ request_id:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -127,7 +126,8 @@ def run_module():
         create_credential(module), module.params["region"],
         create_client_profile(module, "ckafka.tencentcloudapi.com"),
     )
-    paginator = Paginator(
+    item_set, total_count, request_id = paginate_read(
+        module,
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
@@ -137,14 +137,13 @@ def run_module():
             module.params["topic_regular_expression"],
             offset,
             limit),
-        lambda request: sdk_call(module, client.DescribeDatahubTopics, request),
+        client.DescribeDatahubTopics,
         lambda response: response.Result.TopicList if response.Result is not None else None,
         lambda response: response.Result.TotalCount if response.Result is not None else None,
     )
-    item_set, total_count = paginator.fetch_all()
     datahub_topics = [serialize_sdk_object(item) for item in item_set]
     module.exit_json(changed=False, datahub_topics=datahub_topics,
-                     total_count=total_count, request_id=paginator.request_id)
+                     total_count=total_count, request_id=request_id)
 
 
 def main():
