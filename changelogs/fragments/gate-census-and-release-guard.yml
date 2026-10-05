@@ -21,13 +21,13 @@ minor_changes:
     reviewed edit to the gate rather than a command.
   - >-
     check_quality_gates - new census and shrink-only baseline for hand-written
-    ``_info`` modules that still read through the non-retrying ``sdk_call``.
-    The 502 generated ones moved when the generator did, but 53 hand-written
-    ones kept the old call, and nothing said so: their throttling failures
-    looked identical to the migrated modules' successes. The count is now
-    printed on every gate run and the list may only shrink, so a new ``_info``
-    module that reaches for ``sdk_call`` fails on its own rather than joining
-    an invisible pile.
+    ``_info`` modules that call the module-level ``sdk_call``, which does not
+    retry. The 502 generated ones moved when the generator did; 15 hand-written
+    ones kept the old call and nothing said so. The census separates that
+    function from ``TencentCloudModule.sdk_call``, which retries and records
+    the call audit trail: the two share a suffix, so a text search for
+    ``sdk_call`` counts both, and an earlier version of this census listed 38
+    modules that already retry.
   - >-
     release_check - "ready to tag" is no longer printed when checks were left
     out with ``--ignore``. The line reported a release as verified on the

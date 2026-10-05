@@ -176,13 +176,15 @@ UNTESTED_MODULES_CEILING = 0
 PRIVATE_HARNESS_CEILING = 0
 UNTESTED_MAIN_PATH_CEILING = 0
 
-# Hand-written ``_info`` modules still reading through the non-retrying
-# ``sdk_call``. The 502 generated ones moved wholesale when the generator did;
-# these 53 are hand-written, each with its own request builders and pagination,
-# so the move is a per-module review rather than a regeneration. Frozen as a
-# shrink-only list so the debt is visible and the number cannot grow: a new
-# ``_info`` module that reaches for ``sdk_call`` fails on its own.
-LEGACY_READ_CALL_CEILING = 53
+# Hand-written ``_info`` modules calling the module-level ``sdk_call``, which
+# does not retry. The 502 generated ones moved wholesale when the generator
+# did; these are hand-written, each with its own request builders and
+# pagination, so the move is a per-module review rather than a regeneration.
+# Frozen as a shrink-only list so the debt is visible and the number cannot
+# grow. Modules that read through ``TencentCloudModule.sdk_call`` are not
+# counted: that path retries already, and the first version of this census
+# miscounted them because a text search cannot separate the two names.
+LEGACY_READ_CALL_CEILING = 15
 
 _BASELINE_GUIDANCE = {
     BASELINE_RETURN_SAMPLES:
@@ -210,7 +212,7 @@ _BASELINE_GUIDANCE = {
         "usable; dlc_spark_job is the one grandfathered shadow",
     BASELINE_LEGACY_READ_CALL:
         "a new ``_info`` module reads through ``read_sdk_call`` (or "
-        "``paginate_read`` when it pages), not the non-retrying ``sdk_call``, "
+        "``paginate_read`` when it pages), not the module-level ``sdk_call``, "
         "so throttling is retried instead of failing the run; a baselined "
         "module that migrates is delisted here",
 }
@@ -980,16 +982,53 @@ def untested_module_findings():
     return problems
 
 
+def _calls_bare_sdk_call(text):
+    """True when the module calls the module-level ``sdk_call`` function.
+
+    The two call wrappers share a suffix and the difference is the whole point
+    of this census:
+
+    - ``sdk_call(module, operation, request)`` is the module-level function in
+      ``module_utils/tencentcloud.py``, which does **not** retry.
+    - ``module.sdk_call(operation, request)`` is ``TencentCloudModule``'s
+      method, which retries through ``retry_on`` and records the call audit
+      trail.
+
+    A text search for ``sdk_call`` cannot tell them apart. The first version of
+    this census used one, and listed 38 modules that already retry among the 53
+    it called non-retrying. The AST separates them: a bare call parses as
+    ``ast.Call(func=ast.Name(id="sdk_call"))``, a method call as
+    ``ast.Call(func=ast.Attribute(attr="sdk_call"))``.
+    """
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return False
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if isinstance(func, ast.Name) and func.id == "sdk_call":
+            return True
+    return False
+
+
 def legacy_read_call_findings():
     """Hand-written ``_info`` modules still calling the non-retrying wrapper.
 
-    ``sdk_call`` does not retry, which is right for a write module and wrong
-    for a read. Tencent Cloud throttles as a matter of course, so a module on
-    this list fails the first time it meets ``RequestLimitExceeded`` while
-    every module that reads through ``read_sdk_call`` recovers from it. The
-    generated ``_info`` modules moved when the generator did; these are
-    hand-written, each with its own request builders and pagination, so each
-    needs a look rather than a regeneration. Frozen as a shrink-only list.
+    The module-level ``sdk_call`` does not retry, which is right for a write
+    module and wrong for a read. Tencent Cloud throttles as a matter of course,
+    so a module on this list fails the first time it meets
+    ``RequestLimitExceeded`` while every module that reads through
+    ``read_sdk_call`` recovers from it. The generated ``_info`` modules moved
+    when the generator did; these are hand-written, each with its own request
+    builders and pagination, so each needs a look rather than a regeneration.
+
+    Modules that read through ``TencentCloudModule.sdk_call`` are deliberately
+    not listed: that path retries already, and it additionally records the call
+    in the ``tencentcloud_resource_actions`` audit trail, which
+    ``read_sdk_call`` does not. Moving them would be a regression dressed up as
+    a migration.
     """
     problems = []
     for path in module_paths():
@@ -1000,9 +1039,7 @@ def legacy_read_call_findings():
             text = handle.read()
         if GENERATED_MARKER in text:
             continue
-        if "read_sdk_call" in text:
-            continue
-        if not re.search(r"\bsdk_call\b", text):
+        if not _calls_bare_sdk_call(text):
             continue
         problems.append(name)
     return problems
