@@ -22,3 +22,9 @@ bugfixes:
     ``dlc_notebook_statement_info`` and ``dlc_ray_job_info`` all fail on a
     repeated token; these two were the only hand-written marker walks without
     the guard.
+  - >-
+    cloudaudit_track - end the walk on an empty page. Its stop condition is the
+    reported total, so a total larger than the rows the API serves kept it
+    asking for pages that could only come back empty. It terminated either way
+    -- the page count is bounded by the echoed total -- but it spent one
+    request per phantom page.

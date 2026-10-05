@@ -220,6 +220,13 @@ def build_delete_request(models, track_id):
 
 
 def find_track(module, client, models, track_id=None, name=None):
+    """Return the matching track dict, or None.
+
+    A page that comes back empty ends the walk. The stop condition is the
+    reported total, so a total larger than the rows the API actually serves
+    kept asking for pages that could only be empty -- the same short-page rule
+    the shared paginator applies, added here because this walk is its own.
+    """
     page, matches = 1, []
     while True:
         response = module.sdk_call(client.DescribeAuditTracks, build_list_request(models, page))
@@ -227,7 +234,7 @@ def find_track(module, client, models, track_id=None, name=None):
         for item in items:
             if (track_id and item.TrackId == track_id) or (not track_id and item.Name == name):
                 matches.append(item)
-        if page * 50 >= int(response.TotalCount or 0):
+        if not items or page * 50 >= int(response.TotalCount or 0):
             break
         page += 1
     if len(matches) > 1:
