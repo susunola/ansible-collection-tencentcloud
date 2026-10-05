@@ -1,0 +1,13 @@
+bugfixes:
+  - >-
+    paging - a controller-side caller now reports an unusable page sequence
+    through its own failure channel instead of a traceback. ``fetch_all``
+    raises ``PaginationError`` when a list API re-serves a page, which is right,
+    but the inventory plugins and the shared inventory layer called it with
+    nothing to catch it: a plugin that met an API ignoring ``Offset`` failed
+    with an unhandled exception rather than a message naming the cause. The
+    new ``fetch_all_or_raise`` takes the caller's error class -- the plugins
+    pass ``AnsibleError``, the shared layer passes its own
+    ``InventorySourceError`` -- because ``paging`` cannot import either, and
+    the same four-line ``try``/``except`` would otherwise be copied into six
+    list helpers.

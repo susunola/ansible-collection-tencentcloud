@@ -21,6 +21,7 @@ __metaclass__ = type
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import (
     PaginationError,
     Paginator,
+    fetch_all_or_raise,
 )
 
-__all__ = ["Paginator", "PaginationError"]
+__all__ = ["Paginator", "PaginationError", "fetch_all_or_raise"]

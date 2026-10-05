@@ -114,7 +114,7 @@ compose:
 from ansible.errors import AnsibleError
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 
-from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.paging import Paginator, fetch_all_or_raise
 from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
 
 try:
@@ -196,7 +196,7 @@ def fetch_clusters(client, models, cluster_ids, page_size=PAGE_SIZE):
         lambda response: response.Clusters,
         lambda response: response.TotalCount,
     )
-    items, _total = paginator.fetch_all()
+    items, _total = fetch_all_or_raise(paginator, AnsibleError)
     return [serialize_instance(item) for item in items]
 
 
@@ -212,7 +212,7 @@ def fetch_cluster_instances(client, models, cluster_id, page_size=PAGE_SIZE):
         lambda response: response.InstanceSet,
         lambda response: response.TotalCount,
     )
-    items, _total = paginator.fetch_all()
+    items, _total = fetch_all_or_raise(paginator, AnsibleError)
     return [serialize_instance(item) for item in items]
 
 

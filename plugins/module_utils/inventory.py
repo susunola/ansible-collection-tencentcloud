@@ -62,6 +62,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.client impor
 )
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import (
     Paginator,
+    fetch_all_or_raise,
 )
 
 PAGE_SIZE = 100
@@ -464,7 +465,7 @@ def _paged(spec, client, models, filters, page_size, request_class, extra=None,
         lambda response: getattr(response, items_attr or spec.items_attr) or [],
         lambda response: getattr(response, spec.total_attr),
     )
-    items, _total = paginator.fetch_all()
+    items, _total = fetch_all_or_raise(paginator, InventorySourceError)
     return [serialize(item) for item in items]
 
 

@@ -111,7 +111,7 @@ compose:
 from ansible.errors import AnsibleError
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 
-from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.paging import Paginator, fetch_all_or_raise
 from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
 
 try:
@@ -148,7 +148,7 @@ def list_security_groups(client, models, security_group_ids):
         lambda response: response.SecurityGroupSet,
         lambda response: response.TotalCount,
     )
-    items, _total = paginator.fetch_all()
+    items, _total = fetch_all_or_raise(paginator, AnsibleError)
     return [serialize(item) for item in items]
 
 
@@ -174,7 +174,7 @@ def list_network_interfaces(client, models, security_group_id):
         lambda response: response.NetworkInterfaceSet,
         lambda response: response.TotalCount,
     )
-    items, _total = paginator.fetch_all()
+    items, _total = fetch_all_or_raise(paginator, AnsibleError)
     return [serialize(item) for item in items]
 
 

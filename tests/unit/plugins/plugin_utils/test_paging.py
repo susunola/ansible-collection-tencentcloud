@@ -26,7 +26,12 @@ def test_pagination_error_is_the_module_utils_class():
     assert plugin_paging.PaginationError is module_paging.PaginationError
 
 
+def test_the_controller_side_walker_is_the_module_utils_function():
+    """Inventory plugins call it, so it must be the shared implementation."""
+    assert plugin_paging.fetch_all_or_raise is module_paging.fetch_all_or_raise
+
+
 def test_the_module_flavoured_wrapper_is_not_reexported():
     """``paginate()`` is module-only; the controller-side shim stays narrow."""
     assert not hasattr(plugin_paging, "paginate")
-    assert plugin_paging.__all__ == ["Paginator", "PaginationError"]
+    assert plugin_paging.__all__ == ["Paginator", "PaginationError", "fetch_all_or_raise"]

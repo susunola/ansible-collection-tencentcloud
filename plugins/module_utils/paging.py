@@ -142,7 +142,24 @@ class Paginator(object):
         return items, total_count if total_count is not None else len(items)
 
 
-__all__ = ["Paginator", "PaginationError", "paginate"]
+__all__ = ["Paginator", "PaginationError", "fetch_all_or_raise", "paginate"]
+
+
+def fetch_all_or_raise(paginator, error_class):
+    """Walk *paginator*, re-raising an unusable page sequence as *error_class*.
+
+    Modules call :func:`paginate`, which reports through ``fail_json``. The
+    controller-side callers -- the inventory plugins and the shared inventory
+    layer -- have no module: they raise, and ansible-core renders that as a
+    plugin failure rather than a traceback. ``paging`` cannot import either
+    channel, so the caller supplies it. Without this the translation is the
+    same four-line ``try``/``except`` copied into every paginated list helper.
+    """
+    try:
+        return paginator.fetch_all()
+    except PaginationError as exc:
+        raise error_class(
+            "Tencent Cloud list API returned an unusable page sequence: %s" % exc)
 
 
 def paginate(module, page_size, build_request, call_api, items_of, total_of):

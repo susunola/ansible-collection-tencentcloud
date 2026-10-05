@@ -256,6 +256,33 @@ def test_an_unserialisable_page_does_not_invent_a_repeat():
     assert total == 3
 
 
+def test_fetch_all_or_raise_names_the_page_sequence_in_the_callers_error():
+    """Controller-side callers supply their own failure channel.
+
+    ``paging`` cannot import ``AnsibleError`` or ``module.fail_json``, so the
+    caller passes the class in and the message has to carry the reason.
+    """
+    class PluginError(Exception):
+        pass
+
+    def call_api(request):
+        return FakeResponse([1, 2], 9)
+
+    p = paging.Paginator(2, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    with pytest.raises(PluginError) as excinfo:
+        paging.fetch_all_or_raise(p, PluginError)
+    assert "unusable page sequence" in str(excinfo.value)
+    assert "ignoring Offset" in str(excinfo.value)
+
+
+def test_fetch_all_or_raise_passes_a_clean_walk_through():
+    def call_api(request):
+        return FakeResponse([1, 2], 2, request_id="req-ok")
+
+    p = paging.Paginator(2, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    assert paging.fetch_all_or_raise(p, RuntimeError) == ([1, 2], 2)
+
+
 def test_paginate_wrapper_reports_a_repeated_page_as_a_module_failure():
     """The generated modules call ``paginate``, so it must fail cleanly."""
     class FakeModule(object):
