@@ -53,7 +53,7 @@ class PollOutcome(object):
         )
 
 
-def poll_until(poll, is_done, timeout, delay, sleep_fn=None):
+def poll_until(poll, is_done, timeout, delay, sleep_fn=None, clock=time.monotonic):
     """Call ``poll()`` until ``is_done`` accepts a result or the budget is gone.
 
     The loop is deliberately policy-free: it never raises on timeout and never
@@ -63,13 +63,19 @@ def poll_until(poll, is_done, timeout, delay, sleep_fn=None):
     :param poll: zero-argument callable returning the current observation.
     :param is_done: callable taking that observation and returning a truthy
         value when the wait is over.
-    :param timeout: maximum number of seconds to spend, counted as the sum of
-        the delays actually slept. Counting the delays rather than the wall
-        clock keeps the loop deterministic and makes it testable with an
-        injected ``sleep_fn``.
-    :param delay: seconds to sleep between polls; must be greater than zero or
-        the loop cannot make progress against its budget.
+    :param timeout: maximum number of seconds to spend, measured two ways --
+        the delays actually slept and the wall clock -- and the wait ends when
+        either runs out. Counting the slept delays is what keeps the loop
+        deterministic and testable with an injected ``sleep_fn``; the
+        wall-clock ceiling is what makes it impossible to hang. A budget that
+        only counts sleeps cannot advance when ``delay`` is zero, and it is
+        also what a caller asking for "at most N seconds" means when a single
+        ``poll`` is slow.
+    :param delay: seconds to sleep between polls. Zero no longer hangs the
+        loop -- the wall clock ends it -- but it polls the API as fast as it
+        can answer for the whole budget, so leave it at a sane value.
     :param sleep_fn: injectable sleep, defaults to ``time.sleep``.
+    :param clock: injectable monotonic clock, defaults to ``time.monotonic``.
     :returns: a :class:`PollOutcome`. When ``matched`` is False the caller can
         report ``outcome.value`` as the last observation instead of polling
         again.
@@ -78,7 +84,8 @@ def poll_until(poll, is_done, timeout, delay, sleep_fn=None):
     attempts = 0
     waited = 0
     value = None
-    while waited < timeout:
+    deadline = clock() + timeout
+    while waited < timeout and clock() < deadline:
         value = poll()
         attempts += 1
         if is_done(value):

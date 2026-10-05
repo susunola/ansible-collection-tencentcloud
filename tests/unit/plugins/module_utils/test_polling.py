@@ -102,6 +102,47 @@ def test_delay_is_not_slept_after_a_match():
     assert slept == []
 
 
+def test_a_zero_delay_still_terminates():
+    """``delay=0`` used to hang the loop, and the caller cannot prevent it.
+
+    The budget counts the delays actually slept, so at zero the budget never
+    advanced and ``waited < timeout`` stayed true: the loop asked for another
+    observation forever. Every one of the 77 modules that waits through this
+    helper takes ``waiter_delay`` from the shared argument spec, where the
+    option has no lower bound, so a task setting it to zero hung. The wall
+    clock ends the wait now.
+    """
+    ticks = iter(range(1000))
+
+    outcome = poll_until(
+        lambda: "PENDING", lambda value: value == "DONE",
+        timeout=3, delay=0, sleep_fn=_no_sleep, clock=lambda: next(ticks))
+
+    assert outcome.matched is False
+    assert outcome.value == "PENDING"
+    # Nothing was slept, so the slept-delay budget is still zero -- the wall
+    # clock is what stopped it.
+    assert outcome.waited == 0
+
+
+def test_a_slow_poll_cannot_outlast_the_timeout():
+    """The budget is wall-clock as well as slept-delay.
+
+    A caller asking for "at most N seconds" means N seconds, so a poll that
+    takes longer than ``delay`` between observations must not buy extra time.
+    Here ten seconds pass per observation: the slept-delay budget alone would
+    allow three polls, the wall clock allows one.
+    """
+    ticks = iter([0, 10, 20, 30])
+
+    outcome = poll_until(
+        lambda: "PENDING", lambda value: value == "DONE",
+        timeout=15, delay=5, sleep_fn=_no_sleep, clock=lambda: next(ticks))
+
+    assert outcome.matched is False
+    assert outcome.attempts == 1
+
+
 def test_outcome_repr_is_informative():
     outcome = PollOutcome(True, "RUNNING", 2, 1)
     assert "matched=True" in repr(outcome)

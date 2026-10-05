@@ -1,0 +1,14 @@
+bugfixes:
+  - >-
+    polling - the shared wait loop can no longer run forever. ``poll_until``
+    spent its budget by adding up the delays it had slept, so a ``delay`` of
+    zero left the budget at zero and ``waited < timeout`` stayed true: the loop
+    asked for another observation for good. Every module that waits through
+    ``module_utils.waiters`` takes ``waiter_delay`` from the shared argument
+    spec, where the option has no lower bound, so a task setting it to zero
+    hung rather than failing. The module-side path was the fragile one: the 72
+    modules that still hand-roll a loop budget on the wall clock, and the
+    ``tc_wait`` action plugin, which rejects a non-positive delay outright,
+    both survive it. The wait now ends on whichever limit comes first, the
+    delays it slept or the wall clock -- which also stops a slow ``poll`` from
+    buying time beyond the ``waiter_timeout`` the caller asked for.

@@ -187,7 +187,8 @@
   into the module it invokes (which applies its own `TENCENTCLOUD_*`
   fallbacks) or let that module's `env:` fallbacks do the work.
 - Never hand-roll a poll loop: use `plugin_utils.polling.poll_until`, which
-  counts the budget as the delays actually slept.
+  ends the wait on whichever limit comes first, the delays it actually slept
+  or the wall clock.
 - **Action plugins are invisible to `ansible-doc`.** `action` is not in
   ansible-test's `DOCUMENTABLE_PLUGINS`, and `ansible-doc -t action` is
   rejected even on 2.21, so the DOCUMENTATION block in the file is read by
