@@ -86,7 +86,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile,
     create_credential,
-    sdk_call,
+    read_sdk_call,
     serialize_sdk_object,
     tencentcloud_argument_spec,
 )
@@ -111,7 +111,7 @@ def run_module():
         module.fail_json(msg="The tencentcloud-sdk-python-chdfs package is required.")
 
     client = chdfs_client.ChdfsClient(create_credential(module), module.params["region"], create_client_profile(module, "chdfs.tencentcloudapi.com"))
-    response = sdk_call(module, client.DescribeMountPoints, build_request(models, module.params["file_system_id"]))
+    response = read_sdk_call(module, client.DescribeMountPoints, build_request(models, module.params["file_system_id"]))
     matches = [
         serialize_sdk_object(item) for item in getattr(response, "MountPoints", None) or []
         if getattr(item, "MountPointId", None) == module.params["mount_point_id"]

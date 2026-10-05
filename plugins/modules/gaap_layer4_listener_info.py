@@ -105,9 +105,8 @@ request_id:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -132,15 +131,14 @@ def build_request(models, request_name, params, offset, limit):
 
 def query_protocol(module, models, client, action, request_name, params, page_size):
     """Return (listeners, total_count, request_id) for one protocol."""
-    paginator = Paginator(
+    return paginate_read(
+        module,
         page_size,
         lambda offset, limit: build_request(models, request_name, params, offset, limit),
-        lambda request: sdk_call(module, getattr(client, action), request),
+        getattr(client, action),
         lambda response: response.ListenerSet,
         lambda response: response.TotalCount,
     )
-    item_set, total_count = paginator.fetch_all()
-    return item_set, total_count, paginator.request_id
 
 
 def run_module():

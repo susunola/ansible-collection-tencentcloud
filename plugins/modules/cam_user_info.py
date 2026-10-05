@@ -86,7 +86,7 @@ total_count:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -124,7 +124,7 @@ def run_module():
         create_credential(module), module.params["region"],
         create_client_profile(module, "cam.tencentcloudapi.com"),
     )
-    response = sdk_call(module, client.ListUsers, build_request(models))
+    response = read_sdk_call(module, client.ListUsers, build_request(models))
     name = module.params["name"]
     name_keyword = module.params["name_keyword"]
     users = [

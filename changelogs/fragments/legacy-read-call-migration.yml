@@ -1,0 +1,34 @@
+minor_changes:
+  - >-
+    read path - fifteen hand-written ``_info`` modules now retry a throttled
+    read. They called the module-level ``sdk_call``, which does not retry, so a
+    run that met ``RequestLimitExceeded`` failed where every module on the
+    shared read path recovered. Tencent Cloud throttles as a matter of course,
+    and these are the busiest read modules in the collection: ``vpc_info``,
+    ``subnet_info``, ``security_group_info``, ``cvm_instance_info``,
+    ``eip_info``, ``route_table_info``, ``key_pair_info``, ``cam_user_info``,
+    ``cam_role_info``, ``cam_policy_info`` and five smaller ones. Single-call
+    modules moved to the retrying single-call wrapper; the ones that walked
+    their own offset or page-number loop moved to the shared page walker, which
+    walks it for them. Two of these (``subnet_info``,
+    ``gaap_layer4_listener_info``) built a ``Paginator`` by hand and called its
+    ``fetch_all`` outside any ``except``, so a list API that ignored ``Offset``
+    raised out of the module as a traceback instead of a failure; the shared
+    walker turns that into one.
+bugfixes:
+  - >-
+    cam_role_info, cam_policy_info - reject ``page_size`` below 1. Both walked
+    pages with ``(page - 1) * page_size >= total`` as the stop condition, and
+    ``page_size`` had no lower bound in the argument spec: at 0 or below that
+    expression can never become true while the page counter advances, so a task
+    that set it hung instead of failing. The sibling ``tse_*_info`` modules
+    already validated the option; only the upper bound is left alone here,
+    because capping it would change what an existing task may ask for.
+  - >-
+    failure-path tests - the tests for those fifteen modules no longer
+    substitute a hand-written double for the shared read helper. They point the
+    fake client at the SDK error the real helper catches and let it classify,
+    so the asserted payload is the one the shared code produces rather than a
+    copy of its contract kept in the test file. The copy could not notice the
+    helper changing, which is exactly what this change is; each test now also
+    asserts the ``error_class`` bucket the helper derives.

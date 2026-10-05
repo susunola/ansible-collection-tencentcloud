@@ -3,7 +3,8 @@
 Covers build_request (string pagination fields, security group ids, sorted
 filters, scalar value wrapping) and run_module() end to end through the shared
 harness: multi-page collection driven by TotalCount, an empty result set, and
-the sdk_call fail contract (msg/error/error_code/request_id).
+the shared read helper's fail contract
+(msg/error/error_code/request_id/error_class).
 
 The module builds its own SDK client, so the tests still inject a fake
 ``tencentcloud.vpc.v20170312`` service and patch the two factories. They no
@@ -89,6 +90,32 @@ class FakeClient:
         return self._pages.pop(0)
 
 
+class SdkError(Exception):
+    """The SDK exception shape the shared read wrapper catches.
+
+    ``read_sdk_call`` resolves ``TencentCloudSDKException`` through its own
+    module global, so ``_point_wrapper_at_sdk_error`` binds that name here and
+    the fake client can raise something the real wrapper classifies.
+    """
+
+    def __init__(self, code, message, request_id):
+        super(SdkError, self).__init__(message)
+        self._code = code
+        self._request_id = request_id
+
+    def get_code(self):
+        return self._code
+
+    def get_request_id(self):
+        return self._request_id
+
+
+def _point_wrapper_at_sdk_error(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as wrapper
+
+    monkeypatch.setattr(wrapper, "TencentCloudSDKException", SdkError)
+
+
 def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.vpc.v20170312")
     service.models = FakeModels
@@ -145,25 +172,20 @@ def test_run_module_returns_empty_on_empty_first_page(monkeypatch, sdk):
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch, sdk):
+    """The shared wrapper's failure contract, exercised rather than restated.
+
+    The read helper is no longer replaced: the client raises the SDK error and
+    the real ``read_sdk_call`` classifies it, so the payload below is the one
+    the shared code produces. The double that used to stand in for it pinned a
+    hand-written copy of the contract, which could not notice the helper
+    changing -- and this module now reaches the API through that helper.
+    """
     class FailingClient:
         def DescribeSecurityGroups(self, request):
-            raise RuntimeError("api exploded")
-
-    def failing_sdk_call(module, function, request):
-        # Mirrors the real sdk_call failure contract pinned in
-        # tests/unit/plugins/module_utils/test_tencentcloud.py.
-        try:
-            return function(request)
-        except RuntimeError as exc:
-            module.fail_json(
-                msg="Tencent Cloud API request failed",
-                error=str(exc),
-                error_code="UnauthorizedOperation",
-                request_id="req-err",
-            )
+            raise SdkError("UnauthorizedOperation", "api exploded", "req-err")
 
     _inject_sdk(monkeypatch, FailingClient())
-    monkeypatch.setattr(security_group_info, "sdk_call", failing_sdk_call)
+    _point_wrapper_at_sdk_error(monkeypatch)
     _args()
 
     with pytest.raises(AnsibleFailJson) as failure:
@@ -173,3 +195,5 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch, sdk):
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert payload["error_code"] == "UnauthorizedOperation"
     assert payload["request_id"] == "req-err"
+    # The bucket the shared wrapper derives from the code.
+    assert payload["error_class"] == "unauthorized"

@@ -12,7 +12,7 @@ Everything below drives ``run_module()`` through the shared harness. The
 modules build their own ``ConfigClient`` from the ``tencentcloud.config.v20220802``
 service, so the fake service is injected into ``sys.modules`` and the two
 legacy factories (``create_credential`` / ``create_client_profile``) are
-patched on each module. The real legacy ``sdk_call`` runs, which is what makes
+patched on each module. The real shared read helper runs, which is what makes
 the two failure envelopes -- the SDK one and the unexpected one -- the
 modules' own behaviour rather than a test double's.
 

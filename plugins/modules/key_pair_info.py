@@ -87,7 +87,7 @@ total_count:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -130,18 +130,16 @@ def run_module():
         module.params["region"],
         create_client_profile(module, "cvm.tencentcloudapi.com"),
     )
-    key_pairs = []
-    offset = 0
-    total_count = 0
-    while True:
-        request = build_request(models, module.params["key_ids"], module.params["filters"], offset, module.params["page_size"])
-        response = sdk_call(module, client.DescribeKeyPairs, request)
-        batch = [serialize_sdk_object(item) for item in (response.KeyPairSet or [])]
-        key_pairs.extend(batch)
-        total_count = response.TotalCount or 0
-        offset += len(batch)
-        if not batch or offset >= total_count:
-            break
+    item_set, total_count, _request_id = paginate_read(
+        module,
+        module.params["page_size"],
+        lambda offset, limit: build_request(
+            models, module.params["key_ids"], module.params["filters"], offset, limit),
+        client.DescribeKeyPairs,
+        lambda response: response.KeyPairSet,
+        lambda response: response.TotalCount,
+    )
+    key_pairs = [serialize_sdk_object(item) for item in item_set]
     module.exit_json(changed=False, key_pairs=key_pairs, total_count=total_count)
 
 

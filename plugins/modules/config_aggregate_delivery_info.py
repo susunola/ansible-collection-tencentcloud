@@ -84,7 +84,7 @@ request_id:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -105,7 +105,7 @@ def run_module():
         module.fail_json(msg="The tencentcloud-sdk-python-config package is required.")
     p = module.params
     client = config_client.ConfigClient(create_credential(module), p["region"], create_client_profile(module, "config.tencentcloudapi.com"))
-    response = sdk_call(module, client.DescribeAggregateConfigDeliver, build_request(models, p["account_group_id"]))
+    response = read_sdk_call(module, client.DescribeAggregateConfigDeliver, build_request(models, p["account_group_id"]))
     delivery = serialize_sdk_object(response)
     delivery.pop("RequestId", None)
     module.exit_json(changed=False, deliveries=[delivery], delivery=delivery, request_id=getattr(response, "RequestId", None))

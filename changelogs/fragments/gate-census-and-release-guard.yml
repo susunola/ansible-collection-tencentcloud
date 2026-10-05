@@ -20,12 +20,12 @@ minor_changes:
     finding has to be fixed rather than recorded, and re-opening one is a
     reviewed edit to the gate rather than a command.
   - >-
-    check_quality_gates - new census and shrink-only baseline for hand-written
-    ``_info`` modules that call the module-level ``sdk_call``, which does not
-    retry. The 502 generated ones moved when the generator did; 15 hand-written
-    ones kept the old call and nothing said so. The census separates that
-    function from ``TencentCloudModule.sdk_call``, which retries and records
-    the call audit trail: the two share a suffix, so a text search for
+    check_quality_gates - new hard rule for hand-written ``_info`` modules that
+    call the module-level ``sdk_call``, which does not retry. The 502 generated
+    ones moved when the generator did and the 15 hand-written ones were
+    migrated with them, so no module may reach for that call any more. The
+    census separates it from ``TencentCloudModule.sdk_call``, which retries and
+    records the call audit trail: the two share a suffix, so a text search for
     ``sdk_call`` counts both, and an earlier version of this census listed 38
     modules that already retry.
   - >-

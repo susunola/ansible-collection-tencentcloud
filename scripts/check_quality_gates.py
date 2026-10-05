@@ -161,7 +161,6 @@ BASELINE_INTEGRATION_MISSING = "integration_missing"
 BASELINE_UNTESTED_MODULES = "untested_modules"
 BASELINE_PRIVATE_HARNESS = "private_harness"
 BASELINE_UNTESTED_MAIN_PATH = "untested_main_path"
-BASELINE_LEGACY_READ_CALL = "legacy_read_call"
 BASELINE_FRAGMENT_SHADOWING = "fragment_shadowing"
 
 # Three of the families above carry a baseline but had no stock ceiling: their
@@ -177,14 +176,13 @@ PRIVATE_HARNESS_CEILING = 0
 UNTESTED_MAIN_PATH_CEILING = 0
 
 # Hand-written ``_info`` modules calling the module-level ``sdk_call``, which
-# does not retry. The 502 generated ones moved wholesale when the generator
-# did; these are hand-written, each with its own request builders and
-# pagination, so the move is a per-module review rather than a regeneration.
-# Frozen as a shrink-only list so the debt is visible and the number cannot
-# grow. Modules that read through ``TencentCloudModule.sdk_call`` are not
-# counted: that path retries already, and the first version of this census
-# miscounted them because a text search cannot separate the two names.
-LEGACY_READ_CALL_CEILING = 15
+# does not retry. The 502 generated ones moved when the generator did and the
+# 15 hand-written ones were migrated afterwards, so this is a hard rule rather
+# than a ratchet: no module may reach for the non-retrying call. Modules that
+# read through ``TencentCloudModule.sdk_call`` are not counted -- that path
+# retries already, and a census that cannot tell the two names apart reports
+# debt that is not there.
+LEGACY_READ_CALL_CEILING = 0
 
 _BASELINE_GUIDANCE = {
     BASELINE_RETURN_SAMPLES:
@@ -210,11 +208,6 @@ _BASELINE_GUIDANCE = {
         "a module that re-declares a fragment option keeps the fragment's "
         "type, so the shared feature (assume-role, waiter, endpoint) stays "
         "usable; dlc_spark_job is the one grandfathered shadow",
-    BASELINE_LEGACY_READ_CALL:
-        "a new ``_info`` module reads through ``read_sdk_call`` (or "
-        "``paginate_read`` when it pages), not the module-level ``sdk_call``, "
-        "so throttling is retried instead of failing the run; a baselined "
-        "module that migrates is delisted here",
 }
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
@@ -1088,7 +1081,6 @@ def main(argv=None):
                     "untested_modules": untested,
                     "private_harness": private_harness,
                     "untested_main_path": untested_main_path,
-                    "legacy_read_call": legacy_read_call,
                     "fragment_shadowing": shadows}[args.write_baseline]
         return write_baseline(args.write_baseline, findings)
 
@@ -1197,7 +1189,6 @@ def main(argv=None):
             "sdk_call: %d, ceiling is %d (read through read_sdk_call, or "
             "paginate_read when the module pages)"
             % (len(legacy_read_call), LEGACY_READ_CALL_CEILING))
-    problems.extend(baseline_problems(BASELINE_LEGACY_READ_CALL, legacy_read_call))
     problems.extend(baseline_problems(BASELINE_UNTESTED_MODULES, untested))
     problems.extend(baseline_problems(BASELINE_PRIVATE_HARNESS, private_harness))
     problems.extend(baseline_problems(BASELINE_UNTESTED_MAIN_PATH, untested_main_path))
@@ -1293,10 +1284,9 @@ def main(argv=None):
           "(ceiling %d, baseline %d)"
           % (len(untested), UNTESTED_MODULES_CEILING,
              len(read_baseline(BASELINE_UNTESTED_MODULES) or [])))
-    print("ok: %d hand-written _info module(s) still read through the "
-          "non-retrying sdk_call (ceiling %d, baseline %d)"
-          % (len(legacy_read_call), LEGACY_READ_CALL_CEILING,
-             len(read_baseline(BASELINE_LEGACY_READ_CALL) or [])))
+    print("ok: %d hand-written _info module(s) read through the non-retrying "
+          "sdk_call (ceiling %d)"
+          % (len(legacy_read_call), LEGACY_READ_CALL_CEILING))
     return 0
 
 

@@ -82,7 +82,7 @@ total_count:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -105,6 +105,8 @@ def run_module():
         argument_spec=argument_spec,
         supports_check_mode=True,
     )
+    if module.params["page_size"] < 1:
+        module.fail_json(msg="page_size must be at least 1")
     try:
         from tencentcloud.cam.v20190116 import models, cam_client
     except ImportError:
@@ -117,21 +119,20 @@ def run_module():
     role_id = module.params["role_id"]
     role_name = module.params["role_name"]
     roles = []
-    page = 1
-    while True:
-        request = build_request(models, page, module.params["page_size"])
-        response = sdk_call(module, client.DescribeRoleList, request)
-        batch = response.List or []
-        for role in batch:
-            if role_id and role.RoleId != role_id:
-                continue
-            if role_name and role.RoleName != role_name:
-                continue
-            roles.append(serialize_sdk_object(role))
-        total = response.TotalNum or 0
-        page += 1
-        if not batch or (page - 1) * module.params["page_size"] >= total:
-            break
+    item_set, _reported_total, _request_id = paginate_read(
+        module,
+        module.params["page_size"],
+        lambda offset, limit: build_request(models, offset // limit + 1, limit),
+        client.DescribeRoleList,
+        lambda response: response.List,
+        lambda response: response.TotalNum,
+    )
+    for role in item_set:
+        if role_id and role.RoleId != role_id:
+            continue
+        if role_name and role.RoleName != role_name:
+            continue
+        roles.append(serialize_sdk_object(role))
     module.exit_json(changed=False, roles=roles, total_count=len(roles))
 
 

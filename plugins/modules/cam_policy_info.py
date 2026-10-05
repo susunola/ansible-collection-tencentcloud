@@ -92,7 +92,7 @@ total_count:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
-    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    create_client_profile, create_credential, paginate_read, read_sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 
@@ -121,6 +121,8 @@ def run_module():
         argument_spec=argument_spec,
         supports_check_mode=True,
     )
+    if module.params["page_size"] < 1:
+        module.fail_json(msg="page_size must be at least 1")
     try:
         from tencentcloud.cam.v20190116 import models, cam_client
     except ImportError:
@@ -136,27 +138,27 @@ def run_module():
     if policy_id is not None:
         request = models.GetPolicyRequest()
         request.PolicyId = policy_id
-        response = sdk_call(module, client.GetPolicy, request)
+        response = read_sdk_call(module, client.GetPolicy, request)
         policy = serialize_sdk_object(response)
         policy.pop("RequestId", None)
         policy["PolicyId"] = policy_id
         module.exit_json(changed=False, policies=[policy], total_count=1)
 
+    item_set, _reported_total, _request_id = paginate_read(
+        module,
+        module.params["page_size"],
+        lambda offset, limit: build_request(
+            models, module.params["scope"], policy_name, offset // limit + 1, limit),
+        client.ListPolicies,
+        lambda response: response.List,
+        lambda response: response.TotalNum,
+    )
     policies = []
-    page = 1
-    while True:
-        request = build_request(models, module.params["scope"], policy_name, page, module.params["page_size"])
-        response = sdk_call(module, client.ListPolicies, request)
-        batch = response.List or []
-        for policy in batch:
-            # Keyword is a fuzzy match server-side; enforce exact name here.
-            if policy_name and policy.PolicyName != policy_name:
-                continue
-            policies.append(serialize_sdk_object(policy))
-        total = response.TotalNum or 0
-        page += 1
-        if not batch or (page - 1) * module.params["page_size"] >= total:
-            break
+    for policy in item_set:
+        # Keyword is a fuzzy match server-side; enforce exact name here.
+        if policy_name and policy.PolicyName != policy_name:
+            continue
+        policies.append(serialize_sdk_object(policy))
     module.exit_json(changed=False, policies=policies, total_count=len(policies))
 
 
