@@ -174,6 +174,7 @@ def delete_request(models, file_system_id):
 
 def find(module, client, models, p):
     marker = None
+    seen_markers = set()
     matches = []
     while True:
         response = module.sdk_call(client.DescribeFileSystems, describe_request(models, marker))
@@ -185,6 +186,17 @@ def find(module, client, models, p):
                 matches.append(value)
         if response.IsOver or not response.NextFileSystemIdMarker:
             break
+        # The marker is fed back as the next request's cursor, so one the
+        # API serves twice asks for the same page for good and the walk
+        # never returns. alb_load_balancer fails closed on a repeated
+        # NextToken; this loop had no guard at all.
+        if response.NextFileSystemIdMarker in seen_markers:
+            module.fail_json(
+                msg="CHDFS file system pagination returned a repeated marker",
+                marker=response.NextFileSystemIdMarker,
+                request_id=response.RequestId,
+            )
+        seen_markers.add(response.NextFileSystemIdMarker)
         marker = response.NextFileSystemIdMarker
     if len(matches) > 1:
         module.fail_json(msg="Multiple CHDFS file systems matched; specify file_system_id")

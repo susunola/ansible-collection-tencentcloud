@@ -354,9 +354,46 @@ def test_find_paginates_when_not_over(monkeypatch):
     assert [c[0] for c in fake.calls] == ["DescribeFileSystems", "DescribeFileSystems"]
 
 
+def test_find_fails_on_a_repeated_marker(monkeypatch):
+    """A marker the API serves twice must fail, not ask for the same page for good.
+
+    The walk feeds the marker back as the next request's cursor, so a repeated
+    one never terminates. ``alb_load_balancer`` fails closed on a repeated
+    ``NextToken``; this walk had no guard at all until it got one.
+    """
+    class RepeatedMarkerClient(object):
+        def __init__(self):
+            self.calls = 0
+
+        def DescribeFileSystems(self, request):
+            self.calls += 1
+            return SimpleNamespace(
+                FileSystems=[FakeResource(_fs(FileSystemId="f4mp1e-0000",
+                                              FileSystemName="target"))],
+                NextFileSystemIdMarker="f4mp1e-0000",
+                IsOver=False,
+                RequestId="req-loop",
+            )
+
+    fake = RepeatedMarkerClient()
+    _make_module(monkeypatch, fake)
+    module = FakeModule(_params(name="target"))
+
+    with pytest.raises(AnsibleFailJson) as failure:
+        mod.find(module, fake, FakeModels(), module.params)
+
+    payload = failure.value.args[0]
+    assert "repeated marker" in payload["msg"]
+    assert payload["marker"] == "f4mp1e-0000"
+    assert payload["request_id"] == "req-loop"
+    # Two calls: the first records the marker, the second meets it again.
+    assert fake.calls == 2
+
+
 # ---------------------------------------------------------------------------
 # run_module main-path tests
 # ---------------------------------------------------------------------------
+
 
 
 def test_absent_noop_when_missing(monkeypatch):

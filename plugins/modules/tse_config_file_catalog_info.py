@@ -99,6 +99,7 @@ request_id:
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 
 
 def _load():
@@ -121,16 +122,29 @@ def request(models, params, offset):
 
 
 def fetch_all(module, client, models, params):
-    values, offset, total, request_id = [], 0, None, None
-    while total is None or offset < total:
-        response = module.sdk_call(client.DescribeConfigFiles, request(models, params, offset))
-        page = response.ConfigFiles or []
-        values.extend(item._serialize(allow_none=True) for item in page)
-        total, request_id = response.TotalCount, response.RequestId
-        offset += len(page)
-        if not page:
-            break
-    return values, total if total is not None else len(values), request_id
+    """Walk every page of the listing.
+
+    Termination follows the shared paginator rather than a page counter: a
+    short page ends the walk when the API reports no total, and a page the API
+    serves twice is a failure instead of a loop. The loop this replaces
+    advanced the offset by the size of the page it had just been handed and
+    stopped only when a page came back empty, so an API that ignored ``Offset``
+    while reporting no ``TotalCount`` never returned at all.
+
+    The call goes through ``module.sdk_call`` rather than the plain read
+    wrapper, so this module's ``retries`` option and the
+    ``tencentcloud_resource_actions`` call audit trail stay in play.
+    """
+    paginator = Paginator(
+        params["page_size"],
+        lambda offset, limit: request(models, params, offset),
+        lambda req: module.sdk_call(client.DescribeConfigFiles, req),
+        lambda response: response.ConfigFiles,
+        lambda response: response.TotalCount,
+    )
+    values, total = paginator.fetch_all()
+    return ([item._serialize(allow_none=True) for item in values], total,
+            paginator.request_id)
 
 
 def run_module():

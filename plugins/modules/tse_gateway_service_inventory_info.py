@@ -116,6 +116,7 @@ request_ids:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 
 
 def _load():
@@ -141,17 +142,28 @@ def upstream_request(models, gateway_id, service_name):
 
 
 def fetch_inventory(module, client, models, params):
-    services, offset, total, request_id = [], 0, None, None
-    while total is None or offset < total:
-        response = module.sdk_call(client.DescribeCNGWServicesWithRoutes, inventory_request(models, params, offset))
-        result = response.Result
-        page = (result.ServiceList if result else None) or []
-        services.extend(item._serialize(allow_none=True) for item in page)
-        total, request_id = (result.TotalCount if result else 0), response.RequestId
-        offset += len(page)
-        if not page:
-            break
-    return services, total if total is not None else len(services), request_id
+    """Walk every page of the service inventory.
+
+    The shared paginator decides termination -- a short page ends the walk when
+    the API reports no total, and a page served twice fails instead of looping
+    -- in place of a page counter that stopped only on an empty page and so
+    never returned if the API ignored ``Offset`` while reporting no
+    ``TotalCount``. ``module.sdk_call`` is kept as the per-page call so the
+    module's ``retries`` option and the call audit trail still apply.
+
+    The listing nests its page under ``Result``; both accessors read through it
+    and report nothing when it is absent, exactly as the loop did.
+    """
+    paginator = Paginator(
+        params["page_size"],
+        lambda offset, limit: inventory_request(models, params, offset),
+        lambda req: module.sdk_call(client.DescribeCNGWServicesWithRoutes, req),
+        lambda response: response.Result.ServiceList if response.Result else None,
+        lambda response: response.Result.TotalCount if response.Result else 0,
+    )
+    services, total = paginator.fetch_all()
+    return ([item._serialize(allow_none=True) for item in services], total,
+            paginator.request_id)
 
 
 def service_name(value):

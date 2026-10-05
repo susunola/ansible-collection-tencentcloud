@@ -129,6 +129,7 @@ def delete_request(models, access_group_id):
 
 def find(module, client, models, p):
     marker = None
+    seen_markers = set()
     matches = []
     while True:
         response = module.sdk_call(client.DescribeAccessGroups, describe_request(models, marker))
@@ -140,6 +141,17 @@ def find(module, client, models, p):
                 matches.append(value)
         if response.IsOver or not response.NextAccessGroupIdMarker:
             break
+        # The marker is fed back as the next request's cursor, so one the
+        # API serves twice asks for the same page for good and the walk
+        # never returns. alb_load_balancer fails closed on a repeated
+        # NextToken; this loop had no guard at all.
+        if response.NextAccessGroupIdMarker in seen_markers:
+            module.fail_json(
+                msg="CHDFS access group pagination returned a repeated marker",
+                marker=response.NextAccessGroupIdMarker,
+                request_id=response.RequestId,
+            )
+        seen_markers.add(response.NextAccessGroupIdMarker)
         marker = response.NextAccessGroupIdMarker
     if len(matches) > 1:
         module.fail_json(msg="Multiple CHDFS access groups matched; specify access_group_id")

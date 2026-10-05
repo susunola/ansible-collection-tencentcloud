@@ -116,6 +116,7 @@ request_ids:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 
 
 def _load():
@@ -139,18 +140,25 @@ def version_request(models, params):
 
 
 def fetch_contracts(module, client, models, params):
-    contracts, offset, total, request_id = [], 0, None, None
-    while total is None or offset < total:
-        response = module.sdk_call(
-            client.DescribeGovernanceServiceContracts, contract_request(models, params, offset)
-        )
-        page = response.ServiceContracts or []
-        contracts.extend(item._serialize(allow_none=True) for item in page)
-        total, request_id = response.TotalCount, response.RequestId
-        offset += len(page)
-        if not page:
-            break
-    return contracts, total if total is not None else len(contracts), request_id
+    """Walk every page of the contract listing.
+
+    The shared paginator decides termination -- a short page ends the walk when
+    the API reports no total, and a page served twice fails instead of
+    looping -- in place of a page counter that stopped only on an empty page
+    and so never returned if the API ignored ``Offset`` while reporting no
+    ``TotalCount``. ``module.sdk_call`` is kept as the per-page call so the
+    module's ``retries`` option and the call audit trail still apply.
+    """
+    paginator = Paginator(
+        params["page_size"],
+        lambda offset, limit: contract_request(models, params, offset),
+        lambda req: module.sdk_call(client.DescribeGovernanceServiceContracts, req),
+        lambda response: response.ServiceContracts,
+        lambda response: response.TotalCount,
+    )
+    contracts, total = paginator.fetch_all()
+    return ([item._serialize(allow_none=True) for item in contracts], total,
+            paginator.request_id)
 
 
 def run_module():

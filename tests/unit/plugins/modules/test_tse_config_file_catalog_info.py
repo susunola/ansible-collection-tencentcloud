@@ -25,6 +25,7 @@ import types
 import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import PaginationError
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_config_file_catalog_info
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     AnsibleFailJson,
@@ -141,6 +142,29 @@ def test_fetch_all_paginates_catalog():
     assert values == [{"Name": "a"}, {"Name": "b"}, {"Name": "c"}]
     assert (total, request_id) == (3, "request-2")
     assert [request.Offset for request in client.requests] == [0, 2]
+
+
+def test_fetch_all_reports_a_repeated_page():
+    """A list API that ignores Offset must fail, not repeat its rows.
+
+    The walk goes through the shared paginator, which raises when a page comes
+    back twice, and the module's ``run_module`` turns that into its standard
+    failure envelope. The hand-rolled loop this replaced advanced the offset by
+    the size of the page it had just been handed and stopped only when a page
+    came back empty, so an API that ignored ``Offset`` while reporting no
+    ``TotalCount`` never returned at all.
+    """
+    client = FakeClient([
+        FakeResponse([FakeItem("a"), FakeItem("b")], None, "request-0"),
+        FakeResponse([FakeItem("a"), FakeItem("b")], None, "request-1"),
+    ])
+    module_args()
+    module = TencentCloudModule(argument_spec={})
+
+    with pytest.raises(PaginationError) as failure:
+        tse_config_file_catalog_info.fetch_all(module, client, FakeModels, params())
+
+    assert "ignoring Offset" in str(failure.value)
 
 
 def test_run_module_paginates_config_files_until_total_count(monkeypatch):

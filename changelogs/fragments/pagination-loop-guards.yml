@@ -1,0 +1,24 @@
+bugfixes:
+  - >-
+    tse_config_file_catalog_info, tse_governance_service_contract_info,
+    tse_gateway_service_inventory_info, tse_gateway_runtime_info - the walk
+    over a paged listing can no longer loop without end. Each advanced the
+    offset by the size of the page it had just been handed and stopped only
+    when a page came back empty, so an API that ignored ``Offset`` while
+    reporting no ``TotalCount`` was asked for one more page forever. They now
+    walk through the shared paginator: a short page ends the walk when there is
+    no total to compare against, and a page the API serves twice is a failure
+    rather than another request. The two that nest their page under ``Result``
+    read through it in both accessors, exactly as the old loop did, and every
+    one keeps ``module.sdk_call`` as the per-page call so the ``retries``
+    option and the ``tencentcloud_resource_actions`` call audit trail still
+    apply.
+  - >-
+    chdfs_access_group, chdfs_file_system - fail closed on a marker the API
+    serves twice. Both walked ``Describe*`` by continuation marker and stopped
+    only when the response set ``IsOver`` or returned no marker, so a repeated
+    non-empty marker with ``IsOver`` staying false asked for the same page for
+    good. ``alb_load_balancer``, ``alb_listener``, ``alb_target_group``,
+    ``dlc_notebook_statement_info`` and ``dlc_ray_job_info`` all fail on a
+    repeated token; these two were the only hand-written marker walks without
+    the guard.

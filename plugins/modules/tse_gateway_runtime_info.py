@@ -113,6 +113,7 @@ request_ids:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 
 
 def _load():
@@ -133,20 +134,33 @@ def serialized(value):
 
 
 def fetch_nodes(module, client, models, gateway_id, group_id, page_size):
-    nodes, offset, total, request_id = [], 0, None, None
-    while total is None or offset < total:
-        value = request(models.DescribeCloudNativeAPIGatewayNodesRequest, gateway_id, group_id)
-        value.Offset, value.Limit = offset, page_size
-        response = module.sdk_call(client.DescribeCloudNativeAPIGatewayNodes, value)
-        result = response.Result
-        page = (result.NodeList if result else None) or []
-        nodes.extend(serialized(item) for item in page)
-        total = result.TotalCount if result else 0
-        request_id = response.RequestId
-        offset += len(page)
-        if not page:
-            break
-    return nodes, total if total is not None else len(nodes), request_id
+    """Walk every page of the node listing.
+
+    The shared paginator decides termination -- a short page ends the walk when
+    the API reports no total, and a page served twice fails instead of looping
+    -- in place of a page counter that stopped only on an empty page and so
+    never returned if the API ignored ``Offset`` while reporting no
+    ``TotalCount``. ``module.sdk_call`` is kept as the per-page call so the
+    module's ``retries`` option and the call audit trail still apply.
+
+    The listing nests its page under ``Result``; both accessors read through it
+    and report nothing when it is absent, exactly as the loop did.
+    """
+    def build(offset, limit):
+        value = request(models.DescribeCloudNativeAPIGatewayNodesRequest,
+                        gateway_id, group_id)
+        value.Offset, value.Limit = offset, limit
+        return value
+
+    paginator = Paginator(
+        page_size,
+        build,
+        lambda req: module.sdk_call(client.DescribeCloudNativeAPIGatewayNodes, req),
+        lambda response: response.Result.NodeList if response.Result else None,
+        lambda response: response.Result.TotalCount if response.Result else 0,
+    )
+    nodes, total = paginator.fetch_all()
+    return [serialized(item) for item in nodes], total, paginator.request_id
 
 
 def run_module():
