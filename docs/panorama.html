@@ -182,7 +182,7 @@
           <span class="pill">仓库 main <b>1005 模块</b>（v1.4.0 发布时为 891）</span>
           <span class="pill">sanity ignore <b>144 / 封顶 144</b></span>
           <span class="pill">覆盖 <b>204 产品</b> · 71 含写</span>
-          <span class="pill">gate <b>80</b> · 实测 <b>92.58%</b></span>
+          <span class="pill">gate <b>80</b> · 实测 <b>92.57%</b></span>
         </div>
       </div>
     </div>
@@ -194,15 +194,15 @@
 
   <section aria-label="合并后代码快照" style="margin-top:22px">
     <div class="sec-h"><div><div class="eyebrow">Current source snapshot</div><h2>合并后代码快照 · 2026-09-24</h2></div></div>
-    <p>当前整合树实测：1027 模块 = 457 write + 570 _info，204 产品、71 含写、68 roles、17 个 module_utils。单测共 1,182 个 test_*.py，其中 1095 个模块级文件、11,995 个模块级测试函数。92 个读面缺口分布于 19 个产品：56 个已映射到其他 _info、36 个 no-list-api（其中 1 个接口预下线）；backlog 为 0。下方四云基准、雷达和旧测试运行结果仍是 2026-09-14 的历史快照，不应当作本次整合树的新实测结论。</p>
+    <p>当前整合树实测：1027 模块 = 457 write + 570 _info，204 产品、71 含写、68 roles、17 个 module_utils。单测共 1,182 个 test_*.py，其中 1095 个模块级文件、12,001 个模块级测试函数。92 个读面缺口分布于 19 个产品：56 个已映射到其他 _info、36 个 no-list-api（其中 1 个接口预下线）；backlog 为 0。下方四云基准、雷达和旧测试运行结果仍是 2026-09-14 的历史快照，不应当作本次整合树的新实测结论。</p>
   </section>
 
   <!-- ================= KPI ================= -->
   <div class="kpi" style="margin-top:26px">
     <div class="cell"><div class="num">1005</div><div class="lbl"><b>模块总数</b> · 456 write + 549 _info</div></div>
     <div class="cell"><div class="num">204</div><div class="lbl"><b>覆盖产品</b> · 71 含写（61 solution + 9 managed + 1 resource-family）</div></div>
-    <div class="cell hot"><div class="num">11,995</div><div class="lbl"><b>测试函数（模块级单测，行首 def test_ 计数）</b> · CI 口径 15,187 条：15,001 过 / 186 跳 / 0 xfail（10-04 实测，复测命令见本节末）</div></div>
-    <div class="cell hot"><div class="num">92.58%</div><div class="lbl"><b>语句覆盖率</b> · CI gate 80（余 12.5 点余量）</div></div>
+    <div class="cell hot"><div class="num">12,001</div><div class="lbl"><b>测试函数（模块级单测，行首 def test_ 计数）</b> · CI 口径 15,192 条：15,006 过 / 186 跳 / 0 xfail（10-04 实测，复测命令见本节末）</div></div>
+    <div class="cell hot"><div class="num">92.57%</div><div class="lbl"><b>语句覆盖率</b> · CI gate 80（余 12.5 点余量）</div></div>
     <div class="cell warn"><div class="num">34</div><div class="lbl"><b>集成测试 targets</b> · 旗舰 6 模块仍为 0</div></div>
     <div class="cell hot"><div class="num">0</div><div class="lbl"><b>_info 读面 backlog 已归零</b> · 57 已映射 / 55 无列表 API，共 112 个缺 _info，波及 21 产品</div></div>
   </div>
@@ -263,7 +263,7 @@
         <div class="rt">轴归一说明</div>
         <div class="legend" style="margin-top:4px">
           <div class="li" style="align-items:flex-start"><span class="sw" style="background:#3b82f6;margin-top:2px"></span><span><b>模块广度 / write 深度 / info 发现</b>：<br>三家官方库的模块已按「通用模块外迁」（amazon→community.aws / aws_*）收窄过口径，仍以 Galaxy 产物实数为准；本库按源码 main 全量实测（发布 v1.4.0 = 891，main 已推进到 991）。</span></div>
-          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#f59e0b;margin-top:2px"></span><span><b>单测文件（口径差异）</b>：<br>amazon 产物带 144 个单测文件；azure 产物剥离全部 tests/、google 产物仅留 1 个 —— 这两家在源码仓库的测试规模远大于产物所见，对比时只看趋势、勿当作源码差距。本库 1,182 个单测文件，其中 1,095 个模块级（11,995 个测试函数，脚本实测），口径为 repo 而非产物。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#f59e0b;margin-top:2px"></span><span><b>单测文件（口径差异）</b>：<br>amazon 产物带 144 个单测文件；azure 产物剥离全部 tests/、google 产物仅留 1 个 —— 这两家在源码仓库的测试规模远大于产物所见，对比时只看趋势、勿当作源码差距。本库 1,182 个单测文件，其中 1,095 个模块级（12,001 个测试函数，脚本实测），口径为 repo 而非产物。</span></div>
           <div class="li" style="align-items:flex-start"><span class="sw" style="background:#22d3ee;margin-top:2px"></span><span><b>插件 + roles</b>：<br>本库 68 roles（61 solution + 组合 role，三家官方 0）+ 17 个非模块插件文件（inventory 6 / lookup 3 / connection 1 / callback 1 / event_source 4 / action 1 / filter 1）；amazon 10 个（action 1 / callback 1 / connection 1 / inventory 2 / lookup 5）。</span></div>
           <div class="li" style="align-items:flex-start"><span class="sw" style="background:#8b5cf6;margin-top:2px"></span><span><b>读图局限</b>：六维归一只能覆盖「有产物可比的量」；<u style="color:var(--muted)">幂等质量、生成式治理、写读配对深度这类「质」的领先与「生态下载 553」这类差距不进雷达</u>，见下方结论卡。</span></div>
         </div>
@@ -287,8 +287,8 @@
           <li><span class="tag">覆盖面</span><b>模块 1005、write 456、info 549，均列四家第一</b>（azure 426/212 次之）。549 个 *_info 中 548 个由 SDK introspection 生成（禁止手改），另 1 个手写（gaap_layer4_listener_info：GAAP 四层监听的列表 API 分为 TCP / UDP 两个 sibling action，生成器无法表达），是三家官方库没有的「全产品可发现」能力。</li>
           <li><span class="tag">写读配对</span><b>v1.1 起系统性关闭 read-surface 缺口</b>：shared resolver 铺到 VPC / TKE / 负载均衡 / 数据库家族，CVM / Lighthouse / database / TCR 读面逐批补齐 —— write 之后能用同一 collection 读回状态的主力产品已闭环。</li>
           <li><span class="tag">组合能力</span><b>68 个 roles（61 个达 solution 成熟度）</b>（含 launch / clb_http / web_stack / tke_cluster / disaster_recovery 等）vs 三家官方 0 个组合 role；一次调用编排多资源 + teardown。</li>
-          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改。许可证头、公共参数文档和等待超时默认值整改后 sanity ignore 债务降至 <b>144 条</b>（36 条 × 4 个 core 版本 ignore 文件）。守卫已由「预算制」改为「棘轮制」：9 类禁止忽略码封顶 <b>0</b>，总条目封顶 <b>144</b>，命中任一禁止码即 CI 失败，每条豁免必须带理由注释，且两个上限都只减不增。<b>coverage gate 80 已达成</b>（09-14 实测 92.58%）。</li>
-          <li><span class="tag">单测密度</span>1,095 个模块级单测文件 / 11,995 个测试函数（脚本实测）；CI 口径（contract + module_utils + modules）15,187 条：15,001 过 / 186 跳 / 0 xfail（10-04 实测），语句覆盖 92.58%。<b>456 个 write 模块已全部有专属单测文件</b>（09-08 时还缺 111 个）。</li>
+          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改。许可证头、公共参数文档和等待超时默认值整改后 sanity ignore 债务降至 <b>144 条</b>（36 条 × 4 个 core 版本 ignore 文件）。守卫已由「预算制」改为「棘轮制」：9 类禁止忽略码封顶 <b>0</b>，总条目封顶 <b>144</b>，命中任一禁止码即 CI 失败，每条豁免必须带理由注释，且两个上限都只减不增。<b>coverage gate 80 已达成</b>（09-14 实测 92.57%）。</li>
+          <li><span class="tag">单测密度</span>1,095 个模块级单测文件 / 12,001 个测试函数（脚本实测）；CI 口径（contract + module_utils + modules）15,192 条：15,006 过 / 186 跳 / 0 xfail（10-04 实测），语句覆盖 92.57%。<b>456 个 write 模块已全部有专属单测文件</b>（09-08 时还缺 111 个）。</li>
           <li><span class="tag">演进对齐</span>ansible-core 门槛 ≥2.19（2.16-2.18 已 EOL），CI 矩阵 2.19/2.20/2.21 × py 3.11/3.12/3.13 —— 主动对齐演进而非历史声明。</li>
         </ul>
       </div>
@@ -297,7 +297,7 @@
         <ul>
           <li><span class="tag">集成测试</span><b>34 个 target 目录（33 个进 registry，21 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单；cvm_image / lighthouse 曾是两个孤儿 target（两侧都不在），09-14 已补进 registry 并加「目录 vs registry」反向校验（G1-d 关闭）。</li>
           <li><span class="tag">读面缺口</span><b>112 个 write 模块没有同名 _info，但 backlog 已归零：0 个待补项、0 个 backlog 产品</b>（scripts/gap_backlog.py 实测）：57 个已由 KNOWN_COVERAGE 映射到确实返回该资源的别的 _info（tse 14 / tdmq 13 / dlc 6 等）、55 个资源根本没有列表 API（cos 13 / tse 13 / teo 7），剩下 21 个读面产品全部读得回来。09-14 由 curated TARGETS 一次生成 100 个 _info（读面缺口 226 → 126，backlog 128 → 28）；09-15 再由 13 条 curated target、14 条 KNOWN_COVERAGE 映射与 1 个手写模块（<code>gaap_layer4_listener_info</code>——GAAP 四层监听的列表 API 分为 TCP / UDP 两个 sibling action，生成器无法表达）把最后 28 个收干，<b>backlog 28 → 0、backlog 产品 18 → 0</b>。curated 目标由 <code>scripts/check_info_targets.py --check</code> 双向守住（已进 CI）：目标声明了却没落出 <code>_info</code> 模块或单测、或 spec 带着 1.5.0 标记却无人声明，都会立刻失败；<code>KNOWN_GAPS</code> 现为空集且不再是停车场——新 write 模块必须落地即被覆盖，否则 <code>scripts/audit_info_coverage.py --check</code> 立刻失败。</li>
-          <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>549 / 549 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.58% 覆盖率仍由深测模块拉高，分布不均。</li>
+          <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>549 / 549 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.57% 覆盖率仍由深测模块拉高，分布不均。</li>
           <li><span class="tag">结构补课</span>plugin_utils（5）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 7 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
           <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
           <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
@@ -317,7 +317,7 @@
       <div>
         <div class="eyebrow">Urgent · 30</div>
         <h2>目前急切可补齐的 30 件事</h2>
-        <div class="sub">按「先证明旗舰可信 → 再补读面/广度 → 后建生态」排序；每批不破坏 coverage gate 80（09-14 实测 92.58%）与当前 sanity 预算（268/268）。<span class="chip done">✓ 已达成</span> 标记为 2026-09-14 复核时已落地的事项。</div>
+        <div class="sub">按「先证明旗舰可信 → 再补读面/广度 → 后建生态」排序；每批不破坏 coverage gate 80（09-14 实测 92.57%）与当前 sanity 预算（268/268）。<span class="chip done">✓ 已达成</span> 标记为 2026-09-14 复核时已落地的事项。</div>
       </div>
       <div class="grpbar">
         <span class="g"><span class="dot" style="background:rgba(251,113,133,.8)"></span>P0 测试可信度 ×12</span>
@@ -438,10 +438,10 @@
       </div>
     </div>
     <div class="foot">
-      <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-14 实拉（amazon 91,290,318 / azure 17,127,874 / google 11,900,300 / 本库 553）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（= v1.4.0 产物），模块级单测 11,995 个测试函数、CI 口径 15,187 条（15,001 过 / 186 跳 / 0 xfail，10-04 实测；复测命令见本节末）。</div></div>
+      <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-14 实拉（amazon 91,290,318 / azure 17,127,874 / google 11,900,300 / 本库 553）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（= v1.4.0 产物），模块级单测 12,001 个测试函数、CI 口径 15,192 条（15,006 过 / 186 跳 / 0 xfail，10-04 实测；复测命令见本节末）。</div></div>
       <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。本库 991 = 456 write + 535 info；产品与 roles 来自 scripts/generate_product_capabilities.py（204 产品 / 71 含写 / 68 roles）。</div></div>
-      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,182 个，其中 1,095 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules + plugin_utils，--cov=plugins/module_utils --cov=plugins/modules --cov=plugins/plugin_utils，92.58%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移，09-15 起改由 <code>scripts/check_doc_figures.py</code> 实测（25 项数字之一），页面不再手写。CI 条数复测命令：<code>python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules tests/unit/plugins/plugin_utils -q</code>（与 <code>.github/workflows/ci.yml</code> 的 coverage 步同一口径，10-04 实测 15,001 过 / 186 跳 / 0 xfail）。</div></div>
-      <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 991 → 1005（09-15 新增 14 个 _info）、覆盖 81.44% → 92.58%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 与 info 无专属单测均归零（111 → 0、36 → 0）。读面缺口 112 个缺 _info（21 个产品）为脚本实时统计，其中 57 个已由 KNOWN_COVERAGE 映射到别的 _info、55 个资源无列表 API，真正待补的 backlog 为 <b>0 个（0 个产品）</b> —— 09-15 由 13 条 curated target、14 条 KNOWN_COVERAGE 映射与 1 个手写模块（gaap_layer4_listener_info）把 09-14 剩下的 28 个（18 个产品）收干。</div></div>
+      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,182 个，其中 1,095 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules + plugin_utils，--cov=plugins/module_utils --cov=plugins/modules --cov=plugins/plugin_utils，92.57%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移，09-15 起改由 <code>scripts/check_doc_figures.py</code> 实测（25 项数字之一），页面不再手写。CI 条数复测命令：<code>python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules tests/unit/plugins/plugin_utils -q</code>（与 <code>.github/workflows/ci.yml</code> 的 coverage 步同一口径，10-04 实测 15,006 过 / 186 跳 / 0 xfail）。</div></div>
+      <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 991 → 1005（09-15 新增 14 个 _info）、覆盖 81.44% → 92.57%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 与 info 无专属单测均归零（111 → 0、36 → 0）。读面缺口 112 个缺 _info（21 个产品）为脚本实时统计，其中 57 个已由 KNOWN_COVERAGE 映射到别的 _info、55 个资源无列表 API，真正待补的 backlog 为 <b>0 个（0 个产品）</b> —— 09-15 由 13 条 curated target、14 条 KNOWN_COVERAGE 映射与 1 个手写模块（gaap_layer4_listener_info）把 09-14 剩下的 28 个（18 个产品）收干。</div></div>
     </div>
   </section>
 

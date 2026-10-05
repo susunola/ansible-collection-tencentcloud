@@ -215,6 +215,7 @@ disk:
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 import time
 
@@ -224,25 +225,20 @@ def _load_cbs():
     return models, cbs_client
 
 
-def build_describe_request(models, disk_id, name, zone):
+def build_describe_request(models, disk_id, filters=None):
+    """Build a DescribeDisks request.
+
+    ``filters`` is the resolver's ``{name: [values]}`` dict. This used to take
+    the name and zone and assemble ``disk-name``/``zone`` itself; the resolver
+    owns the server-side filters now, because it also re-checks every candidate
+    client-side and has to know what was asked for.
+    """
     request = models.DescribeDisksRequest()
     request.Limit = 100
     if disk_id:
         request.DiskIds = [disk_id]
-        return request
-    filters = []
-    if name:
-        name_filter = models.Filter()
-        name_filter.Name = "disk-name"
-        name_filter.Values = [name]
-        filters.append(name_filter)
-    if zone:
-        zone_filter = models.Filter()
-        zone_filter.Name = "zone"
-        zone_filter.Values = [zone]
-        filters.append(zone_filter)
-    if filters:
-        request.Filters = filters
+    else:
+        resolver.attach_filters(request, models, filters)
     return request
 
 
@@ -251,13 +247,27 @@ def _first(collection):
 
 
 def find_disk(module, client, models, disk_id, name, zone):
-    """Return the matching disk dict or None."""
-    request = build_describe_request(models, disk_id, name, zone)
-    response = module.sdk_call(client.DescribeDisks, request)
-    disk = _first(response.DiskSet or [])
-    if disk is None:
-        return None
-    return disk._serialize(allow_none=True)
+    """Return the matching disk dict or None.
+
+    ``disk-name`` is a substring filter server-side, so the candidate set is
+    re-checked client-side by the shared resolver: an ID is authoritative, an
+    exact name wins, and two candidates fail with C(ambiguous=true) plus the
+    candidate list. This used to take ``DiskSet[0]``, which is how
+    ``name: data`` could delete ``data-old`` -- the filter matched both and the
+    API's ordering decided which disk went away.
+    """
+    def describe(filters):
+        response = module.sdk_call(
+            client.DescribeDisks, build_describe_request(models, disk_id, filters))
+        return resolver.records(response.DiskSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="CBS disk",
+        id_value=disk_id, name_value=name,
+        id_keys=("DiskId",), name_keys=("DiskName",),
+        name_filters=("disk-name",),
+        extra_filters={"zone": [zone]} if zone else None,
+    )
 
 
 def _wait_for_state(module, client, models, disk_id, expected_states):

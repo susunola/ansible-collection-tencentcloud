@@ -3,6 +3,9 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.cbs_disk import (
     build_describe_request,
     find_disk,
@@ -133,26 +136,48 @@ class FakeModule(object):
 
 
 def test_build_describe_request_by_id():
-    request = build_describe_request(FakeModels, "disk-123", None, None)
+    request = build_describe_request(FakeModels, "disk-123")
     assert request.DiskIds == ["disk-123"]
     assert request.Limit == 100
     assert not hasattr(request, "Filters") or request.Filters is None
 
 
-def test_build_describe_request_by_name_and_zone():
-    request = build_describe_request(FakeModels, None, "data-disk", "ap-guangzhou-3")
-    names = [f.Name for f in request.Filters]
-    assert "disk-name" in names
-    assert "zone" in names
+def test_build_describe_request_attaches_resolver_filters():
+    request = build_describe_request(
+        FakeModels, None, {"disk-name": ["data-disk"], "zone": ["ap-guangzhou-3"]})
+    assert sorted(f.Name for f in request.Filters) == ["disk-name", "zone"]
     assert not hasattr(request, "DiskIds") or request.DiskIds is None
 
 
-def test_find_disk_returns_first_match():
+def test_find_disk_returns_the_matching_disk():
     client = FakeClient(FakeDescribeResponse([FakeDisk("disk-1", "data-disk")]))
     module = FakeModule()
     disk = find_disk(module, client, FakeModels, None, "data-disk", "ap-guangzhou-3")
     assert disk["DiskId"] == "disk-1"
     assert len(client.calls) == 1
+
+
+def test_find_disk_prefers_the_exact_name_over_a_fuzzy_one():
+    """``disk-name`` is a substring filter, so the API returns both.
+
+    The module used to take ``DiskSet[0]``, so with ``data`` and ``data-old``
+    both present the API's ordering decided which disk a task managed.
+    """
+    client = FakeClient(FakeDescribeResponse(
+        [FakeDisk("disk-old", "data-old"), FakeDisk("disk-1", "data")]))
+    module = FakeModule()
+    disk = find_disk(module, client, FakeModels, None, "data", None)
+    assert disk["DiskId"] == "disk-1"
+
+
+def test_find_disk_fails_when_two_names_are_equally_good():
+    """Two fuzzy candidates and no exact match is ambiguous, not a coin flip."""
+    client = FakeClient(FakeDescribeResponse(
+        [FakeDisk("disk-a", "data-old"), FakeDisk("disk-b", "data-older")]))
+    module = FakeModule()
+    with pytest.raises(AssertionError) as excinfo:
+        find_disk(module, client, FakeModels, None, "data", None)
+    assert "Ambiguous" in str(excinfo.value)
 
 
 def test_find_disk_returns_none_when_absent():

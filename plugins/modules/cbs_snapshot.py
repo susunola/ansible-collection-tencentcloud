@@ -144,15 +144,12 @@ import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_cbs():
     from tencentcloud.cbs.v20170312 import models, cbs_client
     return models, cbs_client
-
-
-def _first(collection):
-    return collection[0] if collection else None
 
 
 def build_describe_request(models, snapshot_ids, disk_id, snapshot_name):
@@ -182,13 +179,42 @@ def build_describe_request(models, snapshot_ids, disk_id, snapshot_name):
 
 
 def find_snapshot(module, client, models, snapshot_ids, disk_id, snapshot_name):
-    """Return the matching snapshot dict or None."""
+    """Return the matching snapshot dict or None.
+
+    ``snapshot-name`` is a substring filter server-side, so ``nightly`` also
+    returns ``nightly-old``. The request already sorts newest-first, which is
+    what several snapshots genuinely sharing one name should resolve to, so a
+    plain ``SnapshotSet[0]`` would manage whichever of them the API put first
+    *or* a substring neighbour. The newest exact match is preferred instead,
+    and a candidate set with no exact match follows the shared resolver's rule:
+    exactly one fuzzy candidate is accepted, two or more are ambiguous.
+
+    ``resolver.resolve_one`` is deliberately not used here: it reports two or
+    more *exact* matches as ambiguous, and for snapshots that is the normal
+    case (a disk snapshotted repeatedly under one name), not an error.
+    """
     request = build_describe_request(models, snapshot_ids, disk_id, snapshot_name)
     response = module.sdk_call(client.DescribeSnapshots, request)
-    snapshot = _first(response.SnapshotSet or [])
-    if snapshot is None:
-        return None
-    return snapshot._serialize(allow_none=True)
+    candidates = resolver.records(response.SnapshotSet)
+
+    if snapshot_name and not snapshot_ids:
+        exact = [item for item in candidates
+                 if item.get("SnapshotName") == snapshot_name]
+        if exact:
+            candidates = exact
+        elif len(candidates) > 1:
+            module.fail_json(
+                msg="Ambiguous CBS snapshot reference: %d snapshots match "
+                    "snapshot_name=%s and none matches it exactly"
+                    % (len(candidates), snapshot_name),
+                snapshot_name=snapshot_name,
+                ambiguous=True,
+                match_count=len(candidates),
+                matches=[item.get("SnapshotId") for item in candidates],
+                resolution="pass snapshot_ids, or use a name that matches exactly",
+            )
+
+    return candidates[0] if candidates else None
 
 
 def _wait_for_available(module, client, models, snapshot_id):

@@ -2983,9 +2983,17 @@ def test_cbs_disk():
     fake = _RecordingModule()
     client = _StubClient()
     errors = []
-    errors.extend(audit_request(module.build_describe_request(models, "disk-xxxxxxxx", None, None), "cbs describe by id"))
-    errors.extend(audit_request(module.build_describe_request(models, None, "data-disk", None), "cbs describe by name"))
-    errors.extend(audit_request(module.build_describe_request(models, None, None, "ap-guangzhou-3"), "cbs describe by zone"))
+    errors.extend(audit_request(module.build_describe_request(models, "disk-xxxxxxxx"), "cbs describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, {"disk-name": ["data-disk"]}),
+        "cbs describe by name"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, {"zone": ["ap-guangzhou-3"]}),
+        "cbs describe by zone"))
+    errors.extend(audit_request(
+        module.build_describe_request(
+            models, None, {"disk-name": ["data-disk"], "zone": ["ap-guangzhou-3"]}),
+        "cbs describe by name and zone"))
     params = {
         "charge_type": "POSTPAID_BY_HOUR",
         "disk_size": 100,

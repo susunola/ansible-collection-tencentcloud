@@ -3,6 +3,9 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.cbs_snapshot import (
     build_describe_request,
     find_snapshot,
@@ -116,12 +119,62 @@ def test_build_describe_request_by_name_only():
     assert [f.Values for f in request.Filters] == [["nightly"]]
 
 
-def test_find_snapshot_returns_first_match():
+def test_find_snapshot_returns_the_only_match():
     client = FakeClient(FakeDescribeResponse([FakeSnapshot("snap-1", "nightly")]))
     module = FakeModule()
     snapshot = find_snapshot(module, client, FakeModels, None, "disk-1", "nightly")
     assert snapshot["SnapshotId"] == "snap-1"
     assert len(client.calls) == 1
+
+
+def test_find_snapshot_prefers_the_newest_exact_name_match():
+    """Several snapshots genuinely share a name; the newest one wins.
+
+    The request sorts newest-first, which is the pre-existing semantic and the
+    reason a repeated name is not treated as ambiguous here.
+    """
+    client = FakeClient(FakeDescribeResponse([
+        FakeSnapshot("snap-new", "nightly"),
+        FakeSnapshot("snap-old", "nightly"),
+    ]))
+    module = FakeModule()
+    snapshot = find_snapshot(module, client, FakeModels, None, "disk-1", "nightly")
+    assert snapshot["SnapshotId"] == "snap-new"
+
+
+def test_find_snapshot_ignores_a_substring_neighbour():
+    """``snapshot-name`` is a substring filter, so ``nightly`` returns ``nightly-old``.
+
+    Rows arrive newest-first, so a longer-named snapshot taken later would
+    otherwise be the one a task managed.
+    """
+    client = FakeClient(FakeDescribeResponse([
+        FakeSnapshot("snap-other", "nightly-old"),
+        FakeSnapshot("snap-1", "nightly"),
+    ]))
+    module = FakeModule()
+    snapshot = find_snapshot(module, client, FakeModels, None, "disk-1", "nightly")
+    assert snapshot["SnapshotId"] == "snap-1"
+
+
+def test_find_snapshot_fails_when_no_name_matches_exactly():
+    """Two substring neighbours and no exact match is ambiguous, not a pick."""
+    client = FakeClient(FakeDescribeResponse([
+        FakeSnapshot("snap-a", "nightly-old"),
+        FakeSnapshot("snap-b", "nightly-older"),
+    ]))
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        find_snapshot(module, client, FakeModels, None, "disk-1", "nightly")
+    assert "Ambiguous" in excinfo.value.code["msg"]
+
+
+def test_find_snapshot_accepts_a_lone_substring_match():
+    """One fuzzy candidate and no exact match keeps the existing behaviour."""
+    client = FakeClient(FakeDescribeResponse([FakeSnapshot("snap-1", "nightly-old")]))
+    module = FakeModule()
+    snapshot = find_snapshot(module, client, FakeModels, None, "disk-1", "nightly")
+    assert snapshot["SnapshotId"] == "snap-1"
 
 
 def test_find_snapshot_returns_none_when_absent():

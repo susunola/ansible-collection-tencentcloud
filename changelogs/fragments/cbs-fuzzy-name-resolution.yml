@@ -1,0 +1,24 @@
+security_fixes:
+  - >-
+    cbs_disk - resolve a disk by name through the shared resolver instead of
+    taking ``DiskSet[0]``. ``disk-name`` is a substring filter server-side, so
+    ``name: data`` returns ``data`` and ``data-old`` together, and the module
+    took whichever the API happened to put first: with ``state: absent`` that
+    deleted the wrong disk, and with ``state: present`` it could resize, rename
+    or attach one. The resolver prefers an exact match, accepts a lone fuzzy
+    candidate (so existing playbooks keep working), and reports two or more
+    candidates as C(ambiguous=true) with the candidate list. ``cdb_instance``
+    already resolved this way; the disk and snapshot lookups were the two
+    written before the resolver existed.
+  - >-
+    cbs_snapshot - resolve a snapshot by name without letting a substring
+    neighbour win. The request already sorts newest-first, which is what
+    several snapshots genuinely sharing one name should resolve to, so that
+    part is kept; what changed is that a name must now match exactly before its
+    snapshot is managed. ``snapshot_name: nightly`` used to manage
+    ``nightly-old`` whenever the API listed it first, which is a delete path.
+    When nothing matches exactly the shared resolver's rule applies: a single
+    candidate is still accepted, two or more fail as ambiguous with the
+    candidate list. ``resolver.resolve_one`` is deliberately not used here --
+    it treats two or more *exact* matches as ambiguous, and for snapshots a
+    repeated name is the normal case rather than an error.
