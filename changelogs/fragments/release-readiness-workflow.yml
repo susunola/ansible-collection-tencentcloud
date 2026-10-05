@@ -1,0 +1,10 @@
+minor_changes:
+  - >-
+    release-readiness - new ``workflow_dispatch`` workflow that runs
+    ``scripts/release_check.py --dry-run`` in CI. The script was a paper guard
+    until now: no workflow invoked it, so a broken release was only discovered
+    by pushing the tag, after a GitHub release object exists and Galaxy may
+    already hold a copy. It is dispatched by hand rather than run on push
+    because most of its checks hold only at the pre-tag moment --
+    ``version-bumped``, ``tag-free``, ``no-duplicate`` and ``fragments`` all
+    fail by construction on a tree that is not about to cut a release.

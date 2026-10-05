@@ -1,0 +1,79 @@
+name: Release readiness
+
+# `scripts/release_check.py` answers "is this tree publishable?" *before* a tag
+# exists, and `--dry-run` goes further: it builds the tarball, checks
+# MANIFEST.json against galaxy.yml, installs it into a throwaway collections
+# root and lists its documentation. Until this workflow existed the script was
+# never invoked by any workflow at all, so a broken release was only discovered
+# by pushing the tag -- by which point a GitHub release object exists and
+# Galaxy may already hold a copy.
+#
+# Dispatched by hand rather than run on every push, because most of its checks
+# only hold at the pre-tag moment. `version-bumped` fails on any tree that is
+# not ahead of the newest release, `tag-free` fails once the tag exists,
+# `no-duplicate` fails as soon as galaxy.yml's version is in the changelog, and
+# `fragments` fails the moment a release fold has emptied the directory.
+# Running it on push would make main permanently red after every release.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to push, e.g. v1.5.0 (enables tag-matches)"
+        type: string
+        default: ""
+      lint:
+        description: "Also run antsibull-changelog lint (slow: minutes)"
+        type: boolean
+        default: false
+      dry_run:
+        description: "Build the tarball, install it and list its documentation"
+        type: boolean
+        default: true
+
+concurrency:
+  group: tencentcloud-release-readiness
+  cancel-in-progress: false
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ansible_collections/susunola/tencentcloud
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ansible_collections/susunola/tencentcloud
+          # The guard compares galaxy.yml against the release tags it can see.
+          # A shallow clone carries no tags, so every version would report as
+          # unbumped and `tag-free` would pass for a tag that already exists.
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        # ansible-core alone is enough: the guard is stdlib + PyYAML (a
+        # dependency of ansible-core) and the dry run shells out to
+        # `ansible-galaxy` and `ansible-doc`. The Tencent Cloud SDK is not
+        # installed on purpose -- reading a module's DOCUMENTATION does not
+        # import it, and pulling it in would suggest the guard needs it.
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "ansible-core==2.19.*"
+          if [ "${{ inputs.lint }}" = "true" ]; then
+            python -m pip install antsibull-changelog
+          fi
+      - name: Release guard
+        run: |
+          args=()
+          if [ -n "${{ inputs.tag }}" ]; then
+            args+=(--tag "${{ inputs.tag }}")
+          fi
+          if [ "${{ inputs.lint }}" = "true" ]; then
+            args+=(--lint)
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          python scripts/release_check.py "${args[@]}"
