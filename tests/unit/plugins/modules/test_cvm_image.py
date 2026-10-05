@@ -3,6 +3,8 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.cvm_image import (
     _create,
     _delete,
@@ -104,12 +106,49 @@ def test_build_describe_request_by_name():
     assert not hasattr(request, "ImageIds") or request.ImageIds is None
 
 
-def test_find_image_returns_first_match():
+def test_find_image_returns_the_only_match():
     client = FakeClient(FakeResponse([FakeImage("img-1", "web-prod")]))
     module = FakeModule()
     image = find_image(module, client, FakeModels, None, "web-prod")
     assert image["ImageId"] == "img-1"
     assert len(client.calls) == 1
+
+
+def test_find_image_rejects_a_prefix_neighbour():
+    """A ``-name`` filter is a substring match server-side.
+
+    So an exact name and a longer name starting with it come back
+    together, and taking ``Set[0]`` let the API's ordering decide which
+    one a rename, association or delete touched.
+    """
+    client = FakeClient(FakeResponse([
+        FakeImage("zz-neighbour", "web-old"),
+        FakeImage("img-1", "web"),
+    ]))
+    module = FakeModule()
+
+    image = find_image(module, client, FakeModels, None, "web")
+
+    assert image['ImageId'] == "img-1"
+
+
+def test_find_image_fails_when_two_names_are_equally_good():
+    """Two fuzzy candidates and no exact match is ambiguous, not a pick."""
+    client = FakeClient(FakeResponse([
+        FakeImage("x-a", "web-old"),
+        FakeImage("x-b", "web-old"),
+    ]))
+
+    class FailingModule(object):
+        def sdk_call(self, operation, request):
+            return operation(request)
+
+        def fail_json(self, **kwargs):
+            raise AssertionError(kwargs.get("msg"))
+
+    with pytest.raises(AssertionError) as excinfo:
+        find_image(FailingModule(), client, FakeModels, None, "web")
+    assert "Ambiguous" in str(excinfo.value)
 
 
 def test_find_image_returns_none_when_absent():

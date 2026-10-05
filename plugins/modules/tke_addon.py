@@ -236,7 +236,7 @@ def wait_for_addon(module, client, models, cluster_id, name, absent=False):
             phase = str(addon.get("Phase") or "").lower()
             if phase == "succeeded":
                 return addon
-            if phase in ("installfailed", "upgradfailed", "upgradefailed"):
+            if phase in ("installfailed", "upgradefailed"):
                 module.fail_json(
                     msg="TKE addon operation failed",
                     addon=_safe(addon),

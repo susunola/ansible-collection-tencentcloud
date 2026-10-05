@@ -141,6 +141,7 @@ image:
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_cvm():
@@ -162,18 +163,28 @@ def build_describe_request(models, image_id, image_name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_image(module, client, models, image_id, image_name):
-    """Return the matching image dict or None."""
-    request = build_describe_request(models, image_id, image_name)
-    response = module.sdk_call(client.DescribeImages, request)
-    image = _first(response.ImageSet or [])
-    if image is None:
-        return None
-    return image._serialize(allow_none=True)
+    """Return the matching image dict or None.
+
+    ``image-name`` is a substring filter server-side, so the candidate set is
+    re-checked client-side by the shared resolver: an ID is authoritative, an
+    exact name wins, and two candidates fail with C(ambiguous=true) plus the
+    candidate list. Taking ``ImageSet[0]`` is how ``image_name: web`` could
+    deregister or rename ``web-old`` -- the filter matched both and the API's
+    ordering decided which one.
+    """
+    def describe(filters):
+        request = build_describe_request(models, image_id, None)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeImages, request)
+        return resolver.records(response.ImageSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="CVM image",
+        id_value=image_id, name_value=image_name,
+        id_keys=("ImageId",), name_keys=("ImageName",),
+        name_filters=("image-name",),
+    )
 
 
 def _create(module, client, models, params):

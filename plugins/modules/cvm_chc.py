@@ -190,6 +190,7 @@ chc_host:
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_cvm():
@@ -211,18 +212,27 @@ def build_describe_request(models, chc_id, name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_host(module, client, models, chc_id, name):
-    """Return the matching CHC host dict or None."""
-    request = build_describe_request(models, chc_id, name)
-    response = module.sdk_call(client.DescribeChcHosts, request)
-    host = _first(response.ChcHostSet or [])
-    if host is None:
-        return None
-    return host._serialize(allow_none=True)
+    """Return the matching CHC host dict or None.
+
+    The name filter is a substring match server-side, so the candidate set is
+    re-checked client-side by the shared resolver: an ID is authoritative, an
+    exact name wins, and two candidates fail with C(ambiguous=true) plus the
+    candidate list. Taking ``ChcHostSet[0]`` is how a name that prefixes
+    another could deploy to, or release, the wrong host.
+    """
+    def describe(filters):
+        request = build_describe_request(models, chc_id, None)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeChcHosts, request)
+        return resolver.records(response.ChcHostSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="CHC host",
+        id_value=chc_id, name_value=name,
+        id_keys=("ChcId",), name_keys=("InstanceName",),
+        name_filters=("instance-name",),
+    )
 
 
 def _network_request(models, params, vpc_key, subnet_key, sg_key):

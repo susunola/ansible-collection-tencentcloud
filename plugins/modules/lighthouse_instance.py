@@ -166,6 +166,7 @@ instance:
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
@@ -188,18 +189,27 @@ def build_describe_request(models, instance_id, instance_name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_instance(module, client, models, instance_id, instance_name):
-    """Return the matching instance dict or None."""
-    request = build_describe_request(models, instance_id, instance_name)
-    response = module.sdk_call(client.DescribeInstances, request)
-    instance = _first(response.InstanceSet or [])
-    if instance is None:
-        return None
-    return instance._serialize(allow_none=True)
+    """Return the matching instance dict or None.
+
+    ``instance-name`` is a substring filter server-side, so the candidate set is
+    re-checked client-side by the shared resolver: an ID is authoritative, an
+    exact name wins, and two candidates fail with C(ambiguous=true) plus the
+    candidate list. Taking ``InstanceSet[0]`` is how ``instance_name: web``
+    could stop, restart or terminate ``web-old``.
+    """
+    def describe(filters):
+        request = build_describe_request(models, instance_id, None)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeInstances, request)
+        return resolver.records(response.InstanceSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="Lighthouse instance",
+        id_value=instance_id, name_value=instance_name,
+        id_keys=("InstanceId",), name_keys=("InstanceName",),
+        name_filters=("instance-name",),
+    )
 
 
 def build_create_request(models, params):

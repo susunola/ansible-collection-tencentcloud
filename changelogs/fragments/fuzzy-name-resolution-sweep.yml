@@ -1,0 +1,17 @@
+bugfixes:
+  - >-
+    cvm_image, lighthouse_instance, cvm_chc, key_pair - a name lookup can no
+    longer manage a resource it merely resembles. All four put the name into a
+    server-side filter and then took the first row of the result, and those
+    filters match substrings: ``instance_name: web`` returns ``web-old`` too,
+    so a stop, restart, rename, deregister or delete could land on the wrong
+    resource, chosen by the API's ordering. They resolve through
+    ``module_utils/resolver.py`` now, as ``cdb_instance``, ``eip`` and
+    ``clb_rule`` already did: an ID is authoritative, an exact name wins over a
+    fuzzy one, a lone fuzzy candidate is accepted so existing playbooks keep
+    working, and two or more candidates fail with C(ambiguous=true) plus the
+    candidate list.
+  - >-
+    tke_addon - drop the misspelt ``upgradfailed`` from the terminal-phase list.
+    It could never match a phase, so it was harmless, but it sat next to the
+    correct ``upgradefailed`` and read as though both were real states.

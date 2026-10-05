@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.key_pair import (
     _create,
     _delete,
@@ -116,12 +118,49 @@ def test_build_describe_request_id_wins_over_name():
     assert not hasattr(request, "Filters") or request.Filters is None
 
 
-def test_find_key_pair_returns_first_match():
+def test_find_key_pair_returns_the_only_match():
     client = FakeClient(FakeDescribeResponse([FakeKeyPair("skey-1", "deploy-key")]))
     module = FakeModule()
     key_pair = find_key_pair(module, client, FakeModels, "deploy-key", None)
     assert key_pair["KeyId"] == "skey-1"
     assert len(client.calls) == 1
+
+
+def test_find_key_pair_rejects_a_prefix_neighbour():
+    """A ``-name`` filter is a substring match server-side.
+
+    So an exact name and a longer name starting with it come back
+    together, and taking ``Set[0]`` let the API's ordering decide which
+    one a rename, association or delete touched.
+    """
+    client = FakeClient(FakeDescribeResponse([
+        FakeKeyPair("zz-neighbour", "deploy-old"),
+        FakeKeyPair("skey-1", "deploy"),
+    ]))
+    module = FakeModule()
+
+    key_pair = find_key_pair(module, client, FakeModels, "deploy", None)
+
+    assert key_pair["KeyId"] == "skey-1"
+
+
+def test_find_key_pair_fails_when_two_names_are_equally_good():
+    """Two fuzzy candidates and no exact match is ambiguous, not a pick."""
+    client = FakeClient(FakeDescribeResponse([
+        FakeKeyPair("x-a", "deploy-old"),
+        FakeKeyPair("x-b", "deploy-old"),
+    ]))
+
+    class FailingModule(object):
+        def sdk_call(self, operation, request):
+            return operation(request)
+
+        def fail_json(self, **kwargs):
+            raise AssertionError(kwargs.get("msg"))
+
+    with pytest.raises(AssertionError) as excinfo:
+        find_key_pair(FailingModule(), client, FakeModels, "deploy", None)
+    assert "Ambiguous" in str(excinfo.value)
 
 
 def test_find_key_pair_returns_none_when_absent():

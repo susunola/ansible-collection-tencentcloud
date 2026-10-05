@@ -191,6 +191,50 @@ def test_find_instance_matches_by_id():
     assert found["InstanceName"] == "blog-01"
 
 
+def test_find_instance_rejects_a_prefix_neighbour():
+    """``instance-name`` is a substring filter server-side.
+
+    The in-memory client above matches the filter by set membership, which is
+    narrower than the real API: ``blog-01`` also returns ``blog-01-old``, and
+    the module took ``InstanceSet[0]``, so the API's ordering decided which one
+    a stop, restart, rename or terminate touched.
+    """
+    class BothRows(object):
+        def DescribeInstances(self, request):
+            return SimpleNamespace(InstanceSet=[
+                FakeResource(dict(_instance(InstanceId="lhins-old",
+                                            InstanceName="blog-01-old"))),
+                FakeResource(dict(_instance())),
+            ])
+
+    found = lh.find_instance(FakeModule(), BothRows(), FakeModels(), None, "blog-01")
+
+    assert found["InstanceId"] == "lhins-8b0a1c2d"
+
+
+def test_find_instance_fails_when_two_names_are_equally_good():
+    """Two fuzzy candidates and no exact match is ambiguous, not a pick."""
+    class TwoNeighbours(object):
+        def DescribeInstances(self, request):
+            return SimpleNamespace(InstanceSet=[
+                FakeResource(dict(_instance(InstanceId="lhins-a",
+                                            InstanceName="blog-01-old"))),
+                FakeResource(dict(_instance(InstanceId="lhins-b",
+                                            InstanceName="blog-01-older"))),
+            ])
+
+    class FailingModule(object):
+        def sdk_call(self, operation, request):
+            return operation(request)
+
+        def fail_json(self, **kwargs):
+            raise AssertionError(kwargs.get("msg"))
+
+    with pytest.raises(AssertionError) as excinfo:
+        lh.find_instance(FailingModule(), TwoNeighbours(), FakeModels(), None, "blog-01")
+    assert "Ambiguous" in str(excinfo.value)
+
+
 def test_find_instance_missing_returns_none():
     module = FakeModule()
     client = FakeLighthouseClient()

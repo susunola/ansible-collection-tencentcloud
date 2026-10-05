@@ -157,12 +157,49 @@ def test_build_describe_request_by_name():
     assert not hasattr(request, "ChcIds") or request.ChcIds is None
 
 
-def test_find_host_returns_first_match():
+def test_find_host_returns_the_only_match():
     client = FakeClient(FakeResponse([FakeHost("chc-1", "chc-prod-01")]))
     module = FakeModule()
     host = find_host(module, client, FakeModels, None, "chc-prod-01")
     assert host["ChcId"] == "chc-1"
     assert len(client.calls) == 1
+
+
+def test_find_host_rejects_a_prefix_neighbour():
+    """A ``-name`` filter is a substring match server-side.
+
+    So an exact name and a longer name starting with it come back
+    together, and taking ``Set[0]`` let the API's ordering decide which
+    one a rename, association or delete touched.
+    """
+    client = FakeClient(FakeResponse([
+        FakeHost("zz-neighbour", "chc-prod-old"),
+        FakeHost("chc-1", "chc-prod"),
+    ]))
+    module = FakeModule()
+
+    host = find_host(module, client, FakeModels, None, "chc-prod")
+
+    assert host['ChcId'] == "chc-1"
+
+
+def test_find_host_fails_when_two_names_are_equally_good():
+    """Two fuzzy candidates and no exact match is ambiguous, not a pick."""
+    client = FakeClient(FakeResponse([
+        FakeHost("x-a", "chc-prod-old"),
+        FakeHost("x-b", "chc-prod-old"),
+    ]))
+
+    class FailingModule(object):
+        def sdk_call(self, operation, request):
+            return operation(request)
+
+        def fail_json(self, **kwargs):
+            raise AssertionError(kwargs.get("msg"))
+
+    with pytest.raises(AssertionError) as excinfo:
+        find_host(FailingModule(), client, FakeModels, None, "chc-prod")
+    assert "Ambiguous" in str(excinfo.value)
 
 
 def test_find_host_returns_none_when_absent():

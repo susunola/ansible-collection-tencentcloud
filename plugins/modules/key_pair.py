@@ -150,6 +150,7 @@ private_key:
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -173,18 +174,27 @@ def build_describe_request(models, name, key_id):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_key_pair(module, client, models, name, key_id):
-    """Return the matching key pair dict or None."""
-    request = build_describe_request(models, name, key_id)
-    response = module.sdk_call(client.DescribeKeyPairs, request)
-    key_pair = _first(response.KeyPairSet or [])
-    if key_pair is None:
-        return None
-    return key_pair._serialize(allow_none=True)
+    """Return the matching key pair dict or None.
+
+    ``key-name`` is a substring filter server-side, so the candidate set is
+    re-checked client-side by the shared resolver: an ID is authoritative, an
+    exact name wins, and two candidates fail with C(ambiguous=true) plus the
+    candidate list. Taking ``KeyPairSet[0]`` is how ``name: deploy`` could
+    delete or associate ``deploy-old``.
+    """
+    def describe(filters):
+        request = build_describe_request(models, None, key_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeKeyPairs, request)
+        return resolver.records(response.KeyPairSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="key pair",
+        id_value=key_id, name_value=name,
+        id_keys=("KeyId",), name_keys=("KeyName",),
+        name_filters=("key-name",),
+    )
 
 
 def _create(module, client, models, name, project_id):
