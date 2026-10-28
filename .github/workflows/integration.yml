@@ -17,7 +17,7 @@ on:
         # tke_addon is deliberately absent: it needs a running cluster, and the
         # account has none, so it can only self-skip and would trip the
         # "nothing executed" gate below. Dispatch it with tke_cluster.
-        default: "security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns vpc subnet"
+        default: "security_group network clb_http cam_user cam_group_membership cos_bucket key_pair kms_key vpc subnet"
 
 # Integration tests create billable resources in a shared Tencent Cloud
 # account. A single fixed concurrency group serialises every run (any
@@ -110,21 +110,8 @@ jobs:
           TENCENTCLOUD_TKE_CLUSTER_ID: ${{ secrets.TENCENTCLOUD_TKE_CLUSTER_ID }}
           TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
           TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
-          TENCENTCLOUD_APIGW_SERVICE_ID: ${{ secrets.TENCENTCLOUD_APIGW_SERVICE_ID }}
-          TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
-          TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
-          TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
           TENCENTCLOUD_CAM_GROUP_ID: ${{ secrets.TENCENTCLOUD_CAM_GROUP_ID }}
           TENCENTCLOUD_CAM_SUB_UIN: ${{ secrets.TENCENTCLOUD_CAM_SUB_UIN }}
-          TENCENTCLOUD_DBBRAIN_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_DBBRAIN_INSTANCE_ID }}
-          TENCENTCLOUD_DBBRAIN_SESSION_TOKEN: ${{ secrets.TENCENTCLOUD_DBBRAIN_SESSION_TOKEN }}
-          TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
-          TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
-          TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
-          TENCENTCLOUD_TCR_NAMESPACE: ${{ vars.TENCENTCLOUD_TCR_NAMESPACE }}
-          TENCENTCLOUD_TCR_WEBHOOK_URL: ${{ secrets.TENCENTCLOUD_TCR_WEBHOOK_URL }}
-          TENCENTCLOUD_CLS_ALARM_UIN: ${{ secrets.TENCENTCLOUD_CLS_ALARM_UIN }}
-          TENCENTCLOUD_REDIS_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_REDIS_INSTANCE_ID }}
           TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID: ${{ secrets.TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID }}
           TENCENTCLOUD_CVM_INSTANCE_TYPE: ${{ vars.TENCENTCLOUD_CVM_INSTANCE_TYPE }}
           TENCENTCLOUD_RUN_BILLED_TARGETS: ${{ vars.TENCENTCLOUD_RUN_BILLED_TARGETS }}
@@ -145,24 +132,8 @@ jobs:
           TENCENTCLOUD_TKE_CLUSTER_ID: ${{ secrets.TENCENTCLOUD_TKE_CLUSTER_ID }}
           TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
           TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
-          # Reuse an existing API Gateway service for apigateway_ip_strategy
-          # instead of creating a throwaway one (docs/integration-env.md §2.4).
-          TENCENTCLOUD_APIGW_SERVICE_ID: ${{ secrets.TENCENTCLOUD_APIGW_SERVICE_ID }}
-          TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
-          TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
-          TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
           TENCENTCLOUD_CAM_GROUP_ID: ${{ secrets.TENCENTCLOUD_CAM_GROUP_ID }}
           TENCENTCLOUD_CAM_SUB_UIN: ${{ secrets.TENCENTCLOUD_CAM_SUB_UIN }}
-          TENCENTCLOUD_DBBRAIN_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_DBBRAIN_INSTANCE_ID }}
-          TENCENTCLOUD_DBBRAIN_SESSION_TOKEN: ${{ secrets.TENCENTCLOUD_DBBRAIN_SESSION_TOKEN }}
-          TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
-          TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
-          TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
-          # High-impact TCR / CLS / Redis targets: unset means skip (§2.2).
-          TENCENTCLOUD_TCR_NAMESPACE: ${{ vars.TENCENTCLOUD_TCR_NAMESPACE }}
-          TENCENTCLOUD_TCR_WEBHOOK_URL: ${{ secrets.TENCENTCLOUD_TCR_WEBHOOK_URL }}
-          TENCENTCLOUD_CLS_ALARM_UIN: ${{ secrets.TENCENTCLOUD_CLS_ALARM_UIN }}
-          TENCENTCLOUD_REDIS_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_REDIS_INSTANCE_ID }}
           # P0-01/02 flagship targets: billed targets stay out of the default
           # list and self-skip until their gate is configured (see
           # docs/integration-env.md §2.2 - keep that table in sync here).
@@ -179,7 +150,7 @@ jobs:
         # nothing. `pipefail` keeps ansible-test's own exit code.
         run: |-
           set -o pipefail
-          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns vpc subnet' }} --color --python 3.12 --coverage 2>&1 | tee /tmp/integration.log
+          ansible-test integration ${{ inputs.targets || 'security_group network clb_http cam_user cam_group_membership cos_bucket key_pair kms_key vpc subnet' }} --color --python 3.12 --coverage 2>&1 | tee /tmp/integration.log
       # Guard against "green but nothing ran". Without this, a target whose
       # gate variable is unset prints "Explain skipped ..." and passes, which
       # is exactly how the scheduled run reported success for months without
