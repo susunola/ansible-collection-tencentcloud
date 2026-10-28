@@ -46,10 +46,6 @@
       susunola.tencentcloud.clb_load_balancer_info:
       register: load_balancers
 
-    - name: Collect CFS file systems
-      susunola.tencentcloud.cfs_file_system_info:
-      register: file_systems
-
     - name: Collect NAT gateways
       susunola.tencentcloud.nat_gateway_info:
       register: nat_gateways
@@ -117,14 +113,6 @@
              | selectattr('LoadBalancerName', 'search',
                           'ansible[-_].*[-_]it[-_]') | list }}
 
-    - name: Select test CFS file systems
-      ansible.builtin.set_fact:
-        test_file_systems: >-
-          {{ file_systems.file_systems
-             | selectattr('Name', 'defined')
-             | selectattr('Name', 'truthy')
-             | selectattr('Name', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
-
     - name: Select test NAT gateways
       ansible.builtin.set_fact:
         test_nat_gateways: >-
@@ -161,8 +149,8 @@
     # Tear down in reverse dependency order. Each delete is best-effort;
     # the sweeper must never fail a CI cleanup step because one resource
     # is still in use (e.g. a security group attached to a running
-    # instance that another test created). CLB and CFS both attach to
-    # subnets, so they must be removed before the subnet/VPC pass below.
+    # instance that another test created). CLB attaches to subnets, so it
+    # must be removed before the subnet/VPC pass below.
     # ------------------------------------------------------------------
     - name: Delete test CLB load balancers
       susunola.tencentcloud.clb_load_balancer:
@@ -171,14 +159,6 @@
       loop: "{{ test_load_balancers }}"
       ignore_errors: true
       when: item.LoadBalancerId is defined
-
-    - name: Delete test CFS file systems
-      susunola.tencentcloud.cfs_file_system:
-        state: absent
-        file_system_id: "{{ item.FileSystemId }}"
-      loop: "{{ test_file_systems }}"
-      ignore_errors: true
-      when: item.FileSystemId is defined
 
     # NAT gateways attach to subnets and hold EIPs, so they must go before
     # the EIP release and the subnet/VPC teardown below.
@@ -258,7 +238,6 @@
       ansible.builtin.debug:
         msg: >-
           Swept {{ test_load_balancers | length }} CLB(s),
-          {{ test_file_systems | length }} CFS file system(s),
           {{ test_nat_gateways | length }} NAT gateway(s),
           {{ test_key_pairs | length }} key pair(s),
           {{ test_lighthouse_instances | length }} Lighthouse instance(s),

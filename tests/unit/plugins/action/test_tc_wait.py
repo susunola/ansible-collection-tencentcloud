@@ -124,7 +124,7 @@ def test_observation_spec_prefers_explicit_values_over_the_table():
 
 
 def test_observation_spec_has_no_defaults_for_unknown_modules():
-    assert observation_spec("cls_topic_info") == (None, None)
+    assert observation_spec("cos_bucket_info") == (None, None)
 
 
 def test_lookup_path_walks_nested_dictionaries():
@@ -272,13 +272,13 @@ def test_explicit_fields_override_the_shipped_table():
 def test_a_module_outside_the_table_works_with_explicit_fields():
     action, _calls = build_action(
         {
-            "module": "cls_topic_info",
+            "module": "cos_bucket_info",
             "args": REGION,
             "state": "1",
-            "list_field": "topics",
+            "list_field": "buckets",
             "state_field": "Status",
         },
-        [{"topics": [{"Status": "1"}]}],
+        [{"buckets": [{"Status": "1"}]}],
     )
     assert action.run(task_vars={})["observed_states"] == ["1"]
 
@@ -310,7 +310,7 @@ def test_timeout_reports_what_was_observed():
 
 
 def test_a_module_without_a_table_entry_is_rejected_before_polling():
-    action, calls = build_action({"module": "cls_topic_info", "args": REGION, "state": "1"}, [{}])
+    action, calls = build_action({"module": "cos_bucket_info", "args": REGION, "state": "1"}, [{}])
     with pytest.raises(AnsibleActionFail) as excinfo:
         action.run(task_vars={})
     assert "no observation table entry" in excinfo.value.result["msg"]
@@ -423,7 +423,6 @@ def test_table_covers_the_documented_state_fields():
     assert OBSERVATION_SPECS["cbs_disk_info"] == ("disks", "DiskState")
     assert OBSERVATION_SPECS["redis_instance_info"] == ("instances", "Status")
     assert OBSERVATION_SPECS["cdb_instance_info"] == ("instances", "Status")
-    assert OBSERVATION_SPECS["scf_function_info"] == ("functions", "Status")
     assert OBSERVATION_SPECS["lighthouse_instance_info"] == ("instances", "InstanceState")
 
 
@@ -431,7 +430,7 @@ def test_table_covers_the_documented_state_fields():
 #: Derived from the response member each module pages: DescribeDisksResponse
 #: DiskSet, DescribeDBInstancesResponse Items, DescribeLoadBalancersResponse
 #: LoadBalancerSet, DescribeInstancesResponse InstanceSet (CVM, Lighthouse and
-#: Redis), ListFunctionsResponse Functions, DescribeClustersResponse Clusters.
+#: Redis), DescribeClustersResponse Clusters.
 SDK_RESOURCE_MODELS = {
     "cbs_disk_info": ("cbs.v20170312", "Disk"),
     "cdb_instance_info": ("cdb.v20170320", "InstanceInfo"),
@@ -439,7 +438,6 @@ SDK_RESOURCE_MODELS = {
     "cvm_instance_info": ("cvm.v20170312", "Instance"),
     "lighthouse_instance_info": ("lighthouse.v20200324", "Instance"),
     "redis_instance_info": ("redis.v20180412", "InstanceSet"),
-    "scf_function_info": ("scf.v20180416", "Function"),
     "tke_cluster_info": ("tke.v20180525", "Cluster"),
 }
 
