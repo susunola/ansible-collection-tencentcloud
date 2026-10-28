@@ -16,7 +16,7 @@ description:
   - Resolves exact resource names through Tencent Cloud read APIs.
   - Returns one ID per lookup term and fails when a name is absent or ambiguous.
   - Supports core network, compute, Auto Scaling, load-balancing, Kubernetes,
-    database, API Gateway, container-registry and TEM application resources.
+    database and container-registry resources.
 options:
   _terms:
     description: Exact resource names to resolve.
@@ -25,12 +25,9 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, gwlb_load_balancer, gwlb_target_group, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, goosefs_file_system, direct_connect, direct_connect_tunnel, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application, organization_member, dts_migration_job, gaap_proxy]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, tke_cluster, cdb_instance, redis_instance, tcr_instance]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
-    type: str
-  file_system_id:
-    description: Parent CHDFS file-system ID required for mount-point lookups.
     type: str
   region:
     description: Tencent Cloud region, falling back to C(TENCENTCLOUD_REGION).
@@ -134,43 +131,14 @@ RESOURCE_SPECS = {
     "autoscaling_group": ("autoscaling.v20180419", "AutoscalingClient", "as.tencentcloudapi.com", "DescribeAutoScalingGroups", "AutoScalingGroupSet", "AutoScalingGroupId", "AutoScalingGroupName"),
     "cbs_disk": ("cbs.v20170312", "CbsClient", "cbs.tencentcloudapi.com", "DescribeDisks", "DiskSet", "DiskId", "DiskName"),
     "clb_load_balancer": ("clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
-    "alb_load_balancer": ("alb.v20251030", "AlbClient", "alb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancers", "LoadBalancerId", "LoadBalancerName"),
-    "gwlb_load_balancer": ("gwlb.v20240906", "GwlbClient", "gwlb.tencentcloudapi.com", "DescribeGatewayLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
-    "gwlb_target_group": ("gwlb.v20240906", "GwlbClient", "gwlb.tencentcloudapi.com", "DescribeTargetGroups", "TargetGroupSet", "TargetGroupId", "TargetGroupName"),
     "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
-    "postgresql_instance": ("postgres.v20170312", "PostgresClient", "postgres.tencentcloudapi.com", "DescribeDBInstances", "DBInstanceSet", "DBInstanceId", "DBInstanceName"),
-    "mariadb_instance": ("mariadb.v20170312", "MariadbClient", "mariadb.tencentcloudapi.com", "DescribeDBInstances", "Instances", "InstanceId", "InstanceName"),
-    "sqlserver_instance": ("sqlserver.v20180328", "SqlserverClient", "sqlserver.tencentcloudapi.com", "DescribeDBInstances", "DBInstances", "InstanceId", "Name"),
-    "cynosdb_cluster": ("cynosdb.v20190107", "CynosdbClient", "cynosdb.tencentcloudapi.com", "DescribeClusters", "ClusterSet", "ClusterId", "ClusterName"),
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
-    "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
-    "elasticsearch_instance": ("es.v20180416", "EsClient", "es.tencentcloudapi.com", "DescribeInstances", "InstanceList", "InstanceId", "InstanceName"),
-    "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
-    "chdfs_file_system": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeFileSystems", "FileSystems", "FileSystemId", "FileSystemName"),
-    "chdfs_access_group": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeAccessGroups", "AccessGroups", "AccessGroupId", "AccessGroupName"),
-    "chdfs_mount_point": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeMountPoints", "MountPoints", "MountPointId", "MountPointName"),
-    "goosefs_file_system": ("goosefs.v20220519", "GoosefsClient", "goosefs.tencentcloudapi.com", "DescribeFileSystems", "FSAttributeList", "FileSystemId", "Name"),
-    "direct_connect": ("dc.v20180410", "DcClient", "dc.tencentcloudapi.com", "DescribeDirectConnects", "DirectConnectSet", "DirectConnectId", "DirectConnectName"),
-    "direct_connect_tunnel": ("dc.v20180410", "DcClient", "dc.tencentcloudapi.com", "DescribeDirectConnectTunnels", "DirectConnectTunnelSet", "DirectConnectTunnelId", "DirectConnectTunnelName"),
-    "ckafka_instance": ("ckafka.v20190819", "CkafkaClient", "ckafka.tencentcloudapi.com", "DescribeInstancesDetail", "Result.InstanceList", "InstanceId", "InstanceName"),
-    "mqtt_instance": ("mqtt.v20240516", "MqttClient", "mqtt.tencentcloudapi.com", "DescribeInstanceList", "Data", "InstanceId", "InstanceName"),
-    "rocketmq_cluster": ("tdmq.v20200217", "TdmqClient", "tdmq.tencentcloudapi.com", "DescribeRocketMQClusters", "ClusterList", "Info.ClusterId", "Info.ClusterName"),
-    "rabbitmq_instance": ("tdmq.v20200217", "TdmqClient", "tdmq.tencentcloudapi.com", "DescribeRabbitMQVipInstances", "Instances", "InstanceId", "InstanceName"),
-    "prometheus_instance": ("monitor.v20180724", "MonitorClient", "monitor.tencentcloudapi.com", "DescribePrometheusInstances", "InstanceSet", "InstanceId", "InstanceName"),
-    "edgeone_zone": ("teo.v20220901", "TeoClient", "teo.tencentcloudapi.com", "DescribeZones", "Zones", "ZoneId", "ZoneName"),
-    "event_bus": ("eb.v20210416", "EbClient", "eb.tencentcloudapi.com", "ListEventBuses", "EventBuses", "EventBusId", "EventBusName"),
-    "api_gateway_service": ("apigateway.v20180808", "ApigatewayClient", "apigateway.tencentcloudapi.com", "DescribeServicesStatus", "Result.ServiceSet", "ServiceId", "ServiceName"),
     "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
-    "tem_environment": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeEnvironments", "Result.Records", "EnvironmentId", "EnvironmentName"),
-    "tem_application": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeApplications", "Result.Records", "ApplicationId", "ApplicationName"),
-    "organization_member": ("organization.v20210331", "OrganizationClient", "organization.tencentcloudapi.com", "DescribeOrganizationMembers", "Items", "MemberUin", "Name"),
-    "dts_migration_job": ("dts.v20211206", "DtsClient", "dts.tencentcloudapi.com", "DescribeMigrationJobs", "JobList", "JobId", "JobName"),
-    "gaap_proxy": ("gaap.v20180529", "GaapClient", "gaap.tencentcloudapi.com", "DescribeProxies", "ProxySet", "ProxyId", "ProxyName"),
 }
 
 
-def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token=None, file_system_id=None):
+def build_request(resource_type, models, name, vpc_id=None, offset=0):
     """Build the narrowest supported exact-name request."""
     request_names = {
         "vpc": "DescribeVpcsRequest",
@@ -181,53 +149,13 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "autoscaling_group": "DescribeAutoScalingGroupsRequest",
         "cbs_disk": "DescribeDisksRequest",
         "clb_load_balancer": "DescribeLoadBalancersRequest",
-        "alb_load_balancer": "DescribeLoadBalancersRequest",
-        "gwlb_load_balancer": "DescribeGatewayLoadBalancersRequest",
-        "gwlb_target_group": "DescribeTargetGroupsRequest",
         "tke_cluster": "DescribeClustersRequest",
         "cdb_instance": "DescribeDBInstancesRequest",
-        "postgresql_instance": "DescribeDBInstancesRequest",
-        "mariadb_instance": "DescribeDBInstancesRequest",
-        "sqlserver_instance": "DescribeDBInstancesRequest",
-        "cynosdb_cluster": "DescribeClustersRequest",
         "redis_instance": "DescribeInstancesRequest",
-        "mongodb_instance": "DescribeDBInstancesRequest",
-        "elasticsearch_instance": "DescribeInstancesRequest",
-        "cfs_file_system": "DescribeCfsFileSystemsRequest",
-        "chdfs_file_system": "DescribeFileSystemsRequest",
-        "chdfs_access_group": "DescribeAccessGroupsRequest",
-        "chdfs_mount_point": "DescribeMountPointsRequest",
-        "goosefs_file_system": "DescribeFileSystemsRequest",
-        "direct_connect": "DescribeDirectConnectsRequest",
-        "direct_connect_tunnel": "DescribeDirectConnectTunnelsRequest",
-        "ckafka_instance": "DescribeInstancesDetailRequest",
-        "mqtt_instance": "DescribeInstanceListRequest",
-        "rocketmq_cluster": "DescribeRocketMQClustersRequest",
-        "rabbitmq_instance": "DescribeRabbitMQVipInstancesRequest",
-        "prometheus_instance": "DescribePrometheusInstancesRequest",
-        "edgeone_zone": "DescribeZonesRequest",
-        "event_bus": "ListEventBusesRequest",
-        "api_gateway_service": "DescribeServicesStatusRequest",
         "tcr_instance": "DescribeInstancesRequest",
-        "tem_environment": "DescribeEnvironmentsRequest",
-        "tem_application": "DescribeApplicationsRequest",
-        "organization_member": "DescribeOrganizationMembersRequest",
-        "dts_migration_job": "DescribeMigrationJobsRequest",
-        "gaap_proxy": "DescribeProxiesRequest",
     }
     request = getattr(models, request_names[resource_type])()
-    if resource_type == "chdfs_file_system":
-        request.FileSystemIdMarker = page_token
-    elif resource_type == "chdfs_access_group":
-        request.AccessGroupIdMarker = page_token
-    elif resource_type == "chdfs_mount_point":
-        if not file_system_id:
-            raise AnsibleError("file_system_id is required for chdfs_mount_point lookups")
-        request.FileSystemId = file_system_id
-    elif resource_type == "alb_load_balancer":
-        request.MaxResults = 100
-        request.NextToken = page_token
-    elif resource_type in ("vpc", "subnet", "security_group"):
+    if resource_type in ("vpc", "subnet", "security_group"):
         request.Limit = "100"
         request.Offset = str(offset)
     else:
@@ -235,68 +163,9 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.Offset = offset
     if resource_type == "cdb_instance":
         request.InstanceNames = [name]
-    elif resource_type == "postgresql_instance":
-        api_filter = models.Filter()
-        api_filter.Name, api_filter.Values = "db-instance-name", [name]
-        request.Filters = [api_filter]
-    elif resource_type == "mariadb_instance":
-        request.SearchName = name
-    elif resource_type == "sqlserver_instance":
-        request.InstanceNameSet = [name]
-    elif resource_type == "cynosdb_cluster":
-        api_filter = models.QueryFilter()
-        api_filter.Names, api_filter.Values = ["ClusterName"], [name]
-        request.Filters = [api_filter]
     elif resource_type == "redis_instance":
         request.InstanceName = name
-    elif resource_type == "mongodb_instance":
-        request.SearchKey = name
-    elif resource_type == "elasticsearch_instance":
-        request.InstanceNames = [name]
-    elif resource_type in ("cfs_file_system", "chdfs_file_system", "chdfs_access_group", "chdfs_mount_point", "goosefs_file_system"):
-        pass  # These APIs have no server-side name filter; client-side match only.
-    elif resource_type in ("direct_connect", "direct_connect_tunnel"):
-        pass  # No name filter available in the Describe API.
-    elif resource_type == "ckafka_instance":
-        api_filter = models.Filter()
-        api_filter.Name, api_filter.Values = "instance-name", [name]
-        request.Filters = [api_filter]
-    elif resource_type == "mqtt_instance":
-        pass  # No name filter available in the Describe API.
-    elif resource_type == "event_bus":
-        pass  # No name filter available in the Describe API.
-    elif resource_type == "rocketmq_cluster":
-        request.NameKeyword = name
-    elif resource_type == "rabbitmq_instance":
-        api_filter = models.Filter()
-        api_filter.Name, api_filter.Values = "instanceName", [name]
-        request.Filters = [api_filter]
-    elif resource_type == "prometheus_instance":
-        request.InstanceName = name
-    elif resource_type == "edgeone_zone":
-        api_filter = models.AdvancedFilter()
-        api_filter.Name, api_filter.Values = "zone-name", [name]
-        request.Filters = [api_filter]
-    elif resource_type == "alb_load_balancer":
-        pass  # No name filter available in the Describe API.
-    elif resource_type in ("gwlb_load_balancer", "gwlb_target_group"):
-        pass  # No name filter available in the Describe API.
-    elif resource_type == "api_gateway_service":
-        api_filter = models.Filter()
-        api_filter.Name, api_filter.Values = "ServiceName", [name]
-        request.Filters = [api_filter]
-    elif resource_type == "tem_environment":
-        request.SourceChannel = 0
-    elif resource_type == "tem_application":
-        request.Keyword = name
-        request.SourceChannel = 0
     elif resource_type == "tcr_instance":
-        pass  # No name filter available in the Describe API.
-    elif resource_type == "organization_member":
-        pass  # No name filter available in the Describe API.
-    elif resource_type == "dts_migration_job":
-        request.JobName = name
-    elif resource_type == "gaap_proxy":
         pass  # No name filter available in the Describe API.
     elif resource_type == "autoscaling_group":
         api_filter = models.Filter()
@@ -334,15 +203,14 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
     return request
 
 
-def resolve_resource(client, models, resource_type, name, vpc_id=None, file_system_id=None):
+def resolve_resource(client, models, resource_type, name, vpc_id=None):
     """Return one exact-match ID or raise a useful lookup error."""
     spec = RESOURCE_SPECS[resource_type]
     matches = []
     offset = 0
-    page_token = None
     while True:
         response = getattr(client, spec[3])(
-            build_request(resource_type, models, name, vpc_id, offset, page_token, file_system_id))
+            build_request(resource_type, models, name, vpc_id, offset))
         values = response
         for attribute in spec[4].split("."):
             values = getattr(values, attribute, None)
@@ -350,19 +218,6 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None, file_syst
                 break
         page = list(values or [])
         matches.extend(item for item in page if nested_attribute(item, spec[6]) == name)
-        if resource_type in ("chdfs_file_system", "chdfs_access_group"):
-            marker_name = "NextFileSystemIdMarker" if resource_type == "chdfs_file_system" else "NextAccessGroupIdMarker"
-            page_token = getattr(response, marker_name, None)
-            if getattr(response, "IsOver", False) or not page_token:
-                break
-            continue
-        if resource_type == "chdfs_mount_point":
-            break
-        if resource_type == "alb_load_balancer":
-            page_token = getattr(response, "NextToken", None)
-            if not page_token:
-                break
-            continue
         if len(page) < 100:
             break
         offset += len(page)
@@ -476,8 +331,7 @@ class LookupModule(LookupBase):
         for name in terms:
             try:
                 values.append(resolve_resource(
-                    client, models, resource_type, name, self.get_option("vpc_id"),
-                    self.get_option("file_system_id")))
+                    client, models, resource_type, name, self.get_option("vpc_id")))
             except AnsibleError:
                 raise
             except Exception as exc:

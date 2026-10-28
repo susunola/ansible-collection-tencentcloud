@@ -22,9 +22,8 @@ controller-side inventory plugins. See ``plugins/plugin_utils/README.md``.
 An API that does not honour ``Offset`` is reported, not papered over:
 ``PaginationError`` is raised when a page is served twice, because the
 duplicated rows it would otherwise contribute are indistinguishable from a
-correct reply. Hand-written callers already guarded this individually — see
-the repeated-token check in ``modules/alb_load_balancer.py`` — and doing it
-here is what makes the generated modules inherit the guard.
+correct reply. Hand-written callers already guarded this individually, and
+doing it here is what makes the generated modules inherit the guard.
 
 Layering: imports nothing else from the collection.
 """

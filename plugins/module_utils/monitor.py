@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """Shared Cloud Monitor alarm-policy helpers.
 
-The ``monitor_alarm_policy`` and ``monitor_alarm_policy_notice`` modules both
-reconcile the same alarm-policy entity (conditions vs notification bindings).
-These helpers centralize the SDK client bootstrap, policy lookup, request
-construction and convergence checks so the two modules never import each
-other (which the sanity ``import`` test forbids).
+Alarm-policy modules reconcile the same alarm-policy entity (conditions vs
+notification bindings). These helpers centralize the SDK client bootstrap,
+policy lookup, request construction and convergence checks so the modules
+never import each other (which the sanity ``import`` test forbids).
 """
 
 from __future__ import absolute_import, division, print_function
