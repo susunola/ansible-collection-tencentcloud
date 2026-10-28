@@ -26,7 +26,7 @@ from pathlib import Path
 
 import yaml
 
-# "Running cls_alarm integration test role"
+# "Running cos_bucket integration test role"
 _TARGET_LINE = re.compile(r"Running\s+(?P<target>[A-Za-z0-9_]+)\s+integration test role")
 # "testhost : ok=20  changed=9  unreachable=0  failed=0  skipped=1  ...".
 # Not anchored: CI prefixes every line with "<job>\t<step>\t<timestamp>Z ".

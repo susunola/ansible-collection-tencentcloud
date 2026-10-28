@@ -211,9 +211,9 @@ def test_repository_examples_pass_the_check(check_examples):
     what CI asserts."""
     problems, inventories = check_examples.check()
     assert problems == [], problems
-    assert len(inventories) == (11 + len(check_examples.discover_targets())
+    assert len(inventories) == (6 + len(check_examples.discover_targets())
                                 + len(check_examples.discover_role_tasks()))
-    assert any("06_full_chain" in item["path"] for item in inventories)
+    assert any("01_network_foundation" in item["path"] for item in inventories)
     assert any("tests/integration/targets/vpc" in item["path"] for item in inventories)
 
 

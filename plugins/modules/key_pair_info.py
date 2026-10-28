@@ -76,7 +76,7 @@ key_pairs:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - KeyId: skey-a
 total_count:
   description: Number of key pairs reported by the API.

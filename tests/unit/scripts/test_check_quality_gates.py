@@ -212,7 +212,7 @@ def test_a_role_without_a_readme_is_reported(gates, role_tree):
 
 
 def test_committed_role_readmes_are_consistent(gates):
-    """The repository's own 68 roles must pass, not just the fixture's."""
+    """The repository's own roles must pass, not just the fixture's."""
     assert gates.role_doc_findings() == []
 
 
@@ -311,9 +311,8 @@ def test_a_different_type_is_reported_as_a_shadow(gates, tmp_path, monkeypatch):
         "fake_module :: role_arn (shared declares str, module declares int)"]
 
 
-def test_committed_tree_has_only_the_grandfathered_shadow(gates):
-    assert gates.fragment_shadow_findings() == [
-        "dlc_spark_job :: role_arn (credentials declares str, module declares int)"]
+def test_committed_tree_has_no_fragment_shadow(gates):
+    assert gates.fragment_shadow_findings() == []
 
 
 def _dead_helper_tree(gates, tmp_path, monkeypatch):

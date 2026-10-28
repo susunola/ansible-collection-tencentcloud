@@ -1,0 +1,27 @@
+# Frozen findings for the 'private_harness' family of scripts/check_quality_gates.py.
+# One module name per line.
+# This list may only shrink: a baselined module that no longer has the
+# finding must be delisted (the gate names it), and a module that is not on
+# the list must not have the finding at all.
+# a module test drives its module through
+# tests/unit/plugins/modules/harness.py, not a private double, so the payload
+# is observable and the conventions live in one place
+plugins/modules/as_scaling_group_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cam_group_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cbs_disk_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cbs_snapshot_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cdb_account_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cdb_instance_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/clb_listener_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/clb_listener_target_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/clb_load_balancer_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/clb_target_group_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/cvm_image_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/kms_key_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/lighthouse_instance_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/nat_gateway_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/redis_instance_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/security_group_rule_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tcr_instance_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tke_cluster_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness
+plugins/modules/tke_node_pool_info.py: its tests drive run_module through a private double instead of tests.unit.plugins.modules.harness

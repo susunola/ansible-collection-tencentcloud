@@ -124,7 +124,7 @@ key:
   type: dict
   returned: always
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     KeyId: kms-abc123
     Alias: app-key
     Description: app key

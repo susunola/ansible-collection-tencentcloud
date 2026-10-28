@@ -63,7 +63,7 @@ instances:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - InstanceId: ins-a
 total_count:
   description: Number of instances reported by the API.

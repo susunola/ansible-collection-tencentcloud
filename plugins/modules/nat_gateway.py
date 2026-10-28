@@ -13,15 +13,20 @@ short_description: Manage Tencent Cloud NAT gateways
 version_added: "0.12.0"
 description:
   - Create, update and delete NAT gateways through the C(vpc.v20170312) API.
+  - A gateway is identified by O(nat_gateway_id) when given, otherwise
+    matched by O(name) within O(vpc_id). Name matches are exact; multiple
+    gateways with the same name fail the task instead of managing an
+    arbitrary one.
   - This module is idempotent. Running it twice leaves the gateway unchanged
     and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
 options:
   state:
     description:
-      - C(present) creates the gateway when it does not exist and updates its
-        name, bandwidth and deletion-protection flag when it does.
-      - C(absent) deletes the gateway.
+      - C(present) creates the gateway with V(CreateNatGateway) when it does
+        not exist and updates its name, bandwidth and deletion-protection
+        flag with V(ModifyNatGatewayAttribute) when it does.
+      - C(absent) deletes the gateway with V(DeleteNatGateway).
     type: str
     choices: [present, absent]
     default: present
@@ -36,6 +41,7 @@ options:
       - Name of the NAT gateway, written to
         V(CreateNatGatewayRequest.NatGatewayName) and
         V(ModifyNatGatewayAttributeRequest.NatGatewayName).
+      - Required when creating a gateway.
     type: str
   vpc_id:
     description:
@@ -239,6 +245,14 @@ def _create(module, client, models, params):
         request.PublicIpAddresses = params["public_ip_addresses"]
     if params["zone"]:
         request.Zone = params["zone"]
+    if params["tags"]:
+        sdk_tags = []
+        for key, value in sorted(params["tags"].items()):
+            tag = models.Tag()
+            tag.Key = key
+            tag.Value = value
+            sdk_tags.append(tag)
+        request.Tags = sdk_tags
     return module.sdk_call(client.CreateNatGateway, request)
 
 

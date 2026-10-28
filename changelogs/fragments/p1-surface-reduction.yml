@@ -1,0 +1,27 @@
+---
+breaking_changes:
+  - >-
+    collection - the P1 surface reduction has landed ahead of 2.0.0. Roughly
+    950 modules, 65 roles and all four ``plugins/event_source/`` plugins are
+    removed from this collection. Only the hand-maintained core modules listed
+    in ``docs/core-allowlist.yml`` (CAM, CVM and Lighthouse, VPC/CLB/EIP/NAT and
+    security groups, COS and CBS, TKE and TCR, CDB and Redis, KMS and SSM, Auto
+    Scaling) and the three roles ``tc_vpc_foundation``, ``tc_clb_http`` and
+    ``tc_tke_cluster`` remain. Playbooks that call a removed module or role
+    fail with "couldn't resolve module/action" after upgrading; pin the last
+    1.x release (``susunola.tencentcloud:==1.4.0``) while migrating. The
+    binding plan and the reasons for the removal are documented in
+    ``docs/REMEDIATION.md``.
+removed_features:
+  - >-
+    modules - every module not named in ``docs/core-allowlist.yml`` is
+    removed, including all generated ``*_info`` modules, the ALB family, the
+    API Gateway families, and the long-tail discovery modules. The retained
+    set is the allowlist; nothing else ships in 2.0.0.
+  - >-
+    roles - all roles except ``tc_vpc_foundation``, ``tc_clb_http`` and
+    ``tc_tke_cluster`` are removed.
+  - >-
+    event_source - the ``cls_topic``, ``cmq_queue``, ``cos_bucket`` and
+    ``tke_cluster`` Event-Driven Ansible source plugins are removed; the
+    collection no longer ships ``plugins/event_source/``.

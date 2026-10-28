@@ -65,7 +65,7 @@ options:
         description: ENI or other private IP to bind. Mutually exclusive with O(targets.instance_id).
         type: str
       port:
-        description: Backend service port.
+        description: Port the backend instance receives forwarded traffic on.
         type: int
         required: true
       weight:

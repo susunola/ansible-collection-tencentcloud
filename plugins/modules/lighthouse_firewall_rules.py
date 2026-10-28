@@ -16,7 +16,7 @@ description:
 options:
   instance_id:
     description:
-      - Lighthouse instance ID.
+      - ID of the Lighthouse instance whose firewall rules are managed, e.g. C(lhins-xxxxxxxx).
     type: str
     required: true
   rules:
@@ -51,8 +51,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.lighthouse_firewall_rules_info
-    description: Gather information about Tencent Cloud Lighthouse firewall rules.
+  - module: susunola.tencentcloud.lighthouse_instance_info
+    description: Gather information about Tencent Cloud Lighthouse instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -70,7 +70,7 @@ rules:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - Protocol: TCP
       Port: '22'
       CidrBlock: 10.0.0.0/8

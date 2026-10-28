@@ -110,7 +110,7 @@ addon:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     AddonName: cbs
     AddonVersion: 1.4.0
     RawValues: <redacted>

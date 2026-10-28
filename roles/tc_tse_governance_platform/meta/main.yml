@@ -1,7 +1,0 @@
----
-galaxy_info:
-  author: Tencent Cloud Ansible Collection Contributors
-  description: Provision TSE service governance and configuration-center resources
-  license: GPL-3.0-or-later
-  min_ansible_version: "2.19"
-dependencies: []

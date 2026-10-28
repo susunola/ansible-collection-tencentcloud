@@ -5,16 +5,9 @@
 Why
 ---
 ``requirements.txt`` declares ``tencentcloud-sdk-python`` as a compatibility
-range, so the collection promises that the floor of that range works. Nothing
-checked that promise. CI installed the range (which floats to the newest
-release) and then re-pinned the SDK to ``GENERATED_SDK_VERSION`` before
-checking anything, so the release named as the minimum was never the release
-under test -- and three ``_info`` modules were generated from products that do
-not exist at the declared floor at all (``edgezone``, ``databuddy`` and
-``workbuddyenterprise`` only appear in newer SDK releases).
-
-A version range is a claim about the oldest supported release. This guard is
-what makes the claim checkable instead of aspirational.
+range, so the collection promises that the floor of that range works. A
+version range is a claim about the oldest supported release, and this guard
+is what makes the claim checkable instead of aspirational.
 
 What it checks
 --------------
@@ -25,8 +18,6 @@ What it checks
   ``<product>.<api-version>`` string tables in ``RESOURCE_SPECS``-style
   constants, so a renamed SDK class is caught here instead of crashing a user
   at runtime.
-* Every spec in ``scripts/info_specs_auto.py`` names a service package, client
-  module, client class and request class that exist.
 * The COS modules' separate ``qcloud_cos`` SDK imports resolve.
 * The SDK installed here is *exactly* the release ``requirements.txt``
   declares as its floor, so a green run verifies the floor the collection
@@ -55,7 +46,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 REQUIREMENTS_PATH = REPO_ROOT / "requirements.txt"
 
 PLUGIN_DIRS = ("modules", "module_utils", "plugin_utils", "inventory",
-               "lookup", "action", "event_source")
+               "lookup", "action")
 
 #: ``tencentcloud-sdk-python>=3.1.180,<4.0.0`` -> (">=3.1.180", "<4.0.0")
 SDK_REQUIREMENT_RE = re.compile(r"^[ \t]*tencentcloud-sdk-python[ \t]*([^#\n]*)",
@@ -314,47 +305,6 @@ def module_findings(root=REPO_ROOT):
     return sorted(set(findings))
 
 
-def spec_findings(root=REPO_ROOT):
-    """Return a sorted list of unresolved SDK references in the auto specs."""
-    specs_path = Path(root) / "scripts" / "info_specs_auto.py"
-    if not specs_path.is_file():
-        return ["scripts/info_specs_auto.py is missing"]
-    spec = importlib.util.spec_from_file_location("info_specs_auto",
-                                                  str(specs_path))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    specs = getattr(module, "SPECS_AUTO", None)
-    if not isinstance(specs, list) or not specs:
-        return ["scripts/info_specs_auto.py must define a non-empty SPECS_AUTO"]
-
-    findings = []
-    for entry in specs:
-        name = entry.get("module", "<unnamed>")
-        package = entry.get("service_package")
-        client_module = entry.get("client_module")
-        if not package or not client_module:
-            findings.append("%s: spec names no service package" % name)
-            continue
-        client, error = _import("%s.%s" % (package, client_module))
-        if error:
-            findings.append(
-                "%s: spec names SDK client %s.%s, which does not exist (%s)"
-                % (name, package, client_module, error))
-            continue
-        # The client class lives in the *_client module; the request models
-        # live in the sibling ``models`` module.
-        owners = (("client_class", "%s.%s" % (package, client_module),
-                   client),
-                  ("request_class", "%s.models" % package,
-                   _import("%s.models" % package)[0]))
-        for key, where, owner in owners:
-            class_name = entry.get(key)
-            if class_name and owner is not None and not hasattr(owner, class_name):
-                findings.append("%s: spec names %s %s, which %s does not define"
-                                % (name, key, class_name, where))
-    return sorted(findings)
-
-
 def collect_findings(root=REPO_ROOT, requirements=None):
     """Return ``(findings, notes)`` for the whole floor check."""
     findings = []
@@ -380,7 +330,6 @@ def collect_findings(root=REPO_ROOT, requirements=None):
             "it, or raise the floor to the release CI installs"
             % (floor, installed, floor))
     findings.extend(module_findings(root))
-    findings.extend(spec_findings(root))
     notes.append("verified against tencentcloud-sdk-python %s" % installed)
     if floor:
         notes.append("declared floor %s, cap %s" % (floor, cap))

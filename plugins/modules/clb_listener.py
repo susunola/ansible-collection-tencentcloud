@@ -92,7 +92,7 @@ options:
         description: Probe response timeout in seconds, 2-60; must be lower than O(health_check.interval_time).
         type: int
       check_type:
-        description: Probe protocol.
+        description: Protocol used for health probes, e.g. V(TCP), V(HTTP) or V(HTTPS).
         type: str
         choices: [TCP, HTTP, HTTPS, GRPC, PING, CUSTOM]
       check_port:
@@ -105,7 +105,7 @@ options:
         description: Probe domain carried in the HTTP Host header.
         type: str
       http_check_method:
-        description: Probe HTTP method.
+        description: HTTP method used by HTTP/HTTPS health probes (V(GET) or V(HEAD)).
         type: str
         choices: [HEAD, GET]
       http_code:
@@ -123,7 +123,7 @@ options:
     type: dict
     suboptions:
       ssl_mode:
-        description: Authentication mode.
+        description: TLS authentication mode; V(UNIDIRECTIONAL) verifies the server only, V(MUTUAL) also verifies clients.
         type: str
         choices: [UNIDIRECTIONAL, MUTUAL]
       cert_id:

@@ -326,11 +326,7 @@ def audit_registry_claims(root: Path | None = None) -> list[str]:
 
     ``tests/integration/coverage.yml`` is what the quality gate counts when it
     reports how many core modules have an integration target, so an entry that
-    is not backed by a task is a coverage number that is too good. Three were:
-    ``security_group_rule`` belonged to the ``network`` target rather than to
-    ``security_group``, and ``network_acl`` and ``clb_rule`` were called by no
-    target at all -- the last of which made the real gap one larger than the
-    number the repository had been quoting.
+    is not backed by a task is a coverage number that is too good.
     """
     root = root or ROOT
     coverage = root / "tests/integration/coverage.yml"

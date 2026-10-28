@@ -14,7 +14,7 @@ description: Reconciles the complete access policy document of a COS bucket.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) applies O(policy) to the bucket; C(absent) removes the bucket policy.
     type: str
     choices: [present, absent]
     default: present
@@ -83,7 +83,7 @@ RETURN = r"""policy:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     version: '2.0'
     statement:
       - effect: allow

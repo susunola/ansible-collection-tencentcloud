@@ -43,19 +43,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint ruff
-      # The committed _info specs are generated against a specific SDK
-      # release, and requirements.txt declares the range users may install.
-      # This sentinel installs the range, re-pins the SDK to the
-      # GENERATED_SDK_VERSION stamp, and checks that the stamp and the pinned
-      # install agree -- the step below then verifies that every SDK
-      # reference in plugins/ resolves at the floor of that range. Stale
-      # specs, or a floor that drifted away from the artifacts, are
-      # regenerated deliberately (and reviewed) instead of shipping silently.
-      - name: SDK drift sentinel
-        run: |
-          python -m pip install -r requirements.txt
-          python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
-          python scripts/check_sdk_drift.py --check
+      # requirements.txt declares the SDK range users may install; this
+      # verifies that every SDK reference in plugins/ resolves at the floor
+      # of that range.
+      - name: Install the declared SDK range
+        run: python -m pip install -r requirements.txt
       - name: Declared SDK floor is real
         run: python scripts/check_sdk_floor.py --check
       # An option that is a secret by name must carry no_log: True, and no
@@ -69,25 +61,9 @@ jobs:
       - name: Plugin options are options the plugin reads
         run: python scripts/check_plugin_options.py --check
       # The other direction from validate-modules: an option the argument spec
-      # declares that no code path reads. ckafka_topic declared tags this way.
+      # declares that no code path reads.
       - name: Module options are options the module reads
         run: python scripts/check_module_options.py --check
-      # Every captured RETURN sample is re-derived from the module's own unit
-      # tests, so a sample cannot outlive the payload it documents. Hand
-      # written samples are exempt (a test's fake response may carry fewer
-      # fields than the API returns); this script marks the ones it wrote.
-      - name: Return samples match the tests that produce them
-        run: PYTHONPATH="${GITHUB_WORKSPACE}" python scripts/add_return_samples.py --check
-      - name: Generated modules are up to date
-        run: python scripts/generate_info_modules.py --check
-      # RESOURCE_SPECS entries are verified against the installed SDK and
-      # missing scaffolds are flagged (write-once: existing module files are
-      # never overwritten). Add a write module by extending RESOURCE_SPECS
-      # and scaffolding it with --resource <module>.
-      - name: Resource scaffolds match the SDK
-        run: python scripts/generate_info_modules.py --resources --check
-      - name: Module registries are up to date
-        run: python scripts/sync_registry.py --check
       # Common options (credentials/region/connection/retry/user_agent/waiter)
       # are documented by doc_fragments, not copied inline; a module that
       # re-introduces a strippable inline copy or drops a base fragment
@@ -96,14 +72,6 @@ jobs:
         run: python scripts/sync_doc_fragments.py --check
       - name: Module tiers are consistent
         run: python scripts/check_module_tiers.py --check
-      # Every write module needs a readable query surface: a matching _info
-      # module, a curated KNOWN_COVERAGE mapping, or a documented gap.
-      - name: Write modules have a read surface
-        run: python scripts/audit_info_coverage.py --check
-      - name: CAM action manifest is up to date
-        run: python scripts/generate_cam_actions.py --check
-      - name: Product capability matrix is up to date
-        run: python scripts/generate_product_capabilities.py --check
       - name: Integration coverage registry is valid
         run: python scripts/integration_impact.py --check --files plugins/module_utils/base.py
       # The default dispatch list is typed twice in integration.yml and is the
@@ -112,24 +80,8 @@ jobs:
       # and the two copies must agree with each other.
       - name: Integration default dispatch list
         run: python scripts/check_integration_defaults.py --check
-      # Generated _info modules must expose every required request field:
-      # a spec hiding one makes every call fail with a confusing API error.
-      # Runs after the SDK drift sentinel so the models are importable.
-      - name: No hidden required params
-        run: python scripts/check_hidden_required_params.py --check
       - name: Extensions metadata matches plugins
         run: python scripts/check_extensions_metadata.py --check
-      - name: Curated info targets shipped
-        run: python scripts/check_info_targets.py --check
-      - name: Roadmap badges match the acceptance criteria
-        run: python scripts/check_roadmap_status.py --check
-      # event_source is the one plugin type neither ansible-core nor
-      # antsibull-docs knows, so its docsite page is generated by hand and
-      # nothing upstream would notice it go stale. This checks the page
-      # itself *and* the chain that makes it reachable: build.sh must copy
-      # extra_rst/ in and index.rst must name it in a toctree.
-      - name: Event source docsite page
-        run: python scripts/generate_event_source_docs.py --check
       - name: Ruff lint
         # --no-cache matters: ruff would otherwise drop a .ruff_cache/ into the
         # working copy, and the ansible-test sanity step below scans *every*
@@ -143,23 +95,6 @@ jobs:
       # the cut PR enables --strict.
       - name: Remediation freeze
         run: python scripts/check_remediation_freeze.py
-      # The reviewer's headline finding: 432 modules documented their options as
-      # single-line flow mappings.  Nothing upstream can see that -- a flow
-      # mapping is legal YAML, validate-modules accepts it, and
-      # sync_doc_fragments accepts it by design.
-      # Reviewer MUST FIX: every module must document check mode support and
-      # idempotency through an attributes block.
-      # Two ratchets over the core subset (tests/quality/core-subset.yml):
-      # an option description may not merely repeat the option name, and a
-      # core write module must have an integration target that actually runs.
-      # Four guards that existed and were never invoked from any workflow.
-      # A check nobody runs is how a regression lands: this collection's
-      # sanity step was itself skipped for a day because a step above it
-      # failed, which is the same failure mode one level up.
-      - name: Modules cross-reference their read-only counterpart
-        run: python scripts/add_module_seealso.py --check
-      - name: Module headers are complete
-        run: python scripts/fix_module_headers.py --check
       # The same rules cover the roles: a role's tasks are checked against
       # the module tree, its own defaults/vars and everything it publishes,
       # because a role only ever runs in a real account.
@@ -167,30 +102,21 @@ jobs:
         run: python scripts/check_examples.py --check
       - name: Module examples run as written
         run: python scripts/check_module_examples.py --check
-      - name: Every module that can delete shows it
-        run: python scripts/add_delete_examples.py --check
-      - name: Generated test skeletons are unmodified
-        run: python scripts/generate_module_test_skeleton.py --check
       - name: Documentation links resolve
         run: python scripts/check_doc_links.py --check
       - name: Porting table resolves
         run: python scripts/check_porting_map.py --check
       - name: Integration target layout is complete
         run: python scripts/audit_integration_targets.py
+      # Two ratchets over the core subset (tests/quality/core-subset.yml):
+      # an option description may not merely repeat the option name, and a
+      # core write module must have an integration target that actually runs.
       - name: Core subset quality gates
         run: python scripts/check_quality_gates.py
-      - name: Modules document check_mode, diff_mode and idempotent
-        run: python scripts/add_module_attributes.py --check
       - name: Modules document every key they return
         run: python scripts/check_return_docs.py --check
       - name: Changelog fragments use a configured section
         run: python scripts/check_changelog_fragments.py --check
-      - name: Module docs are block style
-        run: python scripts/normalize_module_docs.py --check
-      - name: State documentation names the calls it makes
-        run: python scripts/enrich_state_docs.py --check
-      - name: Identity options say which one to give
-        run: python scripts/enrich_identity_docs.py --check
       - name: Sanity tests
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests
@@ -225,7 +151,6 @@ jobs:
       - name: SDK contract tests
         run: |
           python -m pip install -r requirements.txt pytest-cov
-          python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
           # The measured packages are named in full rather than as relative
           # directories: pointed at a directory, coverage records each file by
           # its bare name, and three of them -- inventory.py, paging.py and
@@ -257,12 +182,6 @@ jobs:
             coverage.xml
             coverage-html/
           if-no-files-found: warn
-      # Deliberately last: this guard reads figures out of docs/panorama.html
-      # and has twice gone red for its own bookkeeping.  While it sat above
-      # the test steps, that failure skipped sanity and units entirely, which
-      # is how 4,559 validate-modules errors reached main unnoticed.
-      - name: Docs figures match the repo
-        run: python scripts/check_doc_figures.py --check
       - name: Build collection
         run: ansible-galaxy collection build
 

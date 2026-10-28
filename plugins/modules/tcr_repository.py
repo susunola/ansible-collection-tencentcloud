@@ -29,7 +29,7 @@ options:
     required: true
     type: str
   name:
-    description: Repository name.
+    description: Name of the image repository to manage within the namespace.
     required: true
     type: str
   brief_description:
@@ -70,8 +70,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.tcr_repository_info
-    description: Gather information about Tencent Cloud TCR repositories.
+  - module: susunola.tencentcloud.tcr_instance_info
+    description: Gather information about Tencent Cloud TCR instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -104,7 +104,7 @@ repository:
   type: dict
   returned: always
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     RegistryId: tcr-abc
     NamespaceName: production
     Name: api

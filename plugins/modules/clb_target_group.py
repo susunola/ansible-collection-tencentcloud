@@ -39,11 +39,11 @@ options:
     type: str
   port:
     description:
-      - Default backend port.
+      - Default port backends in this group receive traffic on.
     type: int
   type:
     description:
-      - Target group generation.
+      - Target group version; V(v2) is the current form and the default.
     type: str
     choices: [v1, v2]
     default: v2
@@ -55,12 +55,12 @@ options:
     default: TCP
   schedule_algorithm:
     description:
-      - Scheduling algorithm.
+      - How traffic is distributed; V(WRR) weighted round-robin, V(LEAST_CONN) fewest connections, V(IP_HASH) by source address.
     type: str
     choices: [WRR, LEAST_CONN, IP_HASH]
   weight:
     description:
-      - Default backend weight.
+      - Default weight for backends that do not set their own.
     type: int
   instances:
     description: Exact backend member set.
@@ -69,12 +69,12 @@ options:
     suboptions:
       ip:
         description:
-          - Backend private IP.
+          - Private IP of the backend to bind.
         type: str
         required: true
       port:
         description:
-          - Backend port.
+          - Port this backend receives traffic on.
         type: int
         required: true
       weight:
@@ -141,7 +141,7 @@ target_group:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     TargetGroupId: lbtg-new-1
     TargetGroupName: api-backends
     VpcId: vpc-abc

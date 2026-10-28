@@ -1,8 +1,8 @@
 # Scenario playbooks
 
 The `playbooks/` directory ships runnable end-to-end scenarios. The numbered
-golden path (network foundation -> web stack -> teardown, in one file) lives
-next to this page in [`examples/`](examples/README.md). All of them
+golden path (network foundation -> teardown) lives next to this page in
+[`examples/`](examples/README.md). All of them
 target `localhost` (the modules call the Tencent Cloud APIs from the
 controller) and take credentials from the shared `TENCENTCLOUD_*`
 environment variables; there is no default region (set it with `-e region=<region>`
@@ -30,29 +30,6 @@ ansible-playbook playbooks/<scenario>.yml
 - **Modules**: `cvm_instance_info`.
 - **Prerequisites**: read-only CAM permission `DescribeInstances`.
 - **Cost**: none.
-
-## tke_kubeconfig.yml — TKE cluster access bootstrap
-
-- **Architecture**: fetches the intranet (default) or extranet
-  (`-e is_extranet=true`) kubeconfig of an existing TKE cluster and writes
-  it to a local file with 0600 permissions.
-- **Modules**: `tke_cluster_kubeconfig`.
-- **Prerequisites**: an existing TKE cluster (`-e tke_cluster_id=cls-...`);
-  for the extranet kubeconfig, public access must be enabled on the cluster
-  first (see the `tke_cluster_endpoint` module).
-- **Cost**: none (read-only API call).
-
-## cos_static_site.yml — static website hosting on COS
-
-- **Architecture**: a public-read COS bucket with static website hosting
-  enabled, a set of local files uploaded as objects, and short-lived
-  pre-signed URLs (PUT for uploads, GET for downloads).
-- **Modules**: `cos_bucket`, `cos_bucket_website`, `cos_object`.
-- **Prerequisites**: COS write permissions; the source directory
-  (`-e site_dir=...`, default `playbooks/site`) must contain the files
-  listed in `site_files`.
-- **Cost**: COS storage and request pricing apply to the bucket and
-  objects; deleting the bucket afterwards stops storage charges.
 
 ## three_tier_web.yml — VPC + CVM pool + CLB three-tier web tier
 

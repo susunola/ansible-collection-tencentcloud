@@ -1,5 +1,14 @@
 # Inclusion remediation record
 
+> **Historical record (2026-10-28 note).** The P1 surface reduction has since
+> landed: the ~950 modules, 65 roles, event_source plugins and generator
+> scripts discussed below were removed from the collection. The retained
+> surface is [`core-allowlist.yml`](core-allowlist.yml) and the binding plan
+> is [`REMEDIATION.md`](REMEDIATION.md). Every figure, module name and
+> verification command below refers to the **pre-reduction tree**; commands
+> that name removed scripts or modules no longer run. The body is kept
+> unedited as the record of the 2026-09 remediation round.
+
 What changed after the review of
 [ansible-inclusion#89](https://github.com/ansible-collections/ansible-inclusion/discussions/89),
 with the command to check every claim. Review date 2026-09-22; this record

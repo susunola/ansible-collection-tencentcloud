@@ -204,7 +204,7 @@ def test_read_sdk_call_reports_exhaustion_as_rate_limited(sdk_exception):
 def test_read_sdk_call_defaults_to_a_real_sleep(sdk_exception, monkeypatch):
     """``sleep_fn`` is resolved at call time, so the default is the real one."""
     seen = []
-    monkeypatch.setattr(tc.time, "sleep", lambda seconds: seen.append(seconds))
+    monkeypatch.setattr(tc.time, "sleep", seen.append)
     throttled = _FakeSDKException("RequestLimitExceeded", "slow down", "req-throttle")
     calls = []
 

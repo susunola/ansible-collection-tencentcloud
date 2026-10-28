@@ -1,5 +1,12 @@
 # 维护一个 991 模块的腾讯云 Ansible 集合：一个月里可复用的经验
 
+> **Historical record (2026-10-28 note).** The P1 surface reduction has since
+> landed: the module fleet, roles and generator tooling this retrospective
+> describes were removed from the collection (see `docs/REMEDIATION.md` and
+> `docs/core-allowlist.yml`). Every module name, script path and figure below
+> refers to the **pre-reduction tree**. The text is kept unedited as a
+> historical retrospective.
+
 > 结论先行：集合大到跑不了、又不能被 CI 跑的时候，能救命的不是更多测试，而是一层"不执行也能查"的静态门禁。本文把这套做法和踩过的坑写成可复用经验，给后续接手或做同类集合的人。
 
 ## 背景

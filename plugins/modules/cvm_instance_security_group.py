@@ -99,7 +99,7 @@ security_group_ids:
   type: list
   elements: str
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - sg-bbbbbbbb
 changed:
   description: Whether the security-group set was modified.

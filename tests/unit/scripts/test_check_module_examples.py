@@ -103,7 +103,7 @@ def test_main_check_exits_zero_on_the_real_tree(checker):
 def test_census_reports_the_module_count(checker, capsys):
     assert checker.main([]) == 0
     out = capsys.readouterr().out
-    assert "1027 module(s) checked" in out
+    assert "77 module(s) checked" in out
 
 
 # --------------------------------------------------------------------------
@@ -111,28 +111,28 @@ def test_census_reports_the_module_count(checker, capsys):
 # --------------------------------------------------------------------------
 
 def test_misspelled_module_name_is_reported(tree, checker):
-    """tse_governance_alias_info shipped an example calling a name that does
+    """demo_alias_info shipped an example calling a name that does
     not exist, so the copy-paste failed before reaching Tencent Cloud."""
-    write_module(tree, "tse_governance_alias_info", """\
+    write_module(tree, "demo_alias_info", """\
 - name: List all governance aliases
-  susunola.tencentcloud.tse_governance_aliase_info:
+  susunola.tencentcloud.demo_aliase_info:
     region: ap-guangzhou
 """)
-    problems = checker.check_module(tree / "plugins" / "modules" / "tse_governance_alias_info.py")
-    assert any("tse_governance_aliase_info" in item for item in problems)
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_alias_info.py")
+    assert any("demo_aliase_info" in item for item in problems)
     assert any("itself" in item for item in problems)
 
 
 def test_missing_required_option_is_reported(tree, checker):
-    """lcic_answer_info documented an example without the question id its
+    """demo_answer_info documented an example without the question id its
     argument spec requires."""
-    write_module(tree, "lcic_answer_info", """\
+    write_module(tree, "demo_answer_info", """\
 - name: List all answers
-  susunola.tencentcloud.lcic_answer_info:
+  susunola.tencentcloud.demo_answer_info:
     region: ap-guangzhou
 """, options=["region", ("question_id", True), "page_size"])
-    problems = checker.check_module(tree / "plugins" / "modules" / "lcic_answer_info.py")
-    assert problems == ["task 'List all answers' calls lcic_answer_info without "
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_answer_info.py")
+    assert problems == ["task 'List all answers' calls demo_answer_info without "
                         "question_id, which it marks required"]
 
 
@@ -149,35 +149,35 @@ def test_required_option_from_a_fragment_is_honoured(tree, checker):
 
 def test_a_scalar_contradicting_the_declared_type_is_reported(tree, checker):
     """product_version: 2.1 unquoted is a float, not the documented string."""
-    write_module(tree, "cdwdoris_instance", """\
+    write_module(tree, "demo_warehouse_instance", """\
 - name: Create an instance
-  susunola.tencentcloud.cdwdoris_instance:
+  susunola.tencentcloud.demo_warehouse_instance:
     product_version: 2.1
 """, options=["product_version"])
-    problems = checker.check_module(tree / "plugins" / "modules" / "cdwdoris_instance.py")
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_warehouse_instance.py")
     assert any("product_version" in item and "float" in item for item in problems)
 
 
 def test_yaml_digit_grouping_is_not_the_documented_string(tree, checker):
     """1400000000_218695_1590065777 unquoted is one huge int; the API expects
     the underscores, so the example must quote the value."""
-    write_module(tree, "trtc_call_info", """\
+    write_module(tree, "demo_call_info", """\
 - name: List call details
-  susunola.tencentcloud.trtc_call_info:
+  susunola.tencentcloud.demo_call_info:
     comm_id: 1400000000_218695_1590065777
 """, options=["comm_id"])
-    problems = checker.check_module(tree / "plugins" / "modules" / "trtc_call_info.py")
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_call_info.py")
     assert any("comm_id" in item and "int" in item for item in problems)
 
 
 def test_quoted_scalars_for_numeric_options_are_accepted(tree, checker):
     """The argument spec casts "2" to int; quoting is the fix, not a finding."""
-    write_module(tree, "scf_version", """\
+    write_module(tree, "demo_function_version", """\
 - name: Publish a version
-  susunola.tencentcloud.scf_version:
+  susunola.tencentcloud.demo_function_version:
     version: "2"
 """, options=["version"], types={"version": "int"})
-    problems = checker.check_module(tree / "plugins" / "modules" / "scf_version.py")
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_function_version.py")
     assert not any("version" in item for item in problems)
 
 
@@ -203,16 +203,16 @@ def test_templated_values_are_not_type_checked(tree, checker):
 
 
 def test_module_documentation_wins_over_a_fragment_type(tree, checker):
-    """dlc_spark_job declares role_arn: int over the credentials fragment's
+    """demo_spark_job declares role_arn: int over the credentials fragment's
     role_arn: str; the runtime lets the module's own spec win, so the example
     is judged against the module's type."""
     write_fragment(tree, "credentials", options=[("role_arn", False)])
-    write_module(tree, "dlc_spark_job", """\
+    write_module(tree, "demo_spark_job", """\
 - name: Submit a job
-  susunola.tencentcloud.dlc_spark_job:
+  susunola.tencentcloud.demo_spark_job:
     role_arn: 100000000001
 """, options=["role_arn"], fragments=["credentials"], types={"role_arn": "int"})
-    problems = checker.check_module(tree / "plugins" / "modules" / "dlc_spark_job.py")
+    problems = checker.check_module(tree / "plugins" / "modules" / "demo_spark_job.py")
     assert not any("role_arn" in item for item in problems)
 
 
@@ -235,12 +235,12 @@ def test_undeclared_option_is_reported(tree, checker):
 def test_module_call_with_no_arguments_is_recognised(tree, checker):
     """A module with no options is documented as a bare ``module:`` key,
     whose value is None and which no other parser treats as a call."""
-    write_module(tree, "ssm_supported_product_info", """\
-- susunola.tencentcloud.ssm_supported_product_info:
+    write_module(tree, "demo_product_info", """\
+- susunola.tencentcloud.demo_product_info:
   register: ssm_products
 """)
     problems = checker.check_module(
-        tree / "plugins" / "modules" / "ssm_supported_product_info.py")
+        tree / "plugins" / "modules" / "demo_product_info.py")
     assert problems == []
 
 

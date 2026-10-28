@@ -99,8 +99,8 @@ class FakeRequest(object):
     def _deserialize(self, data):
         """Mirror the SDK model ``_deserialize`` hook used by nested modules.
 
-        Modules that build request models via ``_model()`` (thpc, ...) call
-        ``result._deserialize(_api_value(...))``; the real SDK models convert
+        Modules that build nested request models (lighthouse_firewall_rules,
+        ...) call ``item._deserialize({...})``; the real SDK models convert
         nested dicts into child model objects, but a plain attribute store is
         enough for unit tests to read back the top-level fields.
         """
@@ -109,12 +109,12 @@ class FakeRequest(object):
         return self
 
     def from_json_string(self, value):
-        """Mirror the SDK model ``from_json_string`` hook used by emr, ...
+        """Mirror the SDK model ``from_json_string`` hook.
 
-        Modules whose requests keep raw SDK-shaped payloads (emr_cluster,
-        ...) build models via ``cls().from_json_string(json.dumps(value))``;
-        the real SDK populates the model from the serialized JSON, and a
-        plain attribute store just decodes and copies the fields in.
+        Modules whose requests keep raw SDK-shaped payloads build models via
+        ``cls().from_json_string(json.dumps(value))``; the real SDK populates
+        the model from the serialized JSON, and a plain attribute store just
+        decodes and copies the fields in.
         """
         if value:
             self.__dict__.update(json.loads(value))

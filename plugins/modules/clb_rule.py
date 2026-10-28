@@ -25,9 +25,9 @@ description:
 options:
   state:
     description:
-      - C(present) creates the rule when it does not exist and updates its
-        attributes when it does.
-      - C(absent) deletes the rule.
+      - C(present) creates the rule with V(CreateRule) when it does not
+        exist and updates its attributes with V(ModifyRule) when it does.
+      - C(absent) deletes the rule with V(DeleteRule).
     type: str
     choices: [present, absent]
     default: present
@@ -51,17 +51,24 @@ options:
     description:
       - Domain of the rule, written to V(RuleInput.Domain).
       - Required when creating a rule and used to match existing rules.
+      - Part of the rule identity and never updated in place; changing
+        O(domain) without O(location_id) creates a new rule and leaves the
+        old one untouched.
     type: str
   url:
     description:
       - URL path of the rule, e.g. C(/api), written to V(RuleInput.Url) and
         V(ModifyRuleRequest.Url).
+      - Part of the rule identity when the rule is matched by O(domain) and
+        O(url); when the rule is addressed by O(location_id), a changed
+        O(url) is updated in place with V(ModifyRule).
     type: str
     required: true
   scheduler:
     description:
       - Balancing method, written to V(RuleInput.Scheduler) and
         V(ModifyRuleRequest.Scheduler).
+      - Defaults to C(WRR) when creating a rule.
     type: str
     choices: [WRR, LEAST_CONN, IP_HASH]
   session_expire_time:
@@ -87,6 +94,8 @@ options:
     description:
       - Health check configuration as a dict with the same suboptions as
         M(susunola.tencentcloud.clb_listener).
+      - Only the listed keys are compared for idempotency; keys not given
+        are left at the API default on creation and untouched on update.
     type: dict
     suboptions:
       health_switch:
@@ -96,7 +105,7 @@ options:
         description: Probe interval in seconds, 2-60.
         type: int
       health_num:
-        description: Healthy threshold, 2-10.
+        description: Consecutive successful probes before a backend is marked healthy (2-10).
         type: int
       un_health_num:
         description: Unhealthy threshold, 2-10.
@@ -105,14 +114,14 @@ options:
         description: Probe response timeout in seconds, 2-60.
         type: int
       check_type:
-        description: Protocol of the probe.
+        description: Protocol used for health probes on this rule's backends.
         type: str
         choices: [TCP, HTTP, HTTPS, GRPC, PING, CUSTOM]
       check_port:
-        description: Port of the probe.
+        description: Port the probes connect to; defaults to the backend's forwarding port.
         type: int
       http_check_path:
-        description: Path of the HTTP probe.
+        description: URL path requested by HTTP health probes, e.g. C(/healthz).
         type: str
       http_check_domain:
         description: Domain of the HTTP probe.

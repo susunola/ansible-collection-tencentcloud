@@ -33,8 +33,6 @@ class Request(Object):
 
 class Models(object):
     Filter = Filter
-    QueryFilter = Filter
-    AdvancedFilter = Filter
     DescribeVpcsRequest = Request
     DescribeSubnetsRequest = Request
     DescribeSecurityGroupsRequest = Request
@@ -42,29 +40,8 @@ class Models(object):
     DescribeAutoScalingGroupsRequest = Request
     DescribeDisksRequest = Request
     DescribeLoadBalancersRequest = Request
-    DescribeGatewayLoadBalancersRequest = Request
-    DescribeTargetGroupsRequest = Request
     DescribeClustersRequest = Request
     DescribeDBInstancesRequest = Request
-    DescribeServicesStatusRequest = Request
-    DescribeEnvironmentsRequest = Request
-    DescribeApplicationsRequest = Request
-    DescribeOrganizationMembersRequest = Request
-    DescribeMigrationJobsRequest = Request
-    DescribeProxiesRequest = Request
-    DescribeCfsFileSystemsRequest = Request
-    DescribeFileSystemsRequest = Request
-    DescribeAccessGroupsRequest = Request
-    DescribeMountPointsRequest = Request
-    DescribeDirectConnectsRequest = Request
-    DescribeDirectConnectTunnelsRequest = Request
-    DescribeInstancesDetailRequest = Request
-    DescribeInstanceListRequest = Request
-    DescribeRocketMQClustersRequest = Request
-    DescribeRabbitMQVipInstancesRequest = Request
-    DescribePrometheusInstancesRequest = Request
-    DescribeZonesRequest = Request
-    ListEventBusesRequest = Request
 
 
 class Client(object):
@@ -122,208 +99,6 @@ def test_lighthouse_instance_request_uses_exact_name_filter():
     assert request.Filters[0].Values == ["edge-node"]
 
 
-def test_postgresql_request_uses_instance_name_filter():
-    request = build_request("postgresql_instance", Models, "orders")
-    assert request.Filters[0].Name == "db-instance-name"
-    assert request.Filters[0].Values == ["orders"]
-
-
-def test_mariadb_request_uses_search_name():
-    request = build_request("mariadb_instance", Models, "orders")
-    assert request.SearchName == "orders"
-
-
-def test_sqlserver_request_uses_instance_name_set():
-    request = build_request("sqlserver_instance", Models, "orders", offset=100)
-    assert request.InstanceNameSet == ["orders"]
-    assert request.Offset == 100
-
-
-def test_elasticsearch_request_uses_instance_names():
-    request = build_request("elasticsearch_instance", Models, "search-platform", offset=100)
-    assert request.InstanceNames == ["search-platform"]
-    assert request.Limit == 100
-    assert request.Offset == 100
-
-
-def test_cynosdb_request_uses_cluster_name_query_filter():
-    request = build_request("cynosdb_cluster", Models, "orders")
-    assert request.Filters[0].Names == ["ClusterName"]
-    assert request.Filters[0].Values == ["orders"]
-
-
-def test_cfs_request_scans_names_with_numeric_pagination():
-    request = build_request("cfs_file_system", Models, "shared-data", offset=100)
-    assert request.Limit == 100
-    assert request.Offset == 100
-
-
-def test_chdfs_requests_use_product_markers_and_parent_scope():
-    file_system = build_request("chdfs_file_system", Models, "analytics", page_token="f-next")
-    access_group = build_request("chdfs_access_group", Models, "analytics", page_token="ag-next")
-    mount_point = build_request(
-        "chdfs_mount_point", Models, "analytics-mount", file_system_id="f-1")
-    assert file_system.FileSystemIdMarker == "f-next"
-    assert access_group.AccessGroupIdMarker == "ag-next"
-    assert mount_point.FileSystemId == "f-1"
-
-
-def test_resolve_chdfs_file_system_follows_product_marker():
-    class MarkerClient(object):
-        def __init__(self):
-            self.markers = []
-
-        def DescribeFileSystems(self, request):
-            self.markers.append(request.FileSystemIdMarker)
-            if request.FileSystemIdMarker is None:
-                return Object(FileSystems=[], IsOver=False, NextFileSystemIdMarker="f-next")
-            return Object(
-                FileSystems=[Object(FileSystemId="f-1", FileSystemName="analytics")],
-                IsOver=True,
-                NextFileSystemIdMarker=None,
-            )
-
-    client = MarkerClient()
-    assert resolve_resource(client, Models, "chdfs_file_system", "analytics") == "f-1"
-    assert client.markers == [None, "f-next"]
-
-
-def test_ckafka_request_uses_instance_name_filter():
-    request = build_request("ckafka_instance", Models, "event-platform")
-    assert request.Filters[0].Name == "instance-name"
-    assert request.Filters[0].Values == ["event-platform"]
-
-
-def test_mqtt_request_scans_names_with_numeric_pagination():
-    request = build_request("mqtt_instance", Models, "device-broker", offset=200)
-    assert request.Limit == 100
-    assert request.Offset == 200
-
-
-def test_event_bus_request_scans_names_with_numeric_pagination():
-    request = build_request("event_bus", Models, "application-events", offset=100)
-    assert request.Limit == 100
-    assert request.Offset == 100
-
-
-def test_rocketmq_cluster_request_uses_name_keyword():
-    request = build_request("rocketmq_cluster", Models, "orders", offset=100)
-    assert request.NameKeyword == "orders"
-    assert request.Offset == 100
-
-
-def test_resolve_rocketmq_cluster_supports_nested_identity():
-    response = Object(ClusterList=[Object(Info=Object(
-        ClusterId="rocketmq-1", ClusterName="orders"))])
-    assert resolve_resource(
-        Client(response), Models, "rocketmq_cluster", "orders") == "rocketmq-1"
-
-
-def test_rabbitmq_instance_request_uses_instance_name_filter():
-    request = build_request("rabbitmq_instance", Models, "orders", offset=100)
-    assert request.Filters[0].Name == "instanceName"
-    assert request.Filters[0].Values == ["orders"]
-    assert request.Offset == 100
-
-
-def test_prometheus_instance_request_uses_instance_name():
-    request = build_request("prometheus_instance", Models, "platform-metrics")
-    assert request.InstanceName == "platform-metrics"
-    assert request.Limit == 100
-
-
-def test_edgeone_zone_request_uses_advanced_name_filter():
-    request = build_request("edgeone_zone", Models, "example.com", offset=100)
-    assert request.Filters[0].Name == "zone-name"
-    assert request.Filters[0].Values == ["example.com"]
-    assert request.Offset == 100
-
-
-def test_alb_request_uses_token_pagination():
-    request = build_request("alb_load_balancer", Models, "application", page_token="next-1")
-    assert request.MaxResults == 100
-    assert request.NextToken == "next-1"
-
-
-def test_gwlb_requests_scan_with_numeric_pagination():
-    load_balancer = build_request("gwlb_load_balancer", Models, "inspection", offset=100)
-    target_group = build_request("gwlb_target_group", Models, "appliances", offset=200)
-    assert (load_balancer.Offset, load_balancer.Limit) == (100, 100)
-    assert (target_group.Offset, target_group.Limit) == (200, 100)
-
-
-def test_organization_member_request_scans_with_numeric_pagination():
-    request = build_request("organization_member", Models, "production", offset=100)
-    assert request.Offset == 100
-    assert request.Limit == 100
-
-
-def test_dts_migration_job_request_uses_job_name():
-    request = build_request("dts_migration_job", Models, "orders-migration", offset=100)
-    assert request.JobName == "orders-migration"
-    assert (request.Offset, request.Limit) == (100, 100)
-
-
-def test_resolve_dts_migration_job_requires_exact_name():
-    response = Object(JobList=[
-        Object(JobId="dts-old", JobName="orders-migration-old"),
-        Object(JobId="dts-1", JobName="orders-migration"),
-    ])
-    assert resolve_resource(Client(response), Models, "dts_migration_job", "orders-migration") == "dts-1"
-
-
-def test_gaap_proxy_request_scans_with_numeric_pagination():
-    request = build_request("gaap_proxy", Models, "global-entry", offset=100)
-    assert (request.Offset, request.Limit) == (100, 100)
-
-
-def test_resolve_gaap_proxy_uses_exact_name():
-    response = Object(ProxySet=[Object(ProxyId="proxy-old", ProxyName="global-entry-old"),
-                                      Object(ProxyId="proxy-1", ProxyName="global-entry")])
-    assert resolve_resource(Client(response), Models, "gaap_proxy", "global-entry") == "proxy-1"
-
-
-def test_direct_connect_requests_scan_with_numeric_pagination():
-    circuit = build_request("direct_connect", Models, "primary", offset=100)
-    tunnel = build_request("direct_connect_tunnel", Models, "production", offset=200)
-    assert (circuit.Offset, circuit.Limit) == (100, 100)
-    assert (tunnel.Offset, tunnel.Limit) == (200, 100)
-
-
-def test_goosefs_request_scans_with_numeric_pagination():
-    request = build_request("goosefs_file_system", Models, "analytics-cache", offset=100)
-    assert (request.Offset, request.Limit) == (100, 100)
-
-
-def test_resolve_alb_follows_next_token():
-    class TokenClient(object):
-        def __init__(self):
-            self.tokens = []
-
-        def DescribeLoadBalancers(self, request):
-            self.tokens.append(request.NextToken)
-            if request.NextToken is None:
-                return Object(LoadBalancers=[], NextToken="page-2")
-            return Object(
-                LoadBalancers=[Object(LoadBalancerId="alb-1", LoadBalancerName="application")],
-                NextToken=None,
-            )
-
-    client = TokenClient()
-    assert resolve_resource(client, Models, "alb_load_balancer", "application") == "alb-1"
-    assert client.tokens == [None, "page-2"]
-
-
-def test_tem_and_api_gateway_requests_use_product_specific_filters():
-    environment = build_request("tem_environment", Models, "production")
-    assert environment.SourceChannel == 0
-    application = build_request("tem_application", Models, "orders")
-    assert application.Keyword == "orders"
-    service = build_request("api_gateway_service", Models, "orders-api")
-    assert service.Filters[0].Name == "ServiceName"
-    assert service.Filters[0].Values == ["orders-api"]
-
-
 def test_resolve_resource_returns_exact_match_only():
     response = Object(VpcSet=[
         Object(VpcId="vpc-fuzzy", VpcName="production-old"),
@@ -343,12 +118,18 @@ def test_resolve_resource_rejects_absent_and_ambiguous_names():
         resolve_resource(Client(response), Models, "vpc", "duplicate")
 
 
-def test_resolve_resource_supports_nested_result_collections():
-    response = Object(Result=Object(ServiceSet=[
-        Object(ServiceId="service-1", ServiceName="orders-api"),
+def test_resolve_resource_supports_nested_result_collections(monkeypatch):
+    # No shipped spec pages a nested collection today, so re-point the vpc
+    # spec at one to keep the dotted-path resolution under test.
+    monkeypatch.setitem(
+        lookup_mod.RESOURCE_SPECS,
+        "vpc",
+        ("vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeVpcs", "Result.VpcSet", "VpcId", "VpcName"),
+    )
+    response = Object(Result=Object(VpcSet=[
+        Object(VpcId="vpc-1", VpcName="production"),
     ]))
-    assert resolve_resource(
-        Client(response), Models, "api_gateway_service", "orders-api") == "service-1"
+    assert resolve_resource(Client(response), Models, "vpc", "production") == "vpc-1"
 
 
 def test_resolve_resource_paginates_and_detects_cross_page_match():

@@ -82,8 +82,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.lighthouse_key_pair_info
-    description: Gather information about Tencent Cloud Lighthouse key pairs.
+  - module: susunola.tencentcloud.lighthouse_instance_info
+    description: Gather information about Tencent Cloud Lighthouse instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -106,7 +106,7 @@ RETURN = r"""key_pair:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     KeyId: lhkey-8b0a1c2d
     KeyName: production-automation
     PublicKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMockPublicKeyMaterial

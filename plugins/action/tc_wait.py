@@ -132,11 +132,11 @@ EXAMPLES = r'''
 
 - name: Wait on a module outside the shipped observation table
   susunola.tencentcloud.tc_wait:
-    module: cls_topic_info
+    module: tcr_instance_info
     args:
       region: ap-guangzhou
-    state: "1"
-    list_field: topics
+    state: Running
+    list_field: registries
     state_field: Status
 '''
 
@@ -197,7 +197,6 @@ OBSERVATION_SPECS = {
     "cvm_instance_info": ("instances", "InstanceState"),
     "lighthouse_instance_info": ("instances", "InstanceState"),
     "redis_instance_info": ("instances", "Status"),
-    "scf_function_info": ("functions", "Status"),
     "tke_cluster_info": ("clusters", "ClusterStatus"),
 }
 

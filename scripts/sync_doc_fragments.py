@@ -68,11 +68,10 @@ RUNTIME_FRAGMENTS = frozenset(OPTION_FRAGMENTS.values())
 
 # ``timeout`` lives in its own fragment so that a module which needs the
 # option name for something else can shadow it without the shared
-# documentation leaking a default the module does not apply.
-# dlc_notebook_session, tat_command, tat_invocation and tse_gateway_service
-# define their own ``timeout`` (a product API field, minutes of session or
-# command lifetime) and therefore must not reference the fragment; every other
-# module must.
+# documentation leaking a default the module does not apply. A module whose
+# product API has its own ``timeout`` field (minutes of session or command
+# lifetime, say) defines its own and therefore must not reference the
+# fragment; every other module must.
 _TIMEOUT_OVERRIDE_RE = re.compile(r'"timeout"\s*:\s*\{')
 TIMEOUT_FRAGMENT = "timeout"
 
@@ -80,6 +79,7 @@ TIMEOUT_FRAGMENT = "timeout"
 def needs_timeout_fragment(text):
     """True when the module accepts the SDK request-timeout option."""
     return not _TIMEOUT_OVERRIDE_RE.search(text)
+
 
 # The runtime options are injected by ``base_argument_spec()`` -- reached
 # either directly or through ``TencentCloudModule``.  The legacy
@@ -98,13 +98,14 @@ def accepts_runtime_options(text):
         return False
     return bool(_BASE_SPEC_RE.search(text))
 
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULE_GLOB = os.path.join(REPO_ROOT, "plugins", "modules", "*.py")
 # The legacy single fragment was referenced by modules and by non-module
 # plugins (e.g. the TAT connection plugin).  Scan every plugin directory
 # so migration and --check cover the whole tree, not just modules.
 PLUGIN_GLOBS = [
-    os.path.join(REPO_ROOT, "plugins", directory, "*.py") for directory in ("modules", "connection", "callback", "event_source", "inventory", "lookup")
+    os.path.join(REPO_ROOT, "plugins", directory, "*.py") for directory in ("modules", "connection", "callback", "inventory", "lookup")
 ]
 
 # Generic description families that are safe to fold into a fragment.  Each

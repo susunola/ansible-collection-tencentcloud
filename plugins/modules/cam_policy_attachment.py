@@ -60,8 +60,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.cam_policy_attachment_info
-    description: Gather information about Tencent Cloud CAM policy attachments.
+  - module: susunola.tencentcloud.cam_policy_info
+    description: Gather information about Tencent Cloud CAM policies.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -83,7 +83,7 @@ attachment:
   type: dict
   returned: always
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     policy_id: 123456
     target_type: role
     target_name: deployment-role

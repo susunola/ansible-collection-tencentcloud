@@ -15,8 +15,7 @@ description:
   - Create, update and delete Tencent Cloud SSM secrets through the
     C(ssm.v20190923) API.
   - This compatibility module manages a secret and its current value. New
-    playbooks should prefer C(ssm_secret) with C(ssm_secret_version) for
-    explicit, immutable version management.
+    playbooks should prefer C(ssm_secret).
   - The supplied value is compared with the current value without returning
     it; an unchanged value reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.

@@ -81,7 +81,7 @@ addresses:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - AddressId: eip-a
 total_count:
   description: Number of addresses reported by the API.

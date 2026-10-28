@@ -31,8 +31,8 @@ GOOD_ROW = "| `tencentcloud_vpc` | `vpc` | directly named |\n"
 def test_real_doc_passes():
     problems, seen = check_porting_map.check(REAL_DOC)
     assert problems == [], problems
-    # The two resource-map tables in the shipped doc name 30 modules.
-    assert len(seen) == 30
+    # The resource-map tables in the shipped doc name only kept modules.
+    assert len(seen) == 16
 
 
 def test_missing_module_is_reported(tmp_path):

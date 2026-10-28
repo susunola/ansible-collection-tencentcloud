@@ -7,8 +7,8 @@ Why
 ``validate-modules`` checks that the documentation matches the argument spec,
 and the example checker checks that the examples pass options the spec
 declares. Nothing checked the other direction: a declared option that no code
-path reads. ``ckafka_topic`` declared ``tags`` and never sent it, so a user
-who set tags got a topic without them and no warning -- the same failure the
+path reads. A module that declares an option and never sends it leaves the
+user with a silently ignored setting and no warning -- the same failure the
 plugin option check found in ``tencentcloud_sg.include_sgless``.
 
 What it checks
@@ -21,12 +21,10 @@ module helpers the module imports (``cos.resolve_appid(module)`` reads
 Two things are deliberately out of scope:
 
 * **nested options.** A sub-option may be consumed by a generic mapper that
-  renames keys -- ``mqtt_instance._items`` turns ``vpc_id`` into ``VpcId``
-  with ``str.capitalize`` -- so requiring a literal read would cry wolf.
-* **an option with one choice.** ``tse_governance_host_retirement`` offers
-  ``state: absent`` (choices and default both ``absent``) so the module
-  matches the collection's convention; a constant cannot be branched on, so
-  there is nothing to read.
+  renames keys (snake_case in, CamelCase out) -- so requiring a literal read
+  would cry wolf.
+* **an option with one choice.** A constant cannot be branched on, so there
+  is nothing to read.
 
 Usage
 -----

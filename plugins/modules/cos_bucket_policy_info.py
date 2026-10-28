@@ -57,7 +57,7 @@ policies:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - version: '2.0'
       statement:
         - action: cos:GetObject
@@ -68,7 +68,7 @@ policy:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     version: '2.0'
     statement:
       - action: cos:GetObject

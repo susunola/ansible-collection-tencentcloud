@@ -50,6 +50,10 @@ _SUBJECT_ALLOWLIST = {
 }
 _SUBJECT_TOKEN = re.compile(r"\b([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\b")
 
+#: Sections whose entries name things that *left* the collection: the subject
+#: of a removal announcement cannot resolve to the current tree by definition.
+_SUBJECT_EXEMPT_SECTIONS = {"removed_features"}
+
 
 def catalogue():
     """Every name a fragment subject may legitimately lead with."""
@@ -129,6 +133,8 @@ def findings():
                 found.append((name, "uses section %r, which is not one of: %s"
                               % (section, ", ".join(sorted(known)))))
         for section, entries in parsed.items():
+            if section in _SUBJECT_EXEMPT_SECTIONS:
+                continue
             if not isinstance(entries, list):
                 continue
             for entry in entries:

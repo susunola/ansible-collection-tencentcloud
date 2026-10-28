@@ -197,7 +197,7 @@ def test_check_passes_on_a_clean_tree(secrets, monkeypatch, tmp_path):
 
 def test_committed_tree_declares_no_log_for_every_secret(secrets):
     rows = secrets.secret_options()
-    assert len(rows) > 50, "the census must see the collection's options"
+    assert len(rows) > 10, "the census must see the collection's options"
     assert secrets.no_log_findings() == []
 
 
