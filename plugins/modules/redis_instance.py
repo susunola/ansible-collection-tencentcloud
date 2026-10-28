@@ -17,20 +17,24 @@ description:
   - This module is idempotent. Running it twice leaves the instance
     unchanged and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
-  - An instance is identified by O(instance_id) or by O(name). Instance
-    configuration (size, shards, replicas) is only applied at creation;
-    use the console or a separate scaling module to change it afterwards.
+  - An instance is identified by O(instance_id) or by O(name). Name matches
+    are exact; multiple instances with the same name fail the task instead
+    of managing an arbitrary one. Instance configuration (size, shards,
+    replicas) is only applied at creation; use the console or a separate
+    scaling module to change it afterwards.
 options:
   state:
     description:
-      - C(present) creates the instance when it does not exist and renames
-        it when O(name) differs. After creation the module waits for the
-        instance to reach Status 2 (running) before returning, bounded by
+      - C(present) creates the instance with V(CreateInstances) when it
+        does not exist and renames it with V(ModifyInstance) when O(name)
+        differs. After creation the module waits for the instance to
+        reach Status 2 (running) before returning, bounded by
         O(waiter_timeout).
-      - C(absent) destroys the instance (postpaid instances immediately,
-        prepaid instances via the prepaid destroy flow). The module waits
-        for the instance to reach Status -3 (pending recycle) or disappear
-        from the describe API before returning, bounded by O(waiter_timeout).
+      - C(absent) destroys the instance with V(DestroyPostpaidInstance)
+        or, for prepaid instances, V(DestroyPrepaidInstance). The module
+        waits for the instance to reach Status -3 (pending recycle) or
+        disappear from the describe API before returning, bounded by
+        O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present
@@ -44,26 +48,27 @@ options:
     description:
       - Name of the instance, written to V(CreateInstancesRequest.
         InstanceName) and V(ModifyInstanceRequest.InstanceName).
+      - Required when creating the instance.
     type: str
   zone_name:
     description:
       - Availability zone of the instance, e.g. C(ap-guangzhou-3), written
         to V(CreateInstancesRequest.ZoneName).
-      - Required when creating the instance.
+      - Required when creating the instance; only applied at creation.
     type: str
   type_id:
     description:
       - Instance type of the instance. C(1) is the standard edition and
         C(2) is the cluster edition, written to V(CreateInstancesRequest.
         TypeId).
-      - Required when creating the instance.
+      - Required when creating the instance; only applied at creation.
     type: int
     choices: [1, 2]
   mem_size:
     description:
       - Memory size of the instance in MiB (multiples of 1024), written to
         V(CreateInstancesRequest.MemSize).
-      - Required when creating the instance.
+      - Required when creating the instance; only applied at creation.
     type: int
   redis_shard_num:
     description:

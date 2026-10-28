@@ -17,23 +17,26 @@ description:
   - This module is idempotent. Running it twice leaves the instance
     unchanged and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
-  - An instance is identified by O(instance_id) or by O(name). Zone,
-    engine version, VPC and password are only applied at creation; when
-    O(memory) or O(volume) drift from the running instance the module
-    changes the specification with V(UpgradeDBInstance) and waits for
-    the asynchronous spec-change task to report C(SUCCESS).
+  - An instance is identified by O(instance_id) or by O(name). Name matches
+    are exact; multiple instances with the same name fail the task instead
+    of managing an arbitrary one. Zone, engine version, VPC and password
+    are only applied at creation; when O(memory) or O(volume) drift from
+    the running instance the module changes the specification with
+    V(UpgradeDBInstance) and waits for the asynchronous spec-change task
+    to report C(SUCCESS).
 options:
   state:
     description:
-      - C(present) creates the instance when it does not exist and renames
-        it when O(name) differs. After creation the module waits for the
+      - C(present) creates the instance with V(CreateDBInstance) when it
+        does not exist and renames it with V(ModifyDBInstanceName) when
+        O(name) differs. After creation the module waits for the
         instance to be delivered (Status 1 with TaskStatus 0) before
         returning, bounded by O(waiter_timeout).
-      - C(absent) isolates the instance (the billing is stopped and the
-        instance moves to the recycle bin; postpaid instances are then
-        destroyed automatically after the retention period). The module
-        waits for the isolation to complete (Status 5) before returning,
-        bounded by O(waiter_timeout).
+      - C(absent) isolates the instance with V(IsolateDBInstance) (the
+        billing is stopped and the instance moves to the recycle bin;
+        postpaid instances are then destroyed automatically after the
+        retention period). The module waits for the isolation to complete
+        (Status 5) before returning, bounded by O(waiter_timeout).
       - C(restarted) restarts a running instance with
         V(RestartDBInstances) and waits for the asynchronous restart task
         to report C(SUCCESS).
@@ -53,6 +56,8 @@ options:
     description:
       - Name of the instance, written to V(CreateDBInstanceRequest.
         InstanceName) and V(ModifyDBInstanceNameRequest.InstanceName).
+      - Required when creating the instance; also used to look up the
+        instance when O(instance_id) is not given.
     type: str
   zone:
     description:
@@ -90,7 +95,9 @@ options:
     description:
       - Root password of the instance, written to
         V(CreateDBInstanceRequest.Password).
-      - Only applied at creation; the value is masked from output.
+      - Only applied at creation; the value is masked from output. The
+        password cannot be read back, so the value is ignored on an
+        existing instance.
     type: str
   vpc_id:
     description:

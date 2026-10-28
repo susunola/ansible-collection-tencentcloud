@@ -14,6 +14,10 @@ version_added: "0.12.0"
 description:
   - Create, resize, attach, detach and delete CBS cloud disks through the
     C(cbs.v20170312) API.
+  - A disk is identified by O(disk_id) when given, otherwise matched by
+    O(name), optionally scoped by O(zone). Name matches are exact; multiple
+    disks with the same name fail the task instead of managing an arbitrary
+    one.
   - This module is idempotent. Running it twice leaves the disk unchanged
     and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
@@ -22,9 +26,9 @@ description:
 options:
   state:
     description:
-      - C(present) creates the disk when it does not exist and reconciles its
-        name, size and attachment when it does.
-      - C(absent) terminates the disk.
+      - C(present) creates the disk with V(CreateDisks) when it does not
+        exist and reconciles its name, size and attachment when it does.
+      - C(absent) terminates the disk with V(TerminateDisks).
     type: str
     choices: [present, absent]
     default: present
@@ -38,11 +42,14 @@ options:
     description:
       - Name of the disk, written to V(CreateDisksRequest.DiskName) and
         V(ModifyDiskAttributesRequest.DiskName).
+      - Required to identify the disk when O(disk_id) is not given.
     type: str
   zone:
     description:
       - Availability zone of the disk, e.g. C(ap-guangzhou-3).
       - Required when creating the disk and used to narrow O(name) matches.
+      - A disk cannot move between zones; the zone of an existing disk is
+        only used for matching, never changed.
     type: str
   disk_type:
     description:
@@ -81,6 +88,7 @@ options:
         written to V(AttachDisksRequest.InstanceId).
       - When given and the disk is attached elsewhere, the disk is detached
         first, then attached and waited into C(ATTACHED) state.
+      - When omitted, the existing attachment is left untouched.
     type: str
   detach:
     description:

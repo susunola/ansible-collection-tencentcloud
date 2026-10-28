@@ -17,17 +17,19 @@ description:
   - This module is idempotent. Running it twice leaves the cluster
     unchanged and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
-  - A cluster is identified by O(cluster_id) or by O(name). Worker node
-    provisioning is intentionally out of scope; create the cluster with
-    this module and manage node pools or add nodes through dedicated
-    tooling afterwards.
+  - A cluster is identified by O(cluster_id) or by O(name). Name matches
+    are exact; multiple clusters with the same name fail the task instead
+    of managing an arbitrary one. Worker node provisioning is
+    intentionally out of scope; create the cluster with this module and
+    manage node pools or add nodes through dedicated tooling afterwards.
 options:
   state:
     description:
-      - C(present) creates the cluster when it does not exist and updates
-        its name, description and project when it does.
-      - C(absent) deletes the cluster and (optionally) its attached
-        resources.
+      - C(present) creates the cluster with V(CreateCluster) when it does
+        not exist and updates its name, description and project with
+        V(ModifyClusterAttribute) when it does.
+      - C(absent) deletes the cluster with V(DeleteCluster) and
+        (optionally) its attached resources.
     type: str
     choices: [present, absent]
     default: present
@@ -42,22 +44,26 @@ options:
       - Name of the cluster, written to
         V(ClusterBasicSettings.ClusterName) and
         V(ModifyClusterAttributeRequest.ClusterName).
+      - Required when creating the cluster.
     type: str
   vpc_id:
     description:
       - ID of the VPC, written to V(ClusterBasicSettings.VpcId).
-      - Required when creating the cluster.
+      - Required when creating the cluster; only applied at creation.
     type: str
   subnet_id:
     description:
       - ID of the subnet for the master nodes, written to
         V(ClusterBasicSettings.SubnetId).
+      - Only applied at creation.
     type: str
   cluster_version:
     description:
       - Kubernetes version of the cluster, written to
         V(ClusterBasicSettings.ClusterVersion).
-      - Only applied at creation.
+      - Only applied at creation; when omitted the API default is used, and
+        changing it on an existing cluster is a no-op (cluster upgrades are
+        out of scope).
     type: str
   cluster_desc:
     description:
@@ -81,14 +87,14 @@ options:
     default: MANAGED_CLUSTER
   cluster_cidr:
     description:
-      - CIDR of the pod network, written to V(ClusterCIDRSettings.
-        ClusterCIDR).
+      - CIDR of the pod network, e.g. C(172.16.0.0/16), written to
+        V(ClusterCIDRSettings.ClusterCIDR).
       - Only applied at creation.
     type: str
   service_cidr:
     description:
-      - CIDR of the service network, written to V(ClusterCIDRSettings.
-        ServiceCIDR).
+      - CIDR of the service network, e.g. C(10.96.0.0/16), written to
+        V(ClusterCIDRSettings.ServiceCIDR).
       - Only applied at creation.
     type: str
   max_node_pod_num:
@@ -109,6 +115,9 @@ options:
     description:
       - How to treat the instances of a deleted cluster, written to
         V(DeleteClusterRequest.InstanceDeleteMode).
+      - C(terminate) destroys the node CVMs; C(retain) removes them from
+        the cluster but keeps the CVMs.
+      - Only used with O(state=absent).
     type: str
     choices: [terminate, retain]
     default: retain

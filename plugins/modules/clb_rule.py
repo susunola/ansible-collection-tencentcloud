@@ -25,9 +25,9 @@ description:
 options:
   state:
     description:
-      - C(present) creates the rule when it does not exist and updates its
-        attributes when it does.
-      - C(absent) deletes the rule.
+      - C(present) creates the rule with V(CreateRule) when it does not
+        exist and updates its attributes with V(ModifyRule) when it does.
+      - C(absent) deletes the rule with V(DeleteRule).
     type: str
     choices: [present, absent]
     default: present
@@ -51,17 +51,24 @@ options:
     description:
       - Domain of the rule, written to V(RuleInput.Domain).
       - Required when creating a rule and used to match existing rules.
+      - Part of the rule identity and never updated in place; changing
+        O(domain) without O(location_id) creates a new rule and leaves the
+        old one untouched.
     type: str
   url:
     description:
       - URL path of the rule, e.g. C(/api), written to V(RuleInput.Url) and
         V(ModifyRuleRequest.Url).
+      - Part of the rule identity when the rule is matched by O(domain) and
+        O(url); when the rule is addressed by O(location_id), a changed
+        O(url) is updated in place with V(ModifyRule).
     type: str
     required: true
   scheduler:
     description:
       - Balancing method, written to V(RuleInput.Scheduler) and
         V(ModifyRuleRequest.Scheduler).
+      - Defaults to C(WRR) when creating a rule.
     type: str
     choices: [WRR, LEAST_CONN, IP_HASH]
   session_expire_time:
@@ -87,6 +94,8 @@ options:
     description:
       - Health check configuration as a dict with the same suboptions as
         M(susunola.tencentcloud.clb_listener).
+      - Only the listed keys are compared for idempotency; keys not given
+        are left at the API default on creation and untouched on update.
     type: dict
     suboptions:
       health_switch:
