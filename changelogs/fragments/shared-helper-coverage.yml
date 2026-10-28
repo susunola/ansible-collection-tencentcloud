@@ -8,15 +8,13 @@ minor_changes:
     surface and a blind one for a single file: a shared helper can arrive with
     no tests at all and move the total by a fraction of a point.
   - >-
-    unit tests - cover the defensive branches of the two shared helpers with no
-    direct test. C(cos_bucket_read.py) sat at 89% with twelve uncovered lines,
+    unit tests - cover the defensive branches of the shared COS bucket read
+    helper. C(cos_bucket_read.py) carried uncovered lines,
     every one of them a branch the API itself reaches: an empty payload reads
     as absence, a single C(DomainRule) or C(OriginRule) arrives as a mapping
     rather than a list, and a single C(Domain) or C(Param) arrives as a string
     rather than a list. The module tests all pass well-formed payloads, so none
-    of those branches had ever run; the file is at 100% now. C(monitor.py) went
-    from 89% to 97% by covering the ambiguous-name guard, both waiter timeouts,
-    the convergence comparison and the tag ordering in the create request.
+    of those branches had ever run.
   - >-
     unit tests - load C(module_utils/tencentcloud.py) without the SDK. Its
     placeholder C(TencentCloudSDKException) exists for exactly that
@@ -29,6 +27,5 @@ minor_changes:
     C(inventory.py), C(paging.py) and C(polling.py) -- exist in both
     module_utils and plugin_utils, so the report could not be attributed to
     either. Naming the packages in full gives every file its path back. The
-    plugin_utils tests are collected in the same step so the five helpers are
-    measured rather than counted as uncovered; the measured total is 92.43%
-    against the 80 gate, so the extra 22 statements change nothing.
+    plugin_utils tests are collected in the same step so the helpers are
+    measured rather than counted as uncovered.

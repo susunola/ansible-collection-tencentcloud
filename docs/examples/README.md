@@ -4,8 +4,8 @@ Two directories hold runnable playbooks:
 
 | Directory | What it is | Documented in |
 | --- | --- | --- |
-| `docs/examples/` | a numbered chain: one environment built up stage by stage | this page |
-| `playbooks/` | standalone scenarios (query, static site, kubeconfig, three-tier) | [`../scenarios.md`](../scenarios.md) |
+| `docs/examples/` | a numbered set: one environment built up stage by stage | this page |
+| `playbooks/` | standalone scenarios (queries, three-tier web) | [`../scenarios.md`](../scenarios.md) |
 
 Moving a Terraform config onto this collection? [`../porting.md`](../porting.md)
 maps each provider resource to a module FQCN and explains the state, region and
@@ -17,23 +17,16 @@ environment variables (or `~/.tencentcloud/default.configure`). Nothing
 here is exercised by CI: running any of it creates real, billable
 resources.
 
-## The golden path
-
-`01` and `02` are the two stages that most users need, split apart so each
-can be read and re-run on its own. `06` is the same two stages in one file,
-with the ids handed over automatically instead of by hand.
+## The examples
 
 | File | Stage | Creates | Teardown |
 | --- | --- | --- | --- |
 | `01_network_foundation.yml` | network | VPC, 3 subnets across 2 AZs, route tables, NAT gateways, 2 security groups with exact-set rules | `tc_vpc_foundation_state: absent` |
-| `02_web_stack.yml` | application | CVM pool, MySQL (CDB), Redis, public CLB with an HTTP listener and auto-registered backends | `tc_web_stack_state: absent` |
 | `03_tke_cluster.yml` | platform | managed TKE cluster, one autoscaling node pool, addons | `tc_tke_cluster_state: absent` |
-| `04_disaster_recovery.yml` | resilience | golden image of a source instance, cross-region COS bucket replication, standby CLB in the DR region | `tc_dr_state: absent` |
 | `05_module_mix.yml` | raw modules | security group, EIP, an exact-count CVM pool, then reads it back and tears it down | `ansible-playbook docs/examples/05_module_mix.yml --tags teardown` |
-| `06_full_chain.yml` | **the whole path** | `01` + `02` + a read-back stage in one invocation | `ansible-playbook docs/examples/06_full_chain.yml --tags teardown` |
 
-`03` and `04` are branches off the same foundation, not further stages:
-both take the `vpc_id` / `subnet_id` that `01` produced.
+`03` is a branch off the same foundation, not a further stage: it takes the
+`vpc_id` / `subnet_id` that `01` produced.
 
 ### Run it
 
@@ -41,36 +34,19 @@ both take the `vpc_id` / `subnet_id` that `01` produced.
 export TENCENTCLOUD_SECRET_ID=...
 export TENCENTCLOUD_SECRET_KEY=...
 
-# The one-file chain. image_id is account- and region-specific.
-ansible-playbook docs/examples/06_full_chain.yml \
-  -e image_id=img-xxxxxxxx \
-  -e web_password='ReplaceWith-AStrongPassword1'
-
-# ... or the two stages, copying the ids 01 prints into 02:
 ansible-playbook docs/examples/01_network_foundation.yml
-ansible-playbook docs/examples/02_web_stack.yml \
-  -e vpc_id=vpc-xxxxxxxx -e subnet_id=subnet-xxxxxxxx -e sg_id=sg-xxxxxxxx
 ```
 
-Each role publishes its result as a fact, which is what makes the chain
-work without copy-paste: `tc_vpc_foundation_result` (with `vpc_id`,
-`subnets`, `security_groups`, `route_tables`, `nat_gateways`),
-`tc_web_stack_result`, `tc_tke_cluster_result` and
-`tc_disaster_recovery_result`. Stage 2 of `06_full_chain.yml` reads them
-directly:
-
-```yaml
-tc_web_stack_vpc_id: "{{ tc_vpc_foundation_result.vpc_id }}"
-tc_web_stack_subnet_id: "{{ tc_vpc_foundation_result.subnets[0].subnet.SubnetId }}"
-```
+Each role publishes its result as a fact, which is what makes chaining work
+without copy-paste: `tc_vpc_foundation_result` (with `vpc_id`, `subnets`,
+`security_groups`, `route_tables`, `nat_gateways`) and
+`tc_tke_cluster_result`.
 
 ### Tear it down
 
 Every example is its own teardown runbook: flip the role's `*_state` to
 `absent`, or run the tagged teardown play where one exists. Order matters —
-the resources inside a VPC must go before the VPC, which is why
-`06_full_chain.yml`'s teardown play lists the web stack role first and the
-network role second.
+the resources inside a VPC must go before the VPC.
 
 ## Keeping the examples honest
 
@@ -99,11 +75,7 @@ python scripts/check_module_examples.py           # how many modules were read
 
 It resolves each module an example calls, checks every option against that
 module's `DOCUMENTATION` and its doc fragments, and checks that options the
-module marks `required` are passed. The last one is not a style rule: it
-found `cdb_audit_rule`, whose delete example omitted `rule_filters` while the
-argument spec marked that option unconditionally required, which made deleting
-an audit rule impossible — the documentation said "required when
-`state=present`" and the code disagreed.
+module marks `required` are passed.
 
 Run it locally before touching an example:
 

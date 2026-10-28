@@ -57,21 +57,13 @@ reason this table exists.
 | `tencentcloud_kubernetes_node_pool` | `tke_node_pool` | as above |
 | `tencentcloud_mysql_instance` | `cdb_instance` | CDB is the product code for MySQL |
 | `tencentcloud_redis_instance` | `redis_instance` | — |
-| `tencentcloud_mongodb_instance` | `mongodb_instance` | — |
-| `tencentcloud_postgresql_instance` | `postgresql_instance` | — |
-| `tencentcloud_sqlserver_instance` | `sqlserver_instance` | — |
-| `tencentcloud_cynosdb_cluster` | `cynosdb_cluster` | — |
 | `tencentcloud_cos_bucket` | `cos_bucket` | — |
-| `tencentcloud_cdn_domain` | `cdn_domain` | — |
-| `tencentcloud_dnspod_record` | `dnspod_record` | — |
-| `tencentcloud_vpn_gateway` | `vpn_gateway` | — |
-| `tencentcloud_ssl_certificate` | `ssl_certificate` | — |
-| `tencentcloud_cfs_file_system` | `cfs_file_system` | — |
-| `tencentcloud_ckafka_instance` | `ckafka_instance` | — |
-| `tencentcloud_scf_function` | `scf_function` | — |
-| `tencentcloud_emr_cluster` | `emr_cluster` | — |
-| `tencentcloud_elasticsearch_instance` | `elasticsearch_instance` | — |
-| `tencentcloud_monitor_alarm_policy` | `monitor_alarm_policy` | — |
+
+A Terraform resource whose row is **not** in this table has no module in this
+collection since the 2.0 surface reduction: the collection is deliberately
+limited to the core products in
+[`core-allowlist.yml`](core-allowlist.yml). For those, keep the provider (or
+pin the last 1.x collection release) rather than translating.
 
 Two directions of mismatch are normal and neither is a bug:
 
@@ -81,9 +73,11 @@ Two directions of mismatch are normal and neither is a bug:
   `clb_listener_target`, `clb_target_group`. Split the resource into one task
   per concern.
 * **one module, several Terraform resources.** The provider splits
-  post-creation settings into `postgresql_instance_ha_config`,
-  `..._ssl_config`, `..._network_access` and a dozen more; a single
-  `postgresql_instance` task owns them as options.
+  post-creation settings into separate resources (for example
+  `tencentcloud_kubernetes_cluster` versus its node-pool and addon
+  resources); a single task here can own the same surface as options, and the
+  `tke_node_pool` / `tke_addon` modules take the parts that are their own
+  lifecycle.
 
 ### 2.2 Data sources and lookups
 
@@ -95,11 +89,10 @@ Two directions of mismatch are normal and neither is a bug:
 
 `plugins/lookup/resource_id.py` is the closest analogue of a Terraform data
 source: it takes an **exact** name and fails when the name is absent or
-ambiguous. It covers 41 resource families (VPC, subnet, security group, CVM,
-CLB/ALB/GWLB, TKE, CDB, PostgreSQL, MariaDB, SQL Server, CynosDB, Redis,
-MongoDB, Elasticsearch, CFS, CHDFS, CKafka, TDMQ, Prometheus, API Gateway,
-TCR, TEM, and others). Anything outside that list goes through the
-`<resource>_info` module instead — there are 535 of them.
+ambiguous. It covers the core resource families (VPC, subnet, security
+group, CVM, Lighthouse, CBS, CLB, TKE, CDB, Redis, TCR and Auto Scaling —
+see its `resource_type` choices in `ansible-doc`). Anything outside that
+list goes through the matching `<resource>_info` module instead.
 
 ### 2.3 Finding a module that is not in the table
 
@@ -107,14 +100,12 @@ Naming is `<product>_<resource>`, optionally `<product>_<resource>_<sub>`:
 
 ```
 ansible-doc -l susunola.tencentcloud | grep -iE '^(cvm|vpc|tke|cdb|cos)_'
-ls plugins/modules/ | grep -E '^tke_'
 ```
 
-Product prefixes with the most modules: `tse` (65), `dlc` (58), `tdmq` (31),
-`tsf` (24), `monitor` (24), `waf` (22), `cvm` (20), `teo` (18), `cos` (18),
-`tione` (16), `oceanus` (16), `cam` (16). [`README.md`](../README.md) carries
-the full FQCN index and [`product-capabilities.md`](product-capabilities.md)
-the per-product matrix.
+[`product-capabilities.md`](product-capabilities.md) carries the per-product
+matrix of everything the collection ships, and
+[`core-allowlist.yml`](core-allowlist.yml) is the authoritative list of
+module names.
 
 ## 3. State: what replaces `terraform.tfstate`
 
@@ -147,7 +138,7 @@ ansible-playbook site.yml                  # terraform apply
 ansible-playbook teardown.yml              # terraform destroy  (state: absent)
 ```
 
-All 991 modules declare `supports_check_mode=True`, and the contract is the one
+All modules declare `supports_check_mode=True`, and the contract is the one
 `vpc` implements: resolve, compute the change set once with
 `lifecycle.plan_changes`, then — if check mode — `exit_json(changed=True, ...)`
 without calling a write API. Waiters skip themselves in check mode, so a
@@ -215,8 +206,8 @@ effectively gives you. It is mutually exclusive with `instance_id`.
 `depends_on` becomes ordering you can read: tasks in a play run in order, and
 cross-play hand-off is a registered fact or a role result.
 [`examples/README.md`](examples/README.md) documents the published result facts
-(`tc_vpc_foundation_result`, `tc_web_stack_result`, `tc_tke_cluster_result`,
-`tc_disaster_recovery_result`) and why teardown lists dependents first.
+(`tc_vpc_foundation_result`, `tc_tke_cluster_result`) and why teardown lists
+dependents first.
 
 ## 4. Credentials and region
 
@@ -354,13 +345,10 @@ returned resource is read back from the API, not assembled from the request, so
 ## 6. The `_info` + write module pair
 
 A write module and its `_info` sibling are one surface split in two: the write
-module converges, the `_info` module reads. 330 of the 456 write modules ship
-their own `<name>_info` sibling; the rest are covered either by a curated
-mapping to another `_info` module that really returns the resource, or by a
-recorded gap. `scripts/audit_info_coverage.py --check` is the authority — it is
-the gate that stops a new write module landing without a deliberate read
-decision, and `scripts/generate_info_modules.py` produces the generated half of
-the pairs.
+module converges, the `_info` module reads. Most retained write modules ship
+their own `<name>_info` sibling; the few that do not are listed in
+[`product-depth.md`](product-depth.md) and are read back through the write
+module's own post-change re-read or a sibling reader.
 
 Use the pair in the same play: converge, then read back through a filter, which
 is how a ported Terraform `output` block usually ends up looking.
@@ -389,12 +377,9 @@ is how a ported Terraform `output` block usually ends up looking.
         msg: "{{ found.vpcs | map(attribute='VpcId') | list }}"
 ```
 
-If the write module you need has no `_info` sibling, read the coverage table
-first:
-
-```bash
-python scripts/audit_info_coverage.py --check
-```
+If the write module you need has no `_info` sibling, check
+[`product-depth.md`](product-depth.md) for the current read-surface gaps
+before assuming one exists.
 
 ## 7. Worked example
 
@@ -465,8 +450,10 @@ What changed:
 * Teardown is the same two tasks with `state: absent`, subnet first — a VPC with
   live dependencies cannot be deleted.
 
-A fuller chain, including the web stack that consumes these ids, is
-[`examples/06_full_chain.yml`](examples/06_full_chain.yml).
+A fuller chain that consumes these ids is
+[`examples/01_network_foundation.yml`](examples/01_network_foundation.yml),
+and [`examples/05_module_mix.yml`](examples/05_module_mix.yml) adds the
+CVM pool and EIP on top of it.
 
 ## 8. Common mistakes
 
@@ -488,7 +475,6 @@ A fuller chain, including the web stack that consumes these ids, is
 ansible-playbook your_playbook.yml --syntax-check
 ansible-playbook your_playbook.yml --check --diff
 python scripts/check_examples.py --check        # docs/examples/, playbooks/, roles/, targets/
-python scripts/audit_info_coverage.py --check   # if you touched a write module
 ```
 
 Module authoring conventions, tier rules and the unit-test harness are in
@@ -496,6 +482,14 @@ Module authoring conventions, tier rules and the unit-test harness are in
 anything named in this guide are in [`deprecation-policy.md`](deprecation-policy.md).
 
 ## 10. Version map and upgrade notes
+
+> **The 2.0.0 surface reduction is the next breaking entry in this map.** The
+> 2.0.0 release removes every module, role and plugin not listed in
+> [`core-allowlist.yml`](core-allowlist.yml) — see
+> [`REMEDIATION.md`](REMEDIATION.md). If a module in your playbook is not in
+> the allowlist, pin the last 1.x release
+> (`ansible-galaxy collection install susunola.tencentcloud:==1.4.0`) while
+> you migrate the task to a kept module or off the collection.
 
 `changelogs/changelog.yaml` records every release this collection has shipped.
 This section is the upgrade path across them: which release you are coming
@@ -570,9 +564,7 @@ the rest is additive. If you are coming from before `0.11.0`, the order is:
 3. Move the controller to ansible-core 2.19+ and Python 3.11+ (`1.0.0`).
 4. `ansible-galaxy collection install susunola.tencentcloud --force`.
 
-`scripts/check_sdk_drift.py --check` tells you whether the SDK you have
-installed still matches the version the generated `*_info` modules were
-vouched for, and whether that version sits inside the range
-`requirements.txt` declares; `scripts/check_sdk_floor.py --check` tells you
-whether every module's SDK reference resolves at that range's floor. Run both
-after any upgrade that touches `requirements.txt`.
+`scripts/check_sdk_floor.py --check` tells you
+whether every module's SDK reference resolves at the floor of the range
+`requirements.txt` declares. Run it after any upgrade that touches
+`requirements.txt`.

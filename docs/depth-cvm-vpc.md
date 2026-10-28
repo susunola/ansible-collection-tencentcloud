@@ -1,58 +1,17 @@
-# Depth Plan — CVM & VPC/networking
+# Depth plan — CVM & VPC/networking (superseded)
 
-> Candidates below are derived from the Tencent Cloud *concept surface* teams
-> commonly reach for. Names are placeholders to confirm against API Explorer
-> / the pinned SDK before scaffolding: the reliable way to get real read
-> modules is `python scripts/discover_info_specs.py` + `generate_info_modules.py`
-> (pinned SDK) — it only emits actions the SDK actually ships. Resources
-> without a list API should stay KNOWN_GAPS rather than get fabricated names.
+> **2026-10-28 — superseded by the remediation freeze.** This page listed
+> candidate CVM and VPC/networking modules to scaffold with the `_info`
+> generator. Both the generator and the expansion direction are gone: the P1
+> surface reduction removed every module outside
+> [`core-allowlist.yml`](core-allowlist.yml), and
+> [`REMEDIATION.md`](REMEDIATION.md) forbids growing the surface again except
+> through the allowlist ratchet. The original candidate tables remain in the
+> git history of this file.
 
-## CVM — current (20 modules)
-
-instances, images (+share), launch templates (+versions), disaster-recover /
-placement groups, CHC, HPC cluster, action timers, instance↔security-group
-binding. Read/write pairs are complete for what exists.
-
-### Candidate additions (verify API names, then generate)
-
-| Area | Suggested module (verify) | Kind |
-| --- | --- | --- |
-| Zones / regions (capacity planning) | `cvm_zone_info` / `cvm_region_info` | _info, generated from DescribeZones / DescribeRegions |
-| Instance type catalogue | `cvm_instance_type_info` | _info (DescribeInstanceTypeConfigs) |
-| Instance password / attributes | reset/charge sub-actions on `cvm_instance` if gaps | resource |
-| Image import/export/rollback | extend `cvm_image` states or add per-action modules | resource |
-| Placement group (independent from disaster-recover group) | `cvm_placement_group(_info)` | both |
-| Instance state batch ops (stop/start/reboot/term) | convenience `cvm_instance_state` if desired | resource |
-
-Note: key pairs are already their own product (`key_pair*`).
-
-## VPC & networking — current (51 modules across vpc/subnet/route_table/
-security_group/network_acl/nat/eip/eni/havip/ccn/direct-connect/vpn/
-peering/private-dns/privatelink)
-
-Core plumbing is covered end-to-end. Sub-resource gaps commonly requested:
-
-| Area | Suggested module (verify) | Kind |
-| --- | --- | --- |
-| EIP association (bind to instance/NAT/LB) | `eip_associate(_info)` (AssociateAddress / DescribeAddresses) | both |
-| Network ACL rules | `network_acl_rule(_info)` | both |
-| Security group rule sets already exist (`security_group_rule`) — extend if multi rules missing | — | — |
-| CCN route table / bandwidth limits / instance attach | `ccn_route_table(_info)`, `ccn_bandwidth_limit`, `ccn_attach_instance` | both |
-| Direct Connect gateway / VLAN | `dc_direct_connect_gateway(_info)` | both |
-| VPC IPv6 / DHCP option sets | `vpc_ipv6_cidr` / `vpc_dhcp_options(_info)` (if API surface confirms) | both |
-| Private DNS zone↔VPC bindings | `private_dns_zone_vpc_binding(_info)` | both |
-| VPN client/SSL users | confirm whether part of `vpn_connection` or new | resource |
-
-## Execution
-
-1. Run in an SDK-capable environment:
-   ```bash
-   python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
-   python scripts/discover_info_specs.py
-   python scripts/generate_info_modules.py
-   python scripts/audit_info_coverage.py --check
-   ```
-2. Keep discovered read modules that map to real Describe*/List* actions and
-   remove their KNOWN_GAPS entries; add genuine write scaffolds via
-   RESOURCE_SPECS only for confirmed APIs.
-3. Land CVM and VPC/networking as two separate reviewable PRs.
+Depth work on the retained CVM and VPC/networking modules is now governed by
+the remediation phases: human-readable option documentation (P3) and the
+8-step real-cloud integration contract (P4). Proposals for additional modules
+in these families must amend `docs/core-allowlist.yml` with a written
+justification, dropping another name or lowering no other ceiling, per the
+freeze.

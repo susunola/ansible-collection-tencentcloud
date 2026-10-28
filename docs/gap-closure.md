@@ -1,5 +1,15 @@
 # Gap closure plan — 与行业顶尖 Collection 的差距追差
 
+> **Historical record (2026-10-28 note).** The P1 surface reduction has since
+> landed: the modules, roles, event_source plugins, generators and
+> integration targets this document tracks were removed from the collection
+> (see [`REMEDIATION.md`](REMEDIATION.md) and
+> [`core-allowlist.yml`](core-allowlist.yml)). Every figure, module name and
+> gap verdict below refers to the **pre-reduction tree** and is kept only as
+> a record of how the collection arrived at the remediation freeze. Do not
+> act on the checklists below; the current plan is `REMEDIATION.md` phases
+> P0–P7.
+
 > 当前整合树快照（2026-09-23）：1027 模块（456 write + 569 _info）；下文行业基准及带日期数字仍为历史快照。
 
 > 依据：`docs/capability-map.html` / `docs/panorama.html` 的 INDUSTRY BENCHMARK 区块

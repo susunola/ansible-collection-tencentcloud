@@ -12,10 +12,26 @@ sanity-ignore lines without lowering another count is a failed change.
 
 ## Status
 
-- Phase: **P0 freeze is in force**. Surface reduction (P1) has not landed.
+- Phase: **P1 has landed** (2026-10-28, branch `remediation/p1-surface-reduction`).
+  The collection surface is the 77-module / 3-role allowlist; the generator,
+  its 502 generated modules, and `plugins/event_source/` are gone.
 - Galaxy: no feature release until 2.0.0. 1.4.x is security and defect fixes only.
 - Inclusion: do not claim the collection meets community-package requirements
   until the exit criteria in this file are all green.
+
+P1 evidence:
+
+```text
+claim: 1000+ modules, most of them niche, bloat the package
+fix: remediation/p1-surface-reduction
+verify: python3 scripts/check_remediation_freeze.py
+result: modules 77, generated-banner modules 0, roles 3, event_source 0
+
+claim: 500+ forbidden codes in ignore.txt's
+fix: remediation/p1-surface-reduction (P2 completes the zeroing)
+verify: python3 scripts/check_sanity_ignore.py
+result: 4 entries per ignore file (16 total), 0 forbidden, all justified
+```
 
 ## Why this exists
 
@@ -129,7 +145,7 @@ Do not reply with test or module totals.
 | Phase | Exit |
 | --- | --- |
 | P0 | This file, the allowlist, and the freeze guard are on `main` |
-| P1 | Module count ≤ 120, generator banner count 0, event_source gone |
+| P1 | ~~Module count ≤ 120, generator banner count 0, event_source gone~~ **done** (77 / 0 / gone) |
 | P2 | No `validate-modules` / forbidden sanity ignores |
 | P3 | Allowlisted modules have human-readable option docs |
 | P4 | Every allowlisted write module has the 8-step integration |

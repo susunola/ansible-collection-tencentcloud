@@ -4,14 +4,7 @@
 every module and plugin in `susunola.tencentcloud` and renders them as
 `ansible-doc`-style RST; Sphinx turns that into a browsable, searchable HTML
 site. It is the same content `ansible-doc` shows, without requiring the
-collection to be installed — with 1005 modules that matters, because the
-README table is a flat list of names: it links to each module file, but the
-options, return values and examples only exist here.
-
-`plugins/event_source` is the one exception. Neither ansible-core nor
-antsibull-docs knows that plugin type, so its four plugins would have no page
-at all. `scripts/generate_event_source_docs.py` renders one from their
-`DOCUMENTATION` / `EXAMPLES` into `extra_rst/`, and `build.sh` copies it in.
+collection to be installed.
 
 ## Build
 
@@ -27,14 +20,13 @@ $ ANSIBLE_COLLECTIONS_PATH=/tmp/collections docs/docsite/build.sh
 ```
 
 Output lands in `docs/docsite/build/html/`; open `index.html` from there.
-`docs/docsite/rst/` holds the generated RST: `index.rst` and the pages under
-`extra_rst/` are tracked, everything else is regenerated on every build and is
-safe to delete.
+`docs/docsite/rst/` holds the generated RST: `index.rst` is tracked,
+everything else is regenerated on every build and is safe to delete.
+(`extra_rst/` is the drop-in directory for hand-written pages; it is
+currently empty.)
 
-A cold build takes about five minutes — measured 2026-09-15 at 1,032 pages:
-77 s for the antsibull-docs pass and 221 s for Sphinx. It is memory-hungry,
-because breadcrumbs build a toctree per plugin. Re-runs are incremental:
-rebuilding after one changed page took 43 s.
+A cold build is memory-hungry, because breadcrumbs build a toctree per
+plugin. Re-runs are incremental.
 
 ## What is tracked
 
@@ -67,9 +59,8 @@ refreshed by hand when plugins change, and no workflow rebuilds it.
 
 Both were load-bearing when this docsite was added: the first build produced
 141 findings across 70 modules, all of them invisible in CI because
-`tests/sanity/ignore-2.21.txt` carried 66 blanket
-`validate-modules:invalid-documentation` entries. See the roadmap entry for
-P1-04.
+`tests/sanity/ignore-2.21.txt` carried blanket
+`validate-modules:invalid-documentation` entries at the time.
 
 ## Cleanup mode
 
