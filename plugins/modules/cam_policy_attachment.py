@@ -83,7 +83,7 @@ attachment:
   type: dict
   returned: always
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     policy_id: 123456
     target_type: role
     target_name: deployment-role

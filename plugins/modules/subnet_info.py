@@ -71,7 +71,7 @@ subnets:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - SubnetId: subnet-a
 total_count:
   description: Number of subnets reported by the API.

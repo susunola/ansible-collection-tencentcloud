@@ -78,7 +78,7 @@ membership:
   type: dict
   returned: always
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     group_id: 12345
     sub_uin: 100000000001
     present: false

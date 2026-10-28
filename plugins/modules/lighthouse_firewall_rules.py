@@ -70,7 +70,7 @@ rules:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - Protocol: TCP
       Port: '22'
       CidrBlock: 10.0.0.0/8

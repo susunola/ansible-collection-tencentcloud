@@ -1,4 +1,1 @@
-scripts/sync_doc_fragments.py pep8:E305  # blank-line count around a nested definition, kept for local grouping readability
-plugins/lookup/resource_id.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/ssm_secret_info.py pylint:disallowed-name  # '_' is an intentional throwaway binding in tuple unpacking
-plugins/action/tc_wait.py action-plugin-docs  # internal helper paired with the tc_wait role, not a module wrapper
+plugins/action/tc_wait.py action-plugin-docs  # internal wait helper shared by the modules (module_utils/polling.py), not a module wrapper

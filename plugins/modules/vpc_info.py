@@ -62,7 +62,7 @@ vpcs:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - VpcId: vpc-a
 total_count:
   description: Number of VPCs reported by the API.

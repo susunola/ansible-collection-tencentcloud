@@ -80,7 +80,7 @@ policies:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - PolicyName: app-x
       PolicyId: 42
 total_count:

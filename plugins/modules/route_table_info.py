@@ -72,7 +72,7 @@ route_tables:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - RouteTableId: rtb-a
 total_count:
   description: Number of route tables reported by the API.

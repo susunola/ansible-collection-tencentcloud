@@ -25,7 +25,19 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, tke_cluster, cdb_instance, redis_instance, tcr_instance]
+    choices:
+      - vpc
+      - subnet
+      - security_group
+      - cvm_instance
+      - lighthouse_instance
+      - autoscaling_group
+      - cbs_disk
+      - clb_load_balancer
+      - tke_cluster
+      - cdb_instance
+      - redis_instance
+      - tcr_instance
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -123,18 +135,43 @@ except ImportError:
 
 
 RESOURCE_SPECS = {
-    "vpc": ("vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeVpcs", "VpcSet", "VpcId", "VpcName"),
-    "subnet": ("vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeSubnets", "SubnetSet", "SubnetId", "SubnetName"),
-    "security_group": ("vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeSecurityGroups", "SecurityGroupSet", "SecurityGroupId", "SecurityGroupName"),
-    "cvm_instance": ("cvm.v20170312", "CvmClient", "cvm.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
-    "lighthouse_instance": ("lighthouse.v20200324", "LighthouseClient", "lighthouse.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
-    "autoscaling_group": ("autoscaling.v20180419", "AutoscalingClient", "as.tencentcloudapi.com", "DescribeAutoScalingGroups", "AutoScalingGroupSet", "AutoScalingGroupId", "AutoScalingGroupName"),
-    "cbs_disk": ("cbs.v20170312", "CbsClient", "cbs.tencentcloudapi.com", "DescribeDisks", "DiskSet", "DiskId", "DiskName"),
-    "clb_load_balancer": ("clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
-    "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
-    "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
-    "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
-    "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
+    "vpc": (
+        "vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeVpcs", "VpcSet", "VpcId", "VpcName",
+    ),
+    "subnet": (
+        "vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeSubnets", "SubnetSet", "SubnetId", "SubnetName",
+    ),
+    "security_group": (
+        "vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeSecurityGroups", "SecurityGroupSet", "SecurityGroupId", "SecurityGroupName",
+    ),
+    "cvm_instance": (
+        "cvm.v20170312", "CvmClient", "cvm.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName",
+    ),
+    "lighthouse_instance": (
+        "lighthouse.v20200324", "LighthouseClient", "lighthouse.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName",
+    ),
+    "autoscaling_group": (
+        "autoscaling.v20180419", "AutoscalingClient", "as.tencentcloudapi.com", "DescribeAutoScalingGroups",
+        "AutoScalingGroupSet", "AutoScalingGroupId", "AutoScalingGroupName",
+    ),
+    "cbs_disk": (
+        "cbs.v20170312", "CbsClient", "cbs.tencentcloudapi.com", "DescribeDisks", "DiskSet", "DiskId", "DiskName",
+    ),
+    "clb_load_balancer": (
+        "clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName",
+    ),
+    "tke_cluster": (
+        "tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName",
+    ),
+    "cdb_instance": (
+        "cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName",
+    ),
+    "redis_instance": (
+        "redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName",
+    ),
+    "tcr_instance": (
+        "tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName",
+    ),
 }
 
 

@@ -104,7 +104,7 @@ RETURN = r"""account:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     User: app
     Host: '%'
     Notes: App account

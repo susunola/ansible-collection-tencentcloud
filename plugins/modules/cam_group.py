@@ -80,7 +80,7 @@ RETURN = r"""group:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     GroupId: 1000001
     GroupName: platform-engineers
     Remark: Platform engineering team

@@ -118,7 +118,7 @@ RETURN = r"""secret:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     SecretName: prod-db
     Description: managed by Ansible
     Status: PendingDelete

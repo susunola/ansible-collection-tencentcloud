@@ -106,7 +106,7 @@ RETURN = r"""key_pair:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     KeyId: lhkey-8b0a1c2d
     KeyName: production-automation
     PublicKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMockPublicKeyMaterial

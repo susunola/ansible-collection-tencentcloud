@@ -80,6 +80,7 @@ def needs_timeout_fragment(text):
     """True when the module accepts the SDK request-timeout option."""
     return not _TIMEOUT_OVERRIDE_RE.search(text)
 
+
 # The runtime options are injected by ``base_argument_spec()`` -- reached
 # either directly or through ``TencentCloudModule``.  The legacy
 # ``tencentcloud_argument_spec()`` helper (module_utils/tencentcloud.py) does
@@ -97,13 +98,14 @@ def accepts_runtime_options(text):
         return False
     return bool(_BASE_SPEC_RE.search(text))
 
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULE_GLOB = os.path.join(REPO_ROOT, "plugins", "modules", "*.py")
 # The legacy single fragment was referenced by modules and by non-module
 # plugins (e.g. the TAT connection plugin).  Scan every plugin directory
 # so migration and --check cover the whole tree, not just modules.
 PLUGIN_GLOBS = [
-    os.path.join(REPO_ROOT, "plugins", directory, "*.py") for directory in ("modules", "connection", "callback", "event_source", "inventory", "lookup")
+    os.path.join(REPO_ROOT, "plugins", directory, "*.py") for directory in ("modules", "connection", "callback", "inventory", "lookup")
 ]
 
 # Generic description families that are safe to fold into a fragment.  Each

@@ -104,7 +104,7 @@ repository:
   type: dict
   returned: always
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     RegistryId: tcr-abc
     NamespaceName: production
     Name: api

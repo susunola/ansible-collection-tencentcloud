@@ -151,7 +151,7 @@ scaling_group:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     AutoScalingGroupId: asg-new-1
     AutoScalingGroupName: web-fleet
     LaunchConfigurationId: asc-abc

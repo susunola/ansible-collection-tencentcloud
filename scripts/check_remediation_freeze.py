@@ -31,7 +31,7 @@ FREEZE = {
     "generated_modules": 0,
     "roles": 3,
     "extra_plugins": 12,
-    "ignore_entries": 16,
+    "ignore_entries": 4,
     # The README was rewritten for 2.0 without the generated catalog tables;
     # 200 is the docs/REMEDIATION.md 2.0.0 target and the P1 exit requires it.
     "readme_lines": 200,

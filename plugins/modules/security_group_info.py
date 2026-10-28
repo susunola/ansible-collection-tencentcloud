@@ -62,7 +62,7 @@ security_groups:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - SecurityGroupId: sg-a
 total_count:
   description: Number of security groups reported by the API.

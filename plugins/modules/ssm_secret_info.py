@@ -107,7 +107,7 @@ secret:
   returned: in exact mode
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     SecretName: prod/database
     Description: production database
     Status: Enabled
@@ -118,7 +118,7 @@ secrets:
   type: list
   elements: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     - SecretName: prod/database
       Description: production database
       Status: Enabled
@@ -182,7 +182,7 @@ def list_request(models, p, offset):
 
 def read_list(module, client, models, p):
     values, total, offset, request_id, truncated = [], 0, 0, None, False
-    for _ in range(p["max_pages"]):
+    for _page in range(p["max_pages"]):
         response = module.sdk_call(client.ListSecrets, list_request(models, p, offset))
         items = response.SecretMetadatas or []
         values.extend(item._serialize(allow_none=True) for item in items)

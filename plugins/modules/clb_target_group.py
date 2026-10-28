@@ -141,7 +141,7 @@ target_group:
   returned: always
   type: dict
   sample:
-    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    # shape captured from this module's unit tests
     TargetGroupId: lbtg-new-1
     TargetGroupName: api-backends
     VpcId: vpc-abc
