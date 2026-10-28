@@ -24,8 +24,15 @@ class FakeRequest(object):
     pass
 
 
+class FakeTag(object):
+    def __init__(self):
+        self.Key = None
+        self.Value = None
+
+
 class FakeModels(object):
     Filter = FakeFilter
+    Tag = FakeTag
     DescribeNatGatewaysRequest = FakeRequest
     CreateNatGatewayRequest = FakeRequest
     ModifyNatGatewayAttributeRequest = FakeRequest
@@ -141,6 +148,7 @@ def test_create_sends_all_provided_fields():
         "address_count": 2,
         "public_ip_addresses": ["1.2.3.4"],
         "zone": "ap-guangzhou-3",
+        "tags": {"env": "prod", "team": "infra"},
     })
     request = client.calls[-1]
     assert request.VpcId == "vpc-1"
@@ -150,6 +158,7 @@ def test_create_sends_all_provided_fields():
     assert request.AddressCount == 2
     assert request.PublicIpAddresses == ["1.2.3.4"]
     assert request.Zone == "ap-guangzhou-3"
+    assert [(tag.Key, tag.Value) for tag in request.Tags] == [("env", "prod"), ("team", "infra")]
 
 
 def test_create_omits_optional_fields():
@@ -163,6 +172,7 @@ def test_create_omits_optional_fields():
         "address_count": None,
         "public_ip_addresses": None,
         "zone": None,
+        "tags": {},
     })
     request = client.calls[-1]
     assert request.VpcId == "vpc-1"
@@ -171,6 +181,7 @@ def test_create_omits_optional_fields():
     assert not hasattr(request, "AddressCount")
     assert not hasattr(request, "PublicIpAddresses")
     assert not hasattr(request, "Zone")
+    assert not hasattr(request, "Tags")
 
 
 def test_update_sets_name_and_bandwidth():

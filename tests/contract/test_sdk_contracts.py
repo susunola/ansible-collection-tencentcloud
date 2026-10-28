@@ -2121,6 +2121,7 @@ def test_nat_gateway():
             "address_count": None,
             "public_ip_addresses": ["eip-xxxxxxxx"],
             "zone": "ap-guangzhou-3",
+            "tags": {"env": "test"},
         },
     )
     module._set_deletion_protection(fake, client, models, "nat-xxxxxxxx", True)
