@@ -20,16 +20,16 @@ options:
     default: present
   group_id:
     description:
-      - CAM user group ID.
+      - ID of the CAM user group whose membership is managed.
     type: int
     required: true
   sub_uin:
     description:
-      - CAM sub-user UIN.
+      - UIN of the sub-user to add or remove, e.g. C(100000000001).
     type: int
   uid:
     description:
-      - CAM sub-user UID.
+      - UID of the sub-user to add or remove; an alternative identifier to O(sub_uin).
     type: int
 
 extends_documentation_fragment:

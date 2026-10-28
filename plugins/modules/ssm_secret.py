@@ -16,7 +16,7 @@ description:
 options:
   state:
     description:
-      - Desired secret state.
+      - C(present) creates or updates the secret; C(absent) schedules its deletion with V(DeleteSecret).
     type: str
     choices: [present, absent]
     default: present
@@ -27,7 +27,7 @@ options:
     required: true
   description:
     description:
-      - Secret description.
+      - Free-text description of the secret.
     type: str
     default: managed by Ansible
   enabled:

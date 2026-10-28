@@ -47,12 +47,12 @@ options:
     elements: str
   min_size:
     description:
-      - Minimum instance count.
+      - Minimum number of instances the group keeps running; scale-in never goes below this.
     type: int
     default: 0
   max_size:
     description:
-      - Maximum instance count.
+      - Maximum number of instances the group may scale out to.
     type: int
     default: 0
   desired_capacity:
@@ -73,7 +73,7 @@ options:
     default: OLDEST_INSTANCE
   retry_policy:
     description:
-      - Scaling retry policy.
+      - How a failed scale-out is retried; V(IMMEDIATE_RETRY) retries at once, V(INCREMENTAL_INTERVALS) backs off between attempts, V(NO_RETRY) gives up.
     type: str
     choices: [IMMEDIATE_RETRY, INCREMENTAL_INTERVALS, NO_RETRY]
     default: IMMEDIATE_RETRY

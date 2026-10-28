@@ -16,7 +16,7 @@ description:
 options:
   instance_id:
     description:
-      - Lighthouse instance ID.
+      - ID of the Lighthouse instance whose firewall rules are managed, e.g. C(lhins-xxxxxxxx).
     type: str
     required: true
   rules:

@@ -14,7 +14,7 @@ version_added: "0.4.0"
 description: Returns TencentDB for Redis instances visible in a Tencent Cloud region.
 options:
   instance_ids:
-    description: Instance IDs to return.
+    description: Return only these instance IDs (e.g. C(crs-xxxxxxxx)); all instances are listed when omitted.
     type: list
     elements: str
   page_size:

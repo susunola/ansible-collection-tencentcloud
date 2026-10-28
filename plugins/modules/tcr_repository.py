@@ -29,7 +29,7 @@ options:
     required: true
     type: str
   name:
-    description: Repository name.
+    description: Name of the image repository to manage within the namespace.
     required: true
     type: str
   brief_description:

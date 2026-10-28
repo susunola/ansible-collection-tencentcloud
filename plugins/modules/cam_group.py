@@ -32,7 +32,7 @@ options:
     type: str
   remark:
     description:
-      - Group remark.
+      - Free-text remark shown with the group in the CAM console; updated in place when it differs.
     type: str
     default: ''
 extends_documentation_fragment:

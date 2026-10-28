@@ -71,7 +71,7 @@ options:
         type: int
         required: true
       description:
-        description: Description of the rule.
+        description: Free-text description of this DNAT rule.
         type: str
         default: ""
   snat_rules:
@@ -111,7 +111,7 @@ options:
         elements: str
         required: true
       description:
-        description: Description of the rule.
+        description: Free-text description of this SNAT rule.
         type: str
         default: ""
   purge:

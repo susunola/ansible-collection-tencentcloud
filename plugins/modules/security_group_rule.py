@@ -65,7 +65,7 @@ options:
         choices: [ACCEPT, DROP]
         default: ACCEPT
       policy_description:
-        description: Description of the rule.
+        description: Free-text description of this rule, shown in the console.
         type: str
         default: ""
       direction:

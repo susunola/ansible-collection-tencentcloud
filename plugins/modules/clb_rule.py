@@ -96,7 +96,7 @@ options:
         description: Probe interval in seconds, 2-60.
         type: int
       health_num:
-        description: Healthy threshold, 2-10.
+        description: Consecutive successful probes before a backend is marked healthy (2-10).
         type: int
       un_health_num:
         description: Unhealthy threshold, 2-10.
@@ -105,14 +105,14 @@ options:
         description: Probe response timeout in seconds, 2-60.
         type: int
       check_type:
-        description: Protocol of the probe.
+        description: Protocol used for health probes on this rule's backends.
         type: str
         choices: [TCP, HTTP, HTTPS, GRPC, PING, CUSTOM]
       check_port:
-        description: Port of the probe.
+        description: Port the probes connect to; defaults to the backend's forwarding port.
         type: int
       http_check_path:
-        description: Path of the HTTP probe.
+        description: URL path requested by HTTP health probes, e.g. C(/healthz).
         type: str
       http_check_domain:
         description: Domain of the HTTP probe.

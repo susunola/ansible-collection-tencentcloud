@@ -22,17 +22,17 @@ options:
     default: present
   instance_id:
     description:
-      - CDB instance ID.
+      - ID of the TencentDB for MySQL instance the account belongs to, e.g. C(cdb-xxxxxxxx).
     type: str
     required: true
   username:
     description:
-      - Account name.
+      - Name of the database account to manage.
     type: str
     required: true
   host:
     description:
-      - Account host expression.
+      - Host pattern the account may connect from, e.g. C(%) or C(10.0.0.%).
     type: str
     default: '%'
   password:
@@ -46,7 +46,7 @@ options:
     default: false
   description:
     description:
-      - Account description.
+      - Free-text account description; updated in place when it differs.
     type: str
     default: ''
   max_user_connections:

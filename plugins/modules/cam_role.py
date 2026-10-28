@@ -38,7 +38,7 @@ options:
         created. When O(role_id) is not given, the role is matched by name.
     type: str
   description:
-    description: Description of the role.
+    description: Free-text description of the role; updated in place when it differs.
     type: str
   assume_policy_document:
     description:

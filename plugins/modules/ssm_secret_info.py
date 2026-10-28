@@ -17,7 +17,7 @@ description:
 options:
   secret_name:
     description:
-      - Exact Secret name.
+      - Exact secret name to fetch, e.g. C(prod/database); switches the module to exact lookup.
     type: str
   state_filter:
     description:
@@ -36,7 +36,7 @@ options:
     default: {}
   secret_type:
     description:
-      - Secret type filter.
+      - Restrict list mode to secrets of this type code.
     type: int
     choices: [0, 1, 2, 3, 4]
   product_name:
@@ -45,7 +45,7 @@ options:
     type: str
   encrypt_type:
     description:
-      - Encryption type filter.
+      - Restrict list mode by encryption type; V(0) for the SSM-managed default key, V(1) for a custom KMS key.
     type: int
     choices: [0, 1]
   instance_id:
@@ -54,7 +54,7 @@ options:
     type: str
   order:
     description:
-      - Creation-time ordering.
+      - Creation-time ordering of list results; V(descending) returns newest first.
     type: str
     choices: [ascending, descending]
     default: descending
@@ -65,7 +65,7 @@ options:
     default: 100
   max_pages:
     description:
-      - Maximum pages fetched.
+      - Upper bound on pages fetched in list mode; reaching it sets RV(truncated=true).
     type: int
     default: 1000
 

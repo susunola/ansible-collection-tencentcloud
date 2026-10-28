@@ -146,7 +146,7 @@ Do not reply with test or module totals.
 | --- | --- |
 | P0 | This file, the allowlist, and the freeze guard are on `main` |
 | P1 | ~~Module count ≤ 120, generator banner count 0, event_source gone~~ **done** (77 / 0 / gone) |
-| P2 | No `validate-modules` / forbidden sanity ignores |
+| P2 | ~~No `validate-modules` / forbidden sanity ignores~~ **done** (4 entries total, 0 forbidden; the one remaining code is `action-plugin-docs` for the shared `tc_wait` helper, a documented legitimate case) |
 | P3 | Allowlisted modules have human-readable option docs |
 | P4 | Every allowlisted write module has the 8-step integration |
 | P5 | Second maintainer named |
