@@ -50,7 +50,7 @@ def write(tmp_path, name, body):
 def test_repository_links_resolve(links_check):
     broken, checked = links_check.check()
     assert broken == [], broken
-    assert checked > 900
+    assert checked > 10
 
 
 def test_main_check_exits_zero(links_check):

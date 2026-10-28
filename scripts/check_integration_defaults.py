@@ -53,10 +53,6 @@ ALWAYS_DISPATCHED = frozenset({"free", "low"})
 # to run unattended every week, and the reason is printed by --check so a
 # reviewer sees it rather than having to trust the name.
 VETTED_MEDIUM = {
-    "cfs_file_system": (
-        "provisions one file system plus its VPC/subnet and tears all three "
-        "down in an always: block, leaving no long-lived billable resource"
-    ),
     "clb_http": (
         "provisions one load balancer plus its VPC/subnet and tears all three "
         "down in an always: block, leaving no long-lived billable resource"

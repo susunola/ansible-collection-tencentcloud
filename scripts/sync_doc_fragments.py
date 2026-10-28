@@ -68,11 +68,10 @@ RUNTIME_FRAGMENTS = frozenset(OPTION_FRAGMENTS.values())
 
 # ``timeout`` lives in its own fragment so that a module which needs the
 # option name for something else can shadow it without the shared
-# documentation leaking a default the module does not apply.
-# dlc_notebook_session, tat_command, tat_invocation and tse_gateway_service
-# define their own ``timeout`` (a product API field, minutes of session or
-# command lifetime) and therefore must not reference the fragment; every other
-# module must.
+# documentation leaking a default the module does not apply. A module whose
+# product API has its own ``timeout`` field (minutes of session or command
+# lifetime, say) defines its own and therefore must not reference the
+# fragment; every other module must.
 _TIMEOUT_OVERRIDE_RE = re.compile(r'"timeout"\s*:\s*\{')
 TIMEOUT_FRAGMENT = "timeout"
 

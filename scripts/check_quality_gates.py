@@ -52,24 +52,19 @@ RUNTIME_YML = os.path.join(REPO_ROOT, "meta", "runtime.yml")
 UNIT_TESTS = os.path.join(REPO_ROOT, "tests", "unit", "plugins", "modules")
 INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.yml")
 
-# Ratchets: the census measured when this gate was introduced (2026-09-25).
-# They may only go down.  The integration number is the honest one: the
-# collection dispatches 21 targets covering 24 of the 166 write modules in
-# the core subset, and 20 core products have no covered write module at all.
-# That gap, not the documentation, is the largest remaining distance between
-# this collection and the standard it claims.
-DOC_RATCHET = 0
-INTEGRATION_GATED_RATCHET = 8
-# Corrected from 134: three modules were credited to a target that never
-# called them. ``security_group_rule`` is exercised by the ``network`` target
-# and was credited to ``security_group``, and ``network_acl`` and ``clb_rule``
-# are exercised by nothing at all. The first was a mis-attribution, so moving
-# it changes no count; ``clb_rule`` is a core-subset write module, so the gap
-# is one larger than the registry claimed. This is a correction, not a
-# regression, and the count now cannot go up again by itself:
+# Ratchets, re-baselined after the P1 surface reduction cut the collection
+# to the docs/core-allowlist.yml core set. They may only go down. The
+# integration numbers are the honest ones: the flagship write modules
+# (cvm_instance, tke_cluster, cdb_instance) sit in targets that exist but
+# are gated out of the default dispatch, and 25 allowlisted write modules
+# have no target at all. That gap, not the documentation, is the largest
+# remaining distance between this collection and the standard it claims
+# (docs/REMEDIATION.md phase P4). The count cannot go up again by itself:
 # ``audit_integration_targets.py`` fails when a target claims a module its
 # tasks never call.
-INTEGRATION_MISSING_RATCHET = 135
+DOC_RATCHET = 0
+INTEGRATION_GATED_RATCHET = 6
+INTEGRATION_MISSING_RATCHET = 25
 
 # Write modules whose unit tests never run ``run_module`` twice, so nothing
 # checks the idempotency the attributes claim.  Small, but the claim is
@@ -81,72 +76,45 @@ IDEMPOTENCY_RATCHET = 0
 # which is most of their value.  Generating them from the SDK model was tried
 # and rejected: it produced 110 lines of ``"string"`` and ``0`` for
 # cvm_instance, which is longer than the curated sample and says less.
-#
-# Two sources closed it. ``scripts/add_return_samples.py`` records the payload
-# a module's own unit test produced and documents that -- 413 modules, the
-# hand-written ones whose tests use the shared harness.  The generated modules
-# are owned by ``generate_info_modules.py``, which now emits the *structure* of
-# the SDK response model it already introspects: the field names are the API's
-# own and the values are deliberately empty, because inventing values for an
-# API nobody here can call is how a sample becomes misinformation.  That is
-# another 501 modules, so this moved from 976 to 62.
-#
-# What is left is hand-written modules whose tests build a private harness (so
-# no payload is captured) and two whose payload is a blob that cannot be
-# wrapped under the line pep8 allows.
-RETURN_SAMPLE_RATCHET = 2
+RETURN_SAMPLE_RATCHET = 0
 
 # RETURN entries whose ``sample`` contradicts the declared ``type`` -- a dict
 # documented as a list, an integer documented as a string. The sample is what
 # the module actually produced under test, so a mismatch is always the
-# documentation lying about the module. The first census found exactly one
-# (``ssl_certificate.deploy_record_id``, an SDK integer documented as
-# ``str``); none may come back.
+# documentation lying about the module.
 RETURN_SAMPLE_TYPE_RATCHET = 0
 
 # Write modules that claim ``check_mode: full`` with no dry-run test. The
 # claim is user-facing and load-bearing: a user runs --check expecting no
-# write. All 457 have one today.
+# write.
 CHECK_MODE_TEST_RATCHET = 0
 
 # Unit-test files that are still unmodified generator skeletons, so their
-# behavioural tests are xfail stubs. Eight files were, covering 22 xfails;
-# each one is hand-finishing work, and this may only go down.
+# behavioural tests are xfail stubs.
 SKELETON_TEST_RATCHET = 0
 
 # Write modules that accept ``state: absent`` and never show it. Deletion is
 # the operation with the most consequence and the one a reader cannot guess:
 # which option identifies the resource, and which create-only parameters the
-# module still demands. All 270 now document it: 38 written by hand and the
-# rest by ``scripts/add_delete_examples.py``, which takes the identity from the
-# options the module's own lookup reads, the values from its create example,
-# and a delete-path flag such as ``deletion_protection`` from the unit test's
-# delete call rather than from the create example that turns it on.
+# module still demands.
 DELETE_EXAMPLE_RATCHET = 0
 
 # Module options that re-declare a doc-fragment option with a *different*
 # type. Same-type re-declaration is how a module overrides a fragment default
-# or description (108 sites today, harmless). A different type means the
-# module silently shadows the fragment feature: ``dlc_spark_job`` declares
-# ``role_arn: int`` (the DLC data-access role) over the credentials fragment's
-# ``role_arn: str`` (the STS assume-role ARN), and because
-# ``TencentCloudModule`` lets the module's own spec ``update()`` over
-# ``base_argument_spec()``, the assume-role option cannot be used with that
-# module at all. Un-shadowing it needs a deprecation cycle, so the one site
-# is frozen as a baseline; no new shadow may appear.
-FRAGMENT_SHADOW_RATCHET = 1
+# or description (harmless). A different type means the module silently
+# shadows the fragment feature: because ``TencentCloudModule`` lets the
+# module's own spec ``update()`` over ``base_argument_spec()``, an option the
+# fragment provides (the STS assume-role ARN, say) becomes unusable with that
+# module. No shadow may appear.
+FRAGMENT_SHADOW_RATCHET = 0
 
 # Top-level helpers a module defines but nothing calls -- not the module
-# itself, not its tests, not the contract suite. Four identical dead
-# ``_first`` one-liners (cfs_file_system, ckafka_topic, gaap_proxy,
-# ssm_parameter) were the first census; helpers referenced only by the
-# contract suite (sqlserver_instance's modify-path builders, tke_cluster_
-# endpoint's build_status) are alive by definition and are recorded in
-# docs/inclusion-remediation.md instead.
+# itself, not its tests, not the contract suite. Helpers referenced only by
+# the contract suite are alive by definition.
 DEAD_HELPER_RATCHET = 0
 
 # Two of the families above are stock counts of *existing* debt -- samples to
-# author (976) and integration targets that need a cloud account (135). A
+# author and integration targets that need a cloud account. A
 # stock ceiling cannot tell "fixed three, broke three" apart from "fixed
 # nothing", and it charges every new module for the sins of the old ones. So
 # those two families are also frozen as an explicit baseline list: a module
@@ -172,16 +140,20 @@ BASELINE_FRAGMENT_SHADOWING = "fragment_shadowing"
 # makes them hard rules: a new finding has to be fixed rather than recorded,
 # and re-opening one is a reviewed edit to this file, not a command.
 UNTESTED_MODULES_CEILING = 0
-PRIVATE_HARNESS_CEILING = 0
+# Ratchet, not a hard rule: the 19 frozen findings are the formerly
+# generator-produced _info modules whose tests predate the shared harness.
+# The generator banner skip hid them until the banner was removed with the
+# generator; the baseline freezes them and the count may only shrink as the
+# tests are migrated.
+PRIVATE_HARNESS_CEILING = 19
 UNTESTED_MAIN_PATH_CEILING = 0
 
 # Hand-written ``_info`` modules calling the module-level ``sdk_call``, which
-# does not retry. The 502 generated ones moved when the generator did and the
-# 15 hand-written ones were migrated afterwards, so this is a hard rule rather
-# than a ratchet: no module may reach for the non-retrying call. Modules that
-# read through ``TencentCloudModule.sdk_call`` are not counted -- that path
-# retries already, and a census that cannot tell the two names apart reports
-# debt that is not there.
+# does not retry. This is a hard rule rather than a ratchet: no module may
+# reach for the non-retrying call. Modules that read through
+# ``TencentCloudModule.sdk_call`` are not counted -- that path retries
+# already, and a census that cannot tell the two names apart reports debt
+# that is not there.
 LEGACY_READ_CALL_CEILING = 0
 
 _BASELINE_GUIDANCE = {
@@ -207,7 +179,7 @@ _BASELINE_GUIDANCE = {
     BASELINE_FRAGMENT_SHADOWING:
         "a module that re-declares a fragment option keeps the fragment's "
         "type, so the shared feature (assume-role, waiter, endpoint) stays "
-        "usable; dlc_spark_job is the one grandfathered shadow",
+        "usable",
 }
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
@@ -230,7 +202,7 @@ def module_product(name):
     """The core product a module belongs to, longest matching prefix first.
 
     A product is a prefix family, and some names span several words
-    (``cvm_disaster_recover_group``), so the match runs against the core list
+    (``clb_listener_target``), so the match runs against the core list
     -- not against the module catalogue, where every module would match
     itself.  Returns ``None`` when the module is outside the core subset.
     """
@@ -695,15 +667,14 @@ def check_mode_test_findings():
 def skeleton_test_findings():
     """Test files that are still unmodified generator skeletons.
 
-    ``scripts/generate_module_test_skeleton.py`` writes a starting point and
-    marks it with a first-line comment; the documented contract is that
-    finishing the file means deleting that line. A file that still carries it
-    has never been finished, so its behavioural tests are ``xfail`` stubs and
-    the module they describe has no real test of its behaviour -- eight files
-    did, which was 22 of the suite's xfails.
+    A skeleton test file carries a first-line marker comment; the documented
+    contract is that finishing the file means deleting that line. A file
+    that still carries it has never been finished, so its behavioural tests
+    are ``xfail`` stubs and the module they describe has no real test of its
+    behaviour.
 
     The marker is read from the first line only, which is where the generator
-    puts it, so a test that happens to quote the marker string is not
+    put it, so a test that happens to quote the marker string is not
     mistaken for a skeleton.
     """
     marker = "# Skeleton generated by scripts/generate_module_test_skeleton.py"
@@ -720,8 +691,7 @@ def role_meta_findings():
     """Roles whose galaxy_info disagrees with the collection's own metadata.
 
     ``meta/runtime.yml`` is the collection's ansible-core floor and the README
-    restates it; a role's ``min_ansible_version`` is a third copy, and all
-    sixty-four roles said 2.16 while the collection required 2.19.  A role
+    restates it; a role's ``min_ansible_version`` is a third copy. A role
     page that advertises a floor the rest of the collection does not support
     is how a user ends up installing something that will not run, so this is a
     hard check rather than a ratchet.
@@ -949,14 +919,10 @@ def _modules_named_by_tests():
 def untested_module_findings():
     """Hand-written modules that no test file imports.
 
-    The collection ships a unit test per module and says so; two modules were
-    referenced by no test file and no integration target at all --
-    ``cos_bucket_domain_certificate_info`` and
-    ``cos_bucket_intelligent_tiering_info`` -- so nothing anywhere executed
-    them. A module nothing runs is a module nobody can tell works, so this is
-    a hard rule rather than a ratchet. Generated modules are exempt: their
-    tests are generated beside them and ``generate_info_modules.py --check``
-    keeps the pair in step.
+    The collection ships a unit test per module and says so. A module
+    nothing runs is a module nobody can tell works, so this is a hard rule
+    rather than a ratchet. Modules carrying the generator banner are exempt:
+    their tests were generated beside them.
     """
     referenced = _modules_named_by_tests()
 
@@ -1013,9 +979,7 @@ def legacy_read_call_findings():
     module and wrong for a read. Tencent Cloud throttles as a matter of course,
     so a module on this list fails the first time it meets
     ``RequestLimitExceeded`` while every module that reads through
-    ``read_sdk_call`` recovers from it. The generated ``_info`` modules moved
-    when the generator did; these are hand-written, each with its own request
-    builders and pagination, so each needs a look rather than a regeneration.
+    ``read_sdk_call`` recovers from it.
 
     Modules that read through ``TencentCloudModule.sdk_call`` are deliberately
     not listed: that path retries already, and it additionally records the call

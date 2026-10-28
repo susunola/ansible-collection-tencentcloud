@@ -103,7 +103,7 @@ def test_both_copies_of_the_list_are_found(guard, workflow_text):
 
 def test_the_default_list_is_not_token_small(guard, dispatched):
     """Two or three targets would make 'agrees with coverage.yml' worthless."""
-    assert len(dispatched) > 10
+    assert len(dispatched) >= 10
 
 
 def test_the_registry_has_targets_that_are_not_dispatched(guard, coverage, dispatched):

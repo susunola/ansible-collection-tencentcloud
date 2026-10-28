@@ -85,7 +85,7 @@ def description_offenders(parsed):
 
     Checking the parsed value also means the rule is about the defect and
     not about syntax. ``seealso`` is a list of mappings on purpose --
-    ``- module: susunola.tencentcloud.alb_listener`` is what ansible-core
+    ``- module: susunola.tencentcloud.vpc`` is what ansible-core
     documents -- and a source-line rule flags all 451 of them.
     """
     found = []
@@ -228,7 +228,7 @@ def test_seealso_entries_are_not_description_offenders():
     rule that catches a stray colon must not catch them."""
     parsed = yaml.safe_load(
         "seealso:\n"
-        "  - module: susunola.tencentcloud.alb_listener\n"
+        "  - module: susunola.tencentcloud.vpc\n"
         "    description: Manage Tencent Cloud ALB listeners.\n")
     assert description_offenders(parsed) == []
     assert seealso_offenders(parsed) == []

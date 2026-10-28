@@ -37,6 +37,7 @@ def tree(tmp_path, fragments):
         "sections:\n"
         "  - [major_changes, Major Changes]\n"
         "  - [minor_changes, Minor Changes]\n"
+        "  - [removed_features, Removed Features]\n"
         "  - [bugfixes, Bugfixes]\n", encoding="utf-8")
     fragments.FRAGMENTS_DIR = str(tmp_path / "fragments")
     fragments.CONFIG = str(tmp_path / "config.yaml")
@@ -155,5 +156,13 @@ def test_a_script_or_role_subject_passes(tree, fragments):
     write(tree, "multi.yml",
           "---\nminor_changes:\n"
           "  - check_quality_gates - new ratchet.\n"
-          "  - tc_alb_application_entry - documented a variable.\n")
+          "  - tc_vpc_foundation - documented a variable.\n")
+    assert fragments.findings() == []
+
+
+def test_a_removed_features_entry_may_name_what_left(tree, fragments):
+    """A removal announcement names the removed thing; it cannot resolve."""
+    write(tree, "removal.yml",
+          "---\nremoved_features:\n"
+          "  - event_source - the event plugins are removed.\n")
     assert fragments.findings() == []

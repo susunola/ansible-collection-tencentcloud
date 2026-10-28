@@ -5,8 +5,8 @@ a whole run can be green while executing nothing - the failure mode that let
 the scheduled Integration workflow report success for months without running
 a single test. These tests pin the gate that catches it.
 
-The numbers below are real PLAY RECAP lines from CI run 34691360139 plus the
-local private_dns run, not invented fixtures.
+The numbers below are shaped like real PLAY RECAP lines: two account-blocked
+targets self-skip while the rest run their lifecycle.
 """
 from __future__ import annotations
 
@@ -40,47 +40,48 @@ def _log(*blocks: tuple[str, str]) -> str:
     return "\n".join(out) + "\n"
 
 
-# Real observations from CI run 34691360139 and the local private_dns run.
+# Real observations from CI: two account-blocked targets self-skip, the rest
+# run their lifecycle.
 REAL_LOG = _log(
-    ("apigateway_ip_strategy", _recap(ok=7, changed=0, skipped=11)),
-    ("cls_alarm", _recap(ok=20, changed=9, skipped=1)),
-    ("redis_replication_group", _recap(ok=3, changed=0, skipped=12)),
-    ("tcr_immutable_tag_rule", _recap(ok=10, changed=3, skipped=1)),
-    ("tcr_webhook_trigger", _recap(ok=11, changed=3, skipped=1)),
-    ("private_dns", _recap(ok=12, changed=6, skipped=1)),
+    ("cam_user", _recap(ok=7, changed=0, skipped=11)),
+    ("cam_group_membership", _recap(ok=3, changed=0, skipped=12)),
+    ("network", _recap(ok=20, changed=9, skipped=1)),
+    ("cos_bucket", _recap(ok=10, changed=3, skipped=1)),
+    ("kms_key", _recap(ok=11, changed=3, skipped=1)),
+    ("tke_addon", _recap(ok=12, changed=6, skipped=1)),
 )
 
 
 def test_parses_every_target_in_the_log():
     recaps = _CHECK.parse_log(REAL_LOG)
     assert set(recaps) == {
-        "apigateway_ip_strategy",
-        "cls_alarm",
-        "redis_replication_group",
-        "tcr_immutable_tag_rule",
-        "tcr_webhook_trigger",
-        "private_dns",
+        "cam_user",
+        "cam_group_membership",
+        "network",
+        "cos_bucket",
+        "kms_key",
+        "tke_addon",
     }
 
 
 def test_targets_that_ran_their_lifecycle_are_executed():
     recaps = _CHECK.parse_log(REAL_LOG)
-    for target in ("cls_alarm", "tcr_immutable_tag_rule", "tcr_webhook_trigger", "private_dns"):
+    for target in ("network", "cos_bucket", "kms_key", "tke_addon"):
         assert recaps[target].changed > 0, target
         assert recaps[target].executed is True, target
 
 
 def test_self_skipped_targets_are_not_executed():
     recaps = _CHECK.parse_log(REAL_LOG)
-    assert recaps["apigateway_ip_strategy"].executed is False
-    assert recaps["redis_replication_group"].executed is False
+    assert recaps["cam_user"].executed is False
+    assert recaps["cam_group_membership"].executed is False
 
 
 def test_ansi_colour_codes_are_stripped():
     coloured = REAL_LOG.replace("testhost", "\x1b[0;33mtesthost\x1b[0m")
     coloured = coloured.replace("ok=20  ", "\x1b[0;32mok=20  \x1b[0m")
     recaps = _CHECK.parse_log(coloured)
-    assert recaps["cls_alarm"].ok == 20
+    assert recaps["network"].ok == 20
 
 
 def test_a_target_that_changed_nothing_but_ran_more_than_it_skipped_passes():
@@ -109,9 +110,9 @@ def test_run_with_undeclared_skips_fails(tmp_path: Path):
     coverage.write_text(
         "version: 1\n"
         "targets:\n"
-        "  apigateway_ip_strategy: {cost: free}\n"
-        "  redis_replication_group: {cost: high}\n"
-        "  cls_alarm: {cost: medium}\n"
+        "  cam_user: {cost: free}\n"
+        "  cam_group_membership: {cost: free}\n"
+        "  network: {cost: low}\n"
     )
     log = tmp_path / "run.log"
     log.write_text(REAL_LOG)
@@ -131,9 +132,9 @@ def test_account_blocked_targets_are_tolerated(tmp_path: Path):
     coverage.write_text(
         "version: 1\n"
         "targets:\n"
-        "  apigateway_ip_strategy: {cost: free, account_blocked: true}\n"
-        "  redis_replication_group: {cost: high, account_blocked: true}\n"
-        "  cls_alarm: {cost: medium}\n"
+        "  cam_user: {cost: free, account_blocked: true}\n"
+        "  cam_group_membership: {cost: free, account_blocked: true}\n"
+        "  network: {cost: low}\n"
     )
     log = tmp_path / "run.log"
     log.write_text(REAL_LOG)
@@ -142,23 +143,23 @@ def test_account_blocked_targets_are_tolerated(tmp_path: Path):
 
 def test_blocked_targets_are_read_from_the_registry():
     blocked = _CHECK.blocked_targets(_REPO / "tests" / "integration" / "coverage.yml")
-    assert "apigateway_ip_strategy" in blocked
-    assert "redis_replication_group" in blocked
+    assert "cam_user" in blocked
+    assert "cam_group_membership" in blocked
 
 
 def test_requested_target_with_no_recap_fails(tmp_path: Path):
     log = tmp_path / "run.log"
-    log.write_text(_log(("cls_alarm", _recap(ok=20, changed=9, skipped=1))))
-    assert _CHECK.main(["--log", str(log), "--targets", "cls_alarm tke_addon"]) == 1
+    log.write_text(_log(("no_such_target", _recap(ok=20, changed=9, skipped=1))))
+    assert _CHECK.main(["--log", str(log), "--targets", "no_such_target tke_addon"]) == 1
     assert (
-        _CHECK.main(["--log", str(log), "--targets", "cls_alarm tke_addon", "--skip-missing"]) == 0
+        _CHECK.main(["--log", str(log), "--targets", "no_such_target tke_addon", "--skip-missing"]) == 0
     )
 
 
 @pytest.mark.parametrize(
     ("ok", "changed", "skipped", "expected"),
     [
-        (20, 9, 1, True),   # cls_alarm
+        (20, 9, 1, True),   # no_such_target
         (12, 6, 1, True),   # private_dns
         (7, 0, 11, False),  # apigateway: skipped more than it ran
         (3, 0, 12, False),  # redis: gate never configured

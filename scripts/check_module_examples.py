@@ -8,24 +8,19 @@ An example is the first thing a user copies, and it was the one part of a
 module nothing checked. ``validate-modules`` proves the ``EXAMPLES`` string is
 present and that it is valid YAML; ``scripts/check_examples.py`` reads the
 playbooks under ``docs/examples/`` and ``playbooks/`` but not the examples that
-ship *inside* the 1,027 modules; and the integration targets are the only thing
+ship *inside* the modules; and the integration targets are the only thing
 that would actually run a module. So an example could name a module that does
 not exist, or omit an option the module requires, and every check stayed green
 while the user's copy-paste failed on the first line.
 
-This is not hypothetical. The first run of this script found three defects that
-had shipped:
-
-* ``tse_governance_alias_info`` called ``tse_governance_aliase_info`` -- a
-  module that does not exist, so the example failed with "couldn't resolve
-  module/action" before reaching Tencent Cloud.
-* ``lcic_answer_info`` omitted ``question_id``, which its argument spec marks
-  required, so the example failed with "missing required arguments".
-* ``cdb_audit_rule`` shipped an example that deletes a rule without
-  ``rule_filters`` while the argument spec marked that option unconditionally
-  required -- the documentation and the code disagreed about whether deletion
-  was possible at all, and the unit tests passed because they supplied the
-  filters on the delete path too.
+This is not hypothetical. The first run of this script found shipped defects
+of every kind it now guards against: an example calling a module that does
+not exist ("couldn't resolve module/action" before reaching Tencent Cloud),
+an example omitting an option the argument spec marks required, and an
+example whose delete call skipped an unconditionally required option -- the
+documentation and the code disagreed about whether deletion was possible at
+all, and the unit tests passed because they supplied the option on the
+delete path too.
 
 What it checks, per example task
 --------------------------------
@@ -43,8 +38,8 @@ What it checks, per example task
   underscores the API expects (``types``),
 * every example calls the module it documents (``self``).
 
-``cdb_audit_rule`` is why the ``required`` check is not a style preference: the
-requirement it applied to the delete path was itself the bug.
+The ``required`` check is not a style preference: in the delete-path case
+above, the requirement it applied to the delete path was itself the bug.
 
 Usage
 -----

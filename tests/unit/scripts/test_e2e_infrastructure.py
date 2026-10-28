@@ -33,8 +33,8 @@ def load_reaper(monkeypatch):
 def manifest_entry(**overrides):
     entry = {
         "run_id": "1",
-        "target": "cmq_queue",
-        "resource_type": "cmq_queue",
+        "target": "subnet",
+        "resource_type": "subnet",
         "resource_id": "q-1",
         "region": "ap-guangzhou",
     }
@@ -50,9 +50,9 @@ def add_via_cli(module, path, *extra):
         "--run-id",
         "1",
         "--target",
-        "cmq_queue",
+        "subnet",
         "--resource-type",
-        "cmq_queue",
+        "subnet",
         "--resource-id",
         "q-1",
         "--region",
@@ -65,8 +65,8 @@ def test_manifest_validate_and_load(tmp_path):
     module = load_script("e2e_manifest")
     entry = {
         "run_id": "1",
-        "target": "cmq_queue",
-        "resource_type": "cmq_queue",
+        "target": "subnet",
+        "resource_type": "subnet",
         "resource_id": "q-1",
         "region": "ap-guangzhou",
         "expires_at": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat(),
@@ -79,9 +79,9 @@ def test_manifest_validate_and_load(tmp_path):
 
 def test_integration_impact_selection():
     module = load_script("integration_impact")
-    coverage = {"targets": {"cmq_queue": {"cost": "low", "modules": ["cmq_queue"]}, "dbbrain_sql_filter": {"cost": "high", "modules": ["dbbrain_sql_filter"]}}}
-    assert module.select({"plugins/modules/cmq_queue.py"}, coverage) == ["cmq_queue"]
-    assert module.select({"plugins/module_utils/base.py"}, coverage) == ["cmq_queue"]
+    coverage = {"targets": {"subnet": {"cost": "low", "modules": ["subnet"]}, "tke_cluster": {"cost": "high", "modules": ["tke_cluster"]}}}
+    assert module.select({"plugins/modules/subnet.py"}, coverage) == ["subnet"]
+    assert module.select({"plugins/module_utils/base.py"}, coverage) == ["subnet"]
 
 
 def test_integration_registry_validation(tmp_path, monkeypatch):
@@ -136,9 +136,9 @@ def test_manifest_add_still_requires_the_caller_supplied_fields(tmp_path):
         "--run-id",
         "1",
         "--target",
-        "cmq_queue",
+        "subnet",
         "--resource-type",
-        "cmq_queue",
+        "subnet",
         "--resource-id",
         "q-1",
         # --region deliberately omitted

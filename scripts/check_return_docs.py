@@ -8,15 +8,9 @@ Why
 a key. Nothing compared that promise with ``exit_json``. ``validate-modules``
 checks the shape of the block -- that an entry has a description, a ``returned``
 and a ``type`` -- and the integration targets assert the keys they happen to
-use, which is a handful. So a module could return a key nobody was told about,
-and four did:
-
-* ``cvm_instance`` returns ``count``, ``instances`` and ``terminated`` in
-  ``exact_count`` mode, which is the whole point of that mode;
-* ``tdcpg_account`` returns ``password_rotated``;
-* ``tdcpg_instance_state`` returns ``restarted``;
-* ``tse_gateway_waf_domains`` returns ``added_domains`` and
-  ``removed_domains``.
+use, which is a handful. So a module could return a key nobody was told
+about: ``cvm_instance`` returns ``count``, ``instances`` and ``terminated``
+in ``exact_count`` mode, which is the whole point of that mode.
 
 What it checks
 --------------

@@ -63,11 +63,11 @@ def test_repo_manifest_is_valid(guard):
     assert guard.validate(data) == []
 
 
-def test_repo_manifest_declares_the_event_source_extension(guard):
+def test_repo_manifest_declares_no_extra_extensions(guard):
+    """The event_source tree is gone; only ansible-core plugin types ship."""
     data, error = guard._load()
     assert error is None
-    assert [d for d, _p in guard._iter_declarations(data) if d] == [
-        "plugins/event_source"]
+    assert [d for d, _p in guard._iter_declarations(data) if d] == []
 
 
 def test_missing_file_is_reported(guard, tmp_path):
