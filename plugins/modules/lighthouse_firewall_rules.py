@@ -51,8 +51,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.lighthouse_firewall_rules_info
-    description: Gather information about Tencent Cloud Lighthouse firewall rules.
+  - module: susunola.tencentcloud.lighthouse_instance_info
+    description: Gather information about Tencent Cloud Lighthouse instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

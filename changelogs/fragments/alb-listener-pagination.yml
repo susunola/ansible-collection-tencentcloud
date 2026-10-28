@@ -1,4 +1,0 @@
-bugfixes:
-  - alb_listener - follow every DescribeListeners page before deciding that a
-    listener is absent or unique, and fail closed on an unobservable list or
-    repeated page token.

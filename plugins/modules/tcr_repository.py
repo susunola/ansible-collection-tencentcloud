@@ -70,8 +70,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.tcr_repository_info
-    description: Gather information about Tencent Cloud TCR repositories.
+  - module: susunola.tencentcloud.tcr_instance_info
+    description: Gather information about Tencent Cloud TCR instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

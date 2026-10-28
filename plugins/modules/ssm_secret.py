@@ -12,7 +12,7 @@ short_description: Manage Tencent Cloud Secrets Manager custom secrets
 version_added: "0.14.0"
 description:
   - Creates, describes, enables, disables, restores and schedules deletion of custom SSM secrets.
-  - Initial secret material is used only at creation; manage subsequent immutable values with C(ssm_secret_version).
+  - Initial secret material is used only at creation and is not rotated by this module.
 options:
   state:
     description:

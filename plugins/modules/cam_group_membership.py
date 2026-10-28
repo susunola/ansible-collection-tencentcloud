@@ -57,8 +57,8 @@ attributes:
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
 seealso:
-  - module: susunola.tencentcloud.cam_group_membership_info
-    description: Gather information about Tencent Cloud CAM group memberships of a user.
+  - module: susunola.tencentcloud.cam_group_info
+    description: Gather information about Tencent Cloud CAM groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
